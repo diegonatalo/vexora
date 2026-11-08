@@ -14,6 +14,7 @@ export const LIMITES = {
   certificacoes: 4,
   topicosPorExperiencia: 3,
   caracteresPorTopico: 110,
+  idiomas: 4,
 } as const;
 
 const DATA_MM_AAAA = /^(0[1-9]|1[0-2])\/\d{4}$/;
@@ -28,9 +29,10 @@ const dataMesAno = z.string().refine((v) => v === "" || DATA_MM_AAAA.test(v), {
   message: "Use o formato MM/AAAA, por exemplo 03/2022.",
 });
 
-const urlOpcional = z
-  .union([z.literal(""), z.url({ message: "Informe uma URL válida." })])
-  .default("");
+const urlOpcional = z.union([
+  z.literal(""),
+  z.url({ message: "Informe uma URL válida." }),
+]);
 
 /** Valida datas de início/fim: se `atual`, ignora o fim; senão exige início <= fim. */
 function validarPeriodo(
@@ -49,12 +51,12 @@ function validarPeriodo(
 export const experienciaSchema = z
   .object({
     id: z.string().min(1),
-    cargo: z.string().trim().max(80).default(""),
-    empresa: z.string().trim().max(80).default(""),
+    cargo: z.string().trim().max(80),
+    empresa: z.string().trim().max(80),
     cidadeUf: z.string().trim().max(60).optional(),
-    inicio: dataMesAno.default(""),
-    fim: dataMesAno.default(""),
-    atual: z.boolean().default(false),
+    inicio: dataMesAno,
+    fim: dataMesAno,
+    atual: z.boolean(),
     topicos: z
       .array(
         z.string().max(LIMITES.caracteresPorTopico, {
@@ -68,19 +70,19 @@ export const experienciaSchema = z
 export const formacaoSchema = z
   .object({
     id: z.string().min(1),
-    curso: z.string().trim().max(100).default(""),
-    instituicao: z.string().trim().max(100).default(""),
-    inicio: dataMesAno.default(""),
-    fim: dataMesAno.default(""),
+    curso: z.string().trim().max(100),
+    instituicao: z.string().trim().max(100),
+    inicio: dataMesAno,
+    fim: dataMesAno,
     /** "Cursando": o fim é exibido como "Atual". */
-    atual: z.boolean().default(false),
+    atual: z.boolean(),
   })
   .superRefine(validarPeriodo);
 
 export const certificacaoSchema = z.object({
   id: z.string().min(1),
-  nome: z.string().trim().max(100).default(""),
-  instituicao: z.string().trim().max(100).default(""),
+  nome: z.string().trim().max(100),
+  instituicao: z.string().trim().max(100),
   ano: z.union([
     z.literal(""),
     z.string().regex(/^\d{4}$/, { message: "Use um ano com 4 dígitos." }),
@@ -118,7 +120,7 @@ export const perfilSchema = z.object({
   formacoes: z.array(formacaoSchema).max(LIMITES.formacoes),
   certificacoes: z.array(certificacaoSchema).max(LIMITES.certificacoes),
   habilidades: habilidadesSchema,
-  idiomas: z.array(idiomaSchema).max(4),
+  idiomas: z.array(idiomaSchema).max(LIMITES.idiomas),
 });
 
 export const ajustesSchema = z.object({

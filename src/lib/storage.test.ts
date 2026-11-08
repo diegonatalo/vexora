@@ -48,6 +48,28 @@ describe("storage", () => {
     expect(importarJson(JSON.stringify({ foo: 1 })).ok).toBe(false);
   });
 
+  it("recupera rascunho com campos inválidos, esvaziando só eles", async () => {
+    const dados = await carregarDados();
+    dados.perfil.nomeCompleto = "Ana";
+    dados.perfil.email = "ana@";
+    dados.perfil.experiencias = [
+      {
+        ...criarExperienciaVazia(),
+        cargo: "Dev",
+        inicio: "3/2022",
+        topicos: ["x".repeat(130), "", ""],
+      },
+    ];
+    await salvarDados(dados);
+
+    const { perfil } = await carregarDados();
+    expect(perfil.nomeCompleto).toBe("Ana");
+    expect(perfil.email).toBe("");
+    expect(perfil.experiencias[0].cargo).toBe("Dev");
+    expect(perfil.experiencias[0].inicio).toBe("");
+    expect(perfil.experiencias[0].topicos[0]).toHaveLength(110);
+  });
+
   it("volta ao perfil vazio se o dado salvo estiver corrompido", async () => {
     const { set } = await import("idb-keyval");
     await set("folha:perfil", { lixo: true });

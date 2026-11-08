@@ -9,6 +9,7 @@ import {
   type Perfil,
   type VersaoCv,
 } from "@/lib/schema";
+import { sanitizar } from "@/lib/sanitizar";
 import { z } from "zod";
 
 const CHAVE_PERFIL = "folha:perfil";
@@ -17,12 +18,13 @@ const CHAVE_VERSOES = "folha:versoes";
 export type Dados = { perfil: Perfil; versoes: VersaoCv[] };
 
 /**
- * Carrega os dados salvos. Dado ausente ou inválido (schema mudou, edição
- * manual) cai para um perfil vazio em vez de quebrar a aplicação.
+ * Carrega os dados salvos. Rascunhos com campos inválidos são recuperados
+ * (campos inválidos esvaziados); dado ausente ou sem conserto (schema mudou,
+ * edição manual) cai para um perfil vazio em vez de quebrar a aplicação.
  */
 export async function carregarDados(): Promise<Dados> {
-  const perfilSalvo = perfilSchema.safeParse(await get(CHAVE_PERFIL));
-  const perfil = perfilSalvo.success ? perfilSalvo.data : criarPerfilVazio();
+  const perfil =
+    sanitizar(perfilSchema, await get(CHAVE_PERFIL)) ?? criarPerfilVazio();
 
   const versoesSalvas = z
     .array(versaoCvSchema)

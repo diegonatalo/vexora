@@ -9,12 +9,25 @@ const ATRASO_SALVAR_MS = 400;
 
 /**
  * Mantém os dados do usuário em memória e persiste no navegador (IndexedDB)
- * com debounce. `dados` é null até a primeira carga terminar.
+ * com debounce. `dados` é null até a primeira carga terminar. Gravações
+ * pendentes são descarregadas ao sair da tela ou fechar a aba.
  */
 export function useDados() {
   const [dados, setDados] = useState<Dados | null>(null);
   const [estado, setEstado] = useState<EstadoSalvamento>("carregando");
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendente = useRef<Dados | null>(null);
+
+  const descarregar = useCallback(() => {
+    if (temporizador.current) clearTimeout(temporizador.current);
+    temporizador.current = null;
+    const proximo = pendente.current;
+    if (!proximo) return;
+    pendente.current = null;
+    salvarDados(proximo)
+      .then(() => setEstado("salvo"))
+      .catch(() => setEstado("erro"));
+  }, []);
 
   useEffect(() => {
     let cancelado = false;
@@ -32,22 +45,23 @@ export function useDados() {
     };
   }, []);
 
-  const atualizar = useCallback((proximo: Dados) => {
-    setDados(proximo);
-    setEstado("salvando");
-    if (temporizador.current) clearTimeout(temporizador.current);
-    temporizador.current = setTimeout(() => {
-      salvarDados(proximo)
-        .then(() => setEstado("salvo"))
-        .catch(() => setEstado("erro"));
-    }, ATRASO_SALVAR_MS);
-  }, []);
+  useEffect(() => {
+    window.addEventListener("pagehide", descarregar);
+    return () => {
+      window.removeEventListener("pagehide", descarregar);
+      descarregar();
+    };
+  }, [descarregar]);
 
-  useEffect(
-    () => () => {
+  const atualizar = useCallback(
+    (proximo: Dados) => {
+      setDados(proximo);
+      setEstado("salvando");
+      pendente.current = proximo;
       if (temporizador.current) clearTimeout(temporizador.current);
+      temporizador.current = setTimeout(descarregar, ATRASO_SALVAR_MS);
     },
-    [],
+    [descarregar],
   );
 
   return { dados, estado, atualizar };
