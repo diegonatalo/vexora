@@ -18,8 +18,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
+      <head>
+        {/* Aplica o tema salvo antes da primeira pintura (evita o "flash" claro). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("folha:tema");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

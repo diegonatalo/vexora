@@ -14,6 +14,7 @@
   --color-warn-bg: #fff1d6;
   --color-warn-ink: #5e3300;
   --color-warn-icon: #8a4b00;
+  --color-on-accent: #ffffff;
 
   --radius-field: 8px;
   --radius-card: 12px;
@@ -21,6 +22,46 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display:
     var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Tema escuro: mesmos nomes de token, valores novos. Vale quando a pessoa
+   escolheu "escuro" ou, sem escolha, quando o sistema está em modo escuro. */
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0e1114;
+  --color-surface: #171b1f;
+  --color-ink: #ecebe6;
+  --color-muted: #a4a9b1;
+  --color-line: #2b3137;
+  --color-field: #7f8791;
+  --color-accent: #46c79b;
+  --color-accent-deep: #9be3c8;
+  --color-accent-soft: #14302a;
+  --color-warn-bg: #3a2a0b;
+  --color-warn-ink: #ffd9a0;
+  --color-warn-icon: #f0a64a;
+  --color-on-accent: #04261b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-paper: #0e1114;
+    --color-surface: #171b1f;
+    --color-ink: #ecebe6;
+    --color-muted: #a4a9b1;
+    --color-line: #2b3137;
+    --color-field: #7f8791;
+    --color-accent: #46c79b;
+    --color-accent-deep: #9be3c8;
+    --color-accent-soft: #14302a;
+    --color-warn-bg: #3a2a0b;
+    --color-warn-ink: #ffd9a0;
+    --color-warn-icon: #f0a64a;
+    --color-on-accent: #04261b;
+  }
 }
 
 body {

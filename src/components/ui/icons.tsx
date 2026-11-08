@@ -13,6 +13,9 @@ export type IconName =
   | "download"
   | "arrow-left"
   | "arrow-right"
+  | "grip"
+  | "sun"
+  | "moon"
   | "logo";
 
 const PATHS: Record<IconName, React.ReactNode> = {
@@ -53,6 +56,23 @@ const PATHS: Record<IconName, React.ReactNode> = {
   ),
   "arrow-left": <path d="M20 12H4M10 6l-6 6 6 6" />,
   "arrow-right": <path d="M4 12h16M14 6l6 6-6 6" />,
+  grip: (
+    <>
+      <circle cx="9" cy="6" r="1" />
+      <circle cx="15" cy="6" r="1" />
+      <circle cx="9" cy="12" r="1" />
+      <circle cx="15" cy="12" r="1" />
+      <circle cx="9" cy="18" r="1" />
+      <circle cx="15" cy="18" r="1" />
+    </>
+  ),
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4" />
+    </>
+  ),
+  moon: <path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z" />,
   logo: (
     <>
       <path d="M7 3h7l5 5v13H7V3z" />

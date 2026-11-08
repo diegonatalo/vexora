@@ -132,10 +132,13 @@ export function CartaoItem({
   aside,
   onRemover,
   rotuloRemover,
+  alca,
   children,
 }: {
   titulo: string;
   aside?: ReactNode;
+  /** Alça de arrastar (ver Ordenavel.tsx). */
+  alca?: ReactNode;
   onRemover?: () => void;
   rotuloRemover: string;
   children: ReactNode;
@@ -148,6 +151,7 @@ export function CartaoItem({
           {titulo}
         </h3>
         <div className="flex items-center gap-3">
+          {alca}
           {aside && <span className="text-muted text-sm">{aside}</span>}
           {onRemover && (
             <button

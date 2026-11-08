@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
+import { AlternarTema } from "@/components/ui/AlternarTema";
 import { BOTAO, CARTAO } from "@/components/ui/estilos";
 import { TextAreaField } from "@/components/ui/fields";
 import { Icon } from "@/components/ui/icons";
@@ -199,7 +200,7 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
       <header className="border-line bg-surface border-b">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
-            <span className="bg-accent rounded-field grid size-9 place-items-center text-white">
+            <span className="bg-accent rounded-field text-on-accent grid size-9 place-items-center">
               <Icon name="logo" size={20} />
             </span>
             <span className="font-display text-2xl font-bold">Folha</span>
@@ -211,10 +212,13 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
             <Icon name="arrow-left" size={16} />
             Voltar ao editor
           </Link>
-          <p className="text-muted ml-auto flex items-center gap-1.5 text-sm">
-            <Icon name="check-circle" size={16} className="text-accent" />
-            Seu perfil original não é alterado
-          </p>
+          <div className="ml-auto flex items-center gap-4">
+            <p className="text-muted flex items-center gap-1.5 text-sm">
+              <Icon name="check-circle" size={16} className="text-accent" />
+              Seu perfil original não é alterado
+            </p>
+            <AlternarTema />
+          </div>
         </div>
       </header>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
+import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
 import {
   AdicionarOuLimite,
   CampoMesAno,
@@ -23,11 +24,12 @@ export function ExperienciaSecao() {
     control,
     formState: { errors },
   } = useFormContext<Perfil>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "experiencias",
   });
-  const [aberta, setAberta] = useState<number | null>(0);
+  // Guarda o id (não a posição): a experiência aberta acompanha a reordenação.
+  const [aberta, setAberta] = useState<string | null>(fields[0]?.id ?? null);
 
   return (
     <>
@@ -36,48 +38,65 @@ export function ExperienciaSecao() {
         descricao={`Até ${LIMITES.experiencias} experiências com ${LIMITES.topicosPorExperiencia} tópicos cada. É o que garante 1 página sem reduzir a fonte.`}
       />
       <div className="space-y-4">
-        {fields.map((campo, i) => {
-          const erro = errors.experiencias?.[i];
-          if (i === aberta) {
-            return (
-              <CartaoItem
-                key={campo.id}
-                titulo={`Experiência ${i + 1}`}
-                aside="Mais recente primeiro"
-                rotuloRemover={`Remover experiência ${i + 1}`}
-                onRemover={() => {
-                  remove(i);
-                  setAberta(null);
-                }}
-              >
-                <ExperienciaCampos indice={i} />
-              </CartaoItem>
-            );
-          }
-          const temErroData = Boolean(erro?.inicio || erro?.fim);
-          const temErro = Boolean(erro);
-          return (
-            <ExperienciaRecolhida
-              key={campo.id}
-              indice={i}
-              aviso={
-                temErroData
-                  ? "Data fora do padrão"
-                  : temErro
-                    ? "Revise os campos"
-                    : undefined
-              }
-              onAbrir={() => setAberta(i)}
-            />
-          );
-        })}
+        <ListaOrdenavel
+          ids={fields.map((f) => f.id)}
+          rotulo="experiência"
+          onMover={move}
+        >
+          <div className="space-y-4">
+            {fields.map((campo, i) => {
+              const erro = errors.experiencias?.[i];
+              return (
+                <ItemOrdenavel
+                  key={campo.id}
+                  id={campo.id}
+                  rotuloAlca={`Reordenar experiência ${i + 1}`}
+                  desabilitado={fields.length < 2}
+                >
+                  {(alca) =>
+                    campo.id === aberta ? (
+                      <CartaoItem
+                        titulo={`Experiência ${i + 1}`}
+                        aside="Mais recente primeiro"
+                        rotuloRemover={`Remover experiência ${i + 1}`}
+                        alca={alca}
+                        onRemover={() => {
+                          remove(i);
+                          setAberta(null);
+                        }}
+                      >
+                        <ExperienciaCampos indice={i} />
+                      </CartaoItem>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        {alca}
+                        <ExperienciaRecolhida
+                          indice={i}
+                          aviso={
+                            erro?.inicio || erro?.fim
+                              ? "Data fora do padrão"
+                              : erro
+                                ? "Revise os campos"
+                                : undefined
+                          }
+                          onAbrir={() => setAberta(campo.id)}
+                        />
+                      </div>
+                    )
+                  }
+                </ItemOrdenavel>
+              );
+            })}
+          </div>
+        </ListaOrdenavel>
         <AdicionarOuLimite
           atingiuLimite={fields.length >= LIMITES.experiencias}
           textoLimite={`Limite de ${LIMITES.experiencias} experiências para manter 1 página`}
           textoAdicionar="Adicionar experiência"
           onAdicionar={() => {
-            append(criarExperienciaVazia());
-            setAberta(fields.length);
+            const nova = criarExperienciaVazia();
+            append(nova);
+            setAberta(nova.id);
           }}
         />
       </div>
@@ -104,7 +123,7 @@ function ExperienciaRecolhida({
       type="button"
       onClick={onAbrir}
       aria-expanded={false}
-      className="border-line bg-paper rounded-card flex min-h-14 w-full items-center justify-between gap-3 border px-5 py-3 text-left"
+      className="border-line bg-paper rounded-card flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 border px-5 py-3 text-left"
     >
       <span>
         <span className="font-display font-semibold">

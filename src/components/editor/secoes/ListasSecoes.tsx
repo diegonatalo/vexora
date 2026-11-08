@@ -8,12 +8,13 @@ import {
   CartaoItem,
   SecaoCabecalho,
 } from "@/components/editor/campos";
+import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
 import { CheckboxField, TextField } from "@/components/ui/fields";
 import { novoId, LIMITES, type Perfil } from "@/lib/schema";
 
 export function FormacaoSecao() {
   const { control } = useFormContext<Perfil>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "formacoes",
   });
@@ -24,16 +25,33 @@ export function FormacaoSecao() {
         descricao="Graduação, técnico ou curso relevante, do mais recente para o mais antigo."
       />
       <div className="space-y-4">
-        {fields.map((campo, i) => (
-          <CartaoItem
-            key={campo.id}
-            titulo={`Formação ${i + 1}`}
-            rotuloRemover={`Remover formação ${i + 1}`}
-            onRemover={() => remove(i)}
-          >
-            <FormacaoCampos indice={i} />
-          </CartaoItem>
-        ))}
+        <ListaOrdenavel
+          ids={fields.map((f) => f.id)}
+          rotulo="formação"
+          onMover={move}
+        >
+          <div className="space-y-4">
+            {fields.map((campo, i) => (
+              <ItemOrdenavel
+                key={campo.id}
+                id={campo.id}
+                rotuloAlca={`Reordenar formação ${i + 1}`}
+                desabilitado={fields.length < 2}
+              >
+                {(alca) => (
+                  <CartaoItem
+                    titulo={`Formação ${i + 1}`}
+                    rotuloRemover={`Remover formação ${i + 1}`}
+                    onRemover={() => remove(i)}
+                    alca={alca}
+                  >
+                    <FormacaoCampos indice={i} />
+                  </CartaoItem>
+                )}
+              </ItemOrdenavel>
+            ))}
+          </div>
+        </ListaOrdenavel>
         <AdicionarOuLimite
           atingiuLimite={fields.length >= LIMITES.formacoes}
           textoLimite={`Limite de ${LIMITES.formacoes} formações para manter 1 página`}
@@ -90,7 +108,7 @@ function FormacaoCampos({ indice }: { indice: number }) {
 
 export function CertificacoesSecao() {
   const { control } = useFormContext<Perfil>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "certificacoes",
   });
@@ -101,16 +119,33 @@ export function CertificacoesSecao() {
         descricao="Só as que reforçam a vaga. Na adaptação à vaga, a Folha pode ocultar as sem relação para manter 1 página."
       />
       <div className="space-y-4">
-        {fields.map((campo, i) => (
-          <CartaoItem
-            key={campo.id}
-            titulo={`Certificação ${i + 1}`}
-            rotuloRemover={`Remover certificação ${i + 1}`}
-            onRemover={() => remove(i)}
-          >
-            <CertificacaoCampos indice={i} />
-          </CartaoItem>
-        ))}
+        <ListaOrdenavel
+          ids={fields.map((f) => f.id)}
+          rotulo="certificação"
+          onMover={move}
+        >
+          <div className="space-y-4">
+            {fields.map((campo, i) => (
+              <ItemOrdenavel
+                key={campo.id}
+                id={campo.id}
+                rotuloAlca={`Reordenar certificação ${i + 1}`}
+                desabilitado={fields.length < 2}
+              >
+                {(alca) => (
+                  <CartaoItem
+                    titulo={`Certificação ${i + 1}`}
+                    rotuloRemover={`Remover certificação ${i + 1}`}
+                    onRemover={() => remove(i)}
+                    alca={alca}
+                  >
+                    <CertificacaoCampos indice={i} />
+                  </CartaoItem>
+                )}
+              </ItemOrdenavel>
+            ))}
+          </div>
+        </ListaOrdenavel>
         <AdicionarOuLimite
           atingiuLimite={fields.length >= LIMITES.certificacoes}
           textoLimite={`Limite de ${LIMITES.certificacoes} certificações para manter 1 página`}

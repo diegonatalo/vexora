@@ -20,6 +20,7 @@ import {
   HabilidadesSecao,
 } from "@/components/editor/secoes/ListasSecoes";
 import { useAnalise } from "@/components/preview/use-analise";
+import { AlternarTema } from "@/components/ui/AlternarTema";
 import { BOTAO, CARTAO } from "@/components/ui/estilos";
 import { Icon } from "@/components/ui/icons";
 import { rodarChecagens } from "@/lib/ats/checks";
@@ -177,7 +178,7 @@ export function EditorShell({
       <header className="border-line bg-surface border-b">
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
-            <span className="bg-accent rounded-field grid size-9 place-items-center text-white">
+            <span className="bg-accent rounded-field text-on-accent grid size-9 place-items-center">
               <Icon name="logo" size={20} />
             </span>
             <span className="font-display text-2xl font-bold">Folha</span>
@@ -213,6 +214,7 @@ export function EditorShell({
               )}
               {TEXTO_ESTADO[estado]}
             </p>
+            <AlternarTema />
             <Link href="/vaga" className={BOTAO.secundario}>
               Adaptar à vaga
             </Link>
