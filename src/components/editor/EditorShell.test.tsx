@@ -19,7 +19,6 @@ import type { Medicao } from "@/lib/pdf/medicao";
 import {
   criarExperienciaVazia,
   criarPerfilVazio,
-  criarVersaoPadrao,
   type Perfil,
 } from "@/lib/schema";
 import type { Dados } from "@/lib/storage";
@@ -56,7 +55,7 @@ beforeEach(() => {
 
 function montar(ajustar?: (d: Dados) => void) {
   const perfil = criarPerfilVazio();
-  const dados: Dados = { perfil, versoes: [criarVersaoPadrao(perfil)] };
+  const dados: Dados = { perfil };
   ajustar?.(dados);
   const onAlterar = vi.fn();
   const usuario = userEvent.setup();

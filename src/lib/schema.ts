@@ -131,42 +131,11 @@ export const perfilSchema = z.object({
   idiomas: z.array(idiomaSchema),
 });
 
-export const ajustesSchema = z.object({
-  /** Ordem personalizada das habilidades (só reordena, nunca acrescenta). */
-  ordemHabilidades: habilidadesSchema.partial().default({}),
-  /** Tópicos a priorizar, por experiência (índices na lista de tópicos). */
-  topicosEmDestaque: z
-    .array(
-      z.object({
-        experienciaId: z.string(),
-        indices: z.array(z.number().int().min(0)),
-      }),
-    )
-    .default([]),
-  certificacoesOcultas: z.array(z.string()).default([]),
-  resumoAlternativo: z.string().max(500).optional(),
-});
-
-export const vagaSchema = z.object({
-  titulo: z.string().trim(),
-  empresa: z.string().trim().default(""),
-  descricao: z.string(),
-});
-
-export const versaoCvSchema = z.object({
-  id: z.string().min(1),
-  nome: z.string().trim().min(1).max(80),
-  perfilId: z.string().min(1),
-  vaga: vagaSchema.optional(),
-  ajustes: ajustesSchema,
-});
-
 /** Arquivo de exportação/importação. `formato` permite migrar no futuro. */
 export const backupSchema = z.object({
   formato: z.literal(1),
   exportadoEm: z.string(),
   perfil: perfilSchema,
-  versoes: z.array(versaoCvSchema),
 });
 
 export type Perfil = z.infer<typeof perfilSchema>;
@@ -175,7 +144,6 @@ export type Formacao = z.infer<typeof formacaoSchema>;
 export type Certificacao = z.infer<typeof certificacaoSchema>;
 export type Idioma = z.infer<typeof idiomaSchema>;
 export type Habilidades = z.infer<typeof habilidadesSchema>;
-export type VersaoCv = z.infer<typeof versaoCvSchema>;
 export type Backup = z.infer<typeof backupSchema>;
 
 export function novoId(): string {
@@ -210,14 +178,5 @@ export function criarPerfilVazio(): Perfil {
     certificacoes: [],
     habilidades: { linguagens: [], frameworks: [], ferramentas: [] },
     idiomas: [],
-  };
-}
-
-export function criarVersaoPadrao(perfil: Perfil): VersaoCv {
-  return {
-    id: novoId(),
-    nome: "CV geral",
-    perfilId: perfil.id,
-    ajustes: ajustesSchema.parse({}),
   };
 }

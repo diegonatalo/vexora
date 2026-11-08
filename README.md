@@ -1,8 +1,7 @@
 # Vexora
 
 Cadastre seu perfil uma vez e baixe um **CV de 1 página otimizado para ATS**
-(sistemas que leem currículos). Cole a descrição de uma vaga e a Vexora compara
-as palavras-chave com o seu perfil e reorganiza o CV para ela.
+(sistemas que leem currículos).
 
 - **Sem backend, sem login, sem IA generativa.** Tudo roda no navegador.
 - **Privacidade (LGPD):** seus dados ficam só neste navegador (IndexedDB). Nada é
@@ -20,12 +19,13 @@ npm run build      # build de produção
 
 Requer Node 22+.
 
-## Telas
+## Recursos
 
-- `/editor`: formulário por seções, verificação ATS, espaço da página e
-  pré-visualização do PDF final. Botão "Baixar PDF".
-- `/vaga`: cola a descrição, vê palavras-chave encontradas e ausentes, escolhe
-  ajustes e gera o CV ou salva como nova versão. O perfil original não muda.
+- Editor por seções, com verificação ATS, medidor de espaço da página e
+  pré-visualização do PDF final.
+- Reordenar experiências, formações e certificações arrastando e soltando.
+- "Exibir no CV" em cada item; PDF com e-mail, telefone e links clicáveis.
+- Tema claro e escuro; backup do perfil em JSON.
 
 ## Decisões de ATS
 
@@ -39,9 +39,6 @@ Requer Node 22+.
 - Ajuste automático para **1 página** (espaçamento, fonte de 11 a 10pt e margens
   até 36pt). Se mesmo assim não couber, o download é bloqueado e há sugestões do
   que enxugar.
-- Adaptação à vaga é determinística (`src/lib/vaga/`): glossário editável
-  (`glossario.json`) com sinônimos, nunca acrescenta habilidade que você não
-  cadastrou.
 
 Todas as decisões, com o porquê, estão em [`docs/decisions.md`](docs/decisions.md).
 
@@ -53,22 +50,22 @@ Next.js (App Router), React, TypeScript, Tailwind CSS v4, Zod, React Hook Form,
 ## Estrutura
 
 ```
-src/app/          rotas (/editor, /vaga)
-src/components/   editor, vaga, preview, ui
-src/lib/          schema, storage, pdf, ats, vaga
+src/app/          rota /editor
+src/components/   editor, preview, ui
+src/lib/          schema, storage, pdf, ats
 src/pdf/          documento do CV (react-pdf)
 docs/decisions.md decisões de projeto
 ```
 
 ## Acessibilidade
 
-Lighthouse (acessibilidade): **100** em `/editor` e `/vaga` (build de produção).
+Lighthouse (acessibilidade): **100** em `/editor` (build de produção).
 
 ## SEO e compartilhamento
 
 - `sitemap.xml` e `robots.txt` são gerados por `src/app/sitemap.ts` e `src/app/robots.ts`.
 - Open Graph e Twitter Card: título, descrição e imagem (`opengraph-image.png`,
-  1200x630) definidos em `src/app/layout.tsx`; `/editor` e `/vaga` têm título próprio.
+  1200x630) definidos em `src/app/layout.tsx`; `/editor` tem título próprio.
 - O endereço público vem de `src/lib/site.ts`: `NEXT_PUBLIC_SITE_URL` se definida;
   em desenvolvimento, `http://localhost:3000`; no resto, `https://vexoradn.vercel.app`.
 - Favicon: `icon.svg`, `favicon.ico` e `apple-icon.png` em `src/app/`.

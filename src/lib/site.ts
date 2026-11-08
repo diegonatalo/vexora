@@ -15,4 +15,4 @@ function resolverUrl(): string {
 export const SITE_URL = resolverUrl();
 export const SITE_NOME = "Vexora";
 export const SITE_DESCRICAO =
-  "Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS. Adapte o currículo à vaga. Seus dados ficam só no seu navegador.";
+  "Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS. Seus dados ficam só no seu navegador.";

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +27,7 @@ import { sugerirEnxugar } from "@/lib/ats/enxugar";
 import { nomeDoArquivo } from "@/lib/pdf/gerar";
 import { prepararPdf } from "@/lib/pdf/preparar";
 import { perfilSchema, type Perfil } from "@/lib/schema";
-import { perfilParaCv } from "@/lib/vaga/ajustes";
+import { somenteVisiveis } from "@/lib/visiveis";
 import { SECOES, statusDasSecoes, type SecaoId } from "@/lib/secoes";
 import type { Dados } from "@/lib/storage";
 import type { EstadoSalvamento } from "@/lib/use-dados";
@@ -66,8 +65,6 @@ type Props = {
   onAlterar: (dados: Dados) => void;
   /** Slot do rodapé da coluna 1 (exportar/importar). */
   backup?: React.ReactNode;
-  /** Seção aberta ao entrar (ex.: vindo de /vaga). */
-  secaoInicial?: SecaoId;
 };
 
 export function EditorShell({
@@ -75,23 +72,20 @@ export function EditorShell({
   estado,
   onAlterar,
   backup,
-  secaoInicial,
 }: Props) {
   const form = useForm<Perfil>({
     resolver: zodResolver(perfilSchema),
     defaultValues: dadosIniciais.perfil,
     mode: "onTouched",
   });
-  const versoes = useRef(dadosIniciais.versoes);
-  const [ativa, setAtiva] = useState<SecaoId>(secaoInicial ?? "dados");
+  const [ativa, setAtiva] = useState<SecaoId>("dados");
   const primeiraRenderizacao = useRef(true);
 
   // Todo rascunho é salvo, mesmo com campos inválidos (ver sanitizar.ts).
   useEffect(() => {
     return form.subscribe({
       formState: { values: true },
-      callback: ({ values }) =>
-        onAlterar({ perfil: values, versoes: versoes.current }),
+      callback: ({ values }) => onAlterar({ perfil: values }),
     });
   }, [form, onAlterar]);
 
@@ -105,16 +99,10 @@ export function EditorShell({
   }, [ativa]);
 
   const perfilOriginal = useWatch({ control: form.control }) as Perfil;
-  // O editor sempre edita o perfil original. A versão escolhida só muda o que
-  // vai para o PDF (ordem e itens ocultos), sem tocar nos dados.
-  const [versaoId, setVersaoId] = useState(dadosIniciais.versoes[0]?.id);
-  const ajustesDaVersao = dadosIniciais.versoes.find(
-    (v) => v.id === versaoId,
-  )?.ajustes;
-  // O que vai para o CV: sem os itens ocultos e com os ajustes da versão.
+  // O que vai para o CV: sem os itens com "Exibir no CV" desligado.
   const perfil = useMemo(
-    () => perfilParaCv(perfilOriginal, ajustesDaVersao),
-    [perfilOriginal, ajustesDaVersao],
+    () => somenteVisiveis(perfilOriginal),
+    [perfilOriginal],
   );
   const [baixando, setBaixando] = useState(false);
   const [erroPdf, setErroPdf] = useState<string | null>(null);
@@ -125,7 +113,7 @@ export function EditorShell({
     try {
       // Refaz o ajuste com os dados de agora (a análise pode estar 400ms atrasada).
       const atual = form.getValues();
-      const pronto = await prepararPdf(perfilParaCv(atual, ajustesDaVersao));
+      const pronto = await prepararPdf(somenteVisiveis(atual));
       if (!pronto.coube) {
         setErroPdf(
           "O CV passa de 1 página. Enxugue o conteúdo para baixar (veja as sugestões em Espaço da página).",
@@ -179,24 +167,6 @@ export function EditorShell({
             </span>
             <span className="font-display text-2xl font-bold">Vexora</span>
           </div>
-          <div className="flex-1 sm:flex-none">
-            <label htmlFor="versao" className="sr-only">
-              Versão do CV
-            </label>
-            <select
-              id="versao"
-              className="border-field bg-surface rounded-field min-h-11 w-full border px-3"
-              value={versaoId}
-              onChange={(e) => setVersaoId(e.target.value)}
-            >
-              {dadosIniciais.versoes.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.nome} —{" "}
-                  {perfilOriginal.cargoDesejado || "[Cargo desejado]"}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="ml-auto flex flex-wrap items-center gap-3">
             <p
               role="status"
@@ -211,9 +181,6 @@ export function EditorShell({
               {TEXTO_ESTADO[estado]}
             </p>
             <AlternarTema />
-            <Link href="/vaga" className={BOTAO.secundario}>
-              Adaptar à vaga
-            </Link>
             <button
               type="button"
               className={BOTAO.primario}

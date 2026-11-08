@@ -13,11 +13,9 @@ beforeEach(async () => {
 });
 
 describe("storage", () => {
-  it("cria perfil vazio e uma versão padrão na primeira carga", async () => {
-    const { perfil, versoes } = await carregarDados();
+  it("cria um perfil vazio na primeira carga", async () => {
+    const { perfil } = await carregarDados();
     expect(perfil.nomeCompleto).toBe("");
-    expect(versoes).toHaveLength(1);
-    expect(versoes[0].perfilId).toBe(perfil.id);
   });
 
   it("mantém os dados após salvar e carregar de novo", async () => {

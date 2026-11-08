@@ -108,3 +108,9 @@ Registro curto das decisões que não estavam no prompt original.
 ## Navegação sem contadores
 
 - Os contadores à direita das seções foram removidos: a navegação mostra só o nome e o ícone de estado (ativa, concluída, pendente). Seção com todos os itens ocultos conta como pendente.
+
+## Fim da adaptação à vaga
+
+- **Escopo novo:** a Vexora é só um gerador de CV em PDF. Removi a tela `/vaga`, o motor `src/lib/vaga/` (análise de palavras-chave, glossário, sugestões), as "versões" do CV (`VersaoCv`, `ajustes`, seletor de versão) e o link "Adaptar à vaga". As seções "Fase 5" acima ficam só como histórico.
+- **Dados:** o armazenamento guarda apenas o perfil. A chave antiga `folha:versoes` não é mais lida e é apagada em `apagarDados`. Backups antigos (que tinham `versoes`) ainda importam: o campo extra é ignorado.
+- **"Exibir no CV" permanece** e é o que controla o que entra no PDF; o filtro é `somenteVisiveis`.

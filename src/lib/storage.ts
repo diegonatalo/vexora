@@ -2,20 +2,17 @@ import { del, get, set } from "idb-keyval";
 import {
   backupSchema,
   criarPerfilVazio,
-  criarVersaoPadrao,
   perfilSchema,
-  versaoCvSchema,
   type Backup,
   type Perfil,
-  type VersaoCv,
 } from "@/lib/schema";
 import { sanitizar } from "@/lib/sanitizar";
-import { z } from "zod";
 
 const CHAVE_PERFIL = "folha:perfil";
-const CHAVE_VERSOES = "folha:versoes";
+// Chave de uma versão antiga do app (que guardava "versões" do CV): só é apagada.
+const CHAVE_LEGADA_VERSOES = "folha:versoes";
 
-export type Dados = { perfil: Perfil; versoes: VersaoCv[] };
+export type Dados = { perfil: Perfil };
 
 /**
  * Carrega os dados salvos. Rascunhos com campos inválidos são recuperados
@@ -26,25 +23,16 @@ export async function carregarDados(): Promise<Dados> {
   const perfil =
     sanitizar(perfilSchema, await get(CHAVE_PERFIL)) ?? criarPerfilVazio();
 
-  const versoesSalvas = z
-    .array(versaoCvSchema)
-    .safeParse(await get(CHAVE_VERSOES));
-  const versoes =
-    versoesSalvas.success && versoesSalvas.data.length > 0
-      ? versoesSalvas.data
-      : [criarVersaoPadrao(perfil)];
-
-  return { perfil, versoes };
+  return { perfil };
 }
 
 export async function salvarDados(dados: Dados): Promise<void> {
   await set(CHAVE_PERFIL, dados.perfil);
-  await set(CHAVE_VERSOES, dados.versoes);
 }
 
 export async function apagarDados(): Promise<void> {
   await del(CHAVE_PERFIL);
-  await del(CHAVE_VERSOES);
+  await del(CHAVE_LEGADA_VERSOES);
 }
 
 export function exportarJson(dados: Dados, agora = new Date()): string {
@@ -52,7 +40,6 @@ export function exportarJson(dados: Dados, agora = new Date()): string {
     formato: 1,
     exportadoEm: agora.toISOString(),
     perfil: dados.perfil,
-    versoes: dados.versoes,
   };
   return JSON.stringify(backup, null, 2);
 }
@@ -74,12 +61,9 @@ export function importarJson(texto: string): ResultadoImportacao {
       erro: "O arquivo não parece ser um backup da Vexora ou está incompleto.",
     };
   }
-  const { perfil, versoes } = resultado.data;
+  const { perfil } = resultado.data;
   return {
     ok: true,
-    dados: {
-      perfil,
-      versoes: versoes.length > 0 ? versoes : [criarVersaoPadrao(perfil)],
-    },
+    dados: { perfil },
   };
 }
