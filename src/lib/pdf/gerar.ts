@@ -24,5 +24,5 @@ export function nomeDoArquivo(nome: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-  return `cv-${slug || "folha"}.pdf`;
+  return `cv-${slug || "vexora"}.pdf`;
 }

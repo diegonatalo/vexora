@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Fonte da verdade dos tipos da Folha.
+ * Fonte da verdade dos tipos da Vexora.
  *
  * Campos de texto aceitam "" porque o perfil é salvo enquanto a pessoa ainda
  * está preenchendo; a completude (e-mail, telefone, datas) é cobrada pelas

@@ -73,12 +73,7 @@ const PATHS: Record<IconName, React.ReactNode> = {
     </>
   ),
   moon: <path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z" />,
-  logo: (
-    <>
-      <path d="M7 3h7l5 5v13H7V3z" />
-      <path d="M14 3v5h5M10 13h6M10 17h6" />
-    </>
-  ),
+  logo: <path d="M5 6l7 13 7-13" strokeWidth="3" />,
 };
 
 type Props = Omit<SVGProps<SVGSVGElement>, "name"> & {

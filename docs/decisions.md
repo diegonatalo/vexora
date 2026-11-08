@@ -81,3 +81,8 @@ Registro curto das decisões que não estavam no prompt original.
 
 - **Arrastar e soltar com `@dnd-kit`** (Experiência, Formação e Certificações): funciona com mouse, toque e teclado (alça "Reordenar…": espaço para pegar, setas, espaço para soltar, Esc cancela), com avisos em português para leitores de tela. Escolhi a biblioteca em vez de HTML5 drag-and-drop nativo, que não funciona em toque nem por teclado. A reordenação usa `move` do `useFieldArray`, então o formulário, a validação e o PDF seguem a nova ordem. A experiência aberta é guardada por id, não por posição, para acompanhar a mudança. A alça some quando há só 1 item. Idiomas ficaram fora (não foi pedido).
 - **Tema escuro por tokens:** os mesmos nomes de cor (`--color-paper`, `--color-ink`...) ganham valores novos em `[data-theme="dark"]`. Sem escolha da pessoa vale o modo do sistema (`prefers-color-scheme`). O botão de lua/sol no cabeçalho grava a escolha em `localStorage`; um script no `<head>` aplica o tema antes da primeira pintura (sem flash claro). Texto de botão usa tokens (`on-accent`, `paper`) em vez de `text-white`. A pré-visualização do PDF continua branca: é o papel.
+
+## Nome: Vexora
+
+- A aplicação passou a se chamar **Vexora** (textos, título da página, nome do pacote, nome dos arquivos baixados `vexora-perfil.json` e fallback `cv-vexora.pdf`). Marca: um "V" branco sobre quadrado verde, em `src/app/icon.svg`, `favicon.ico` (16/32/48) e `apple-icon.png` (180), todos gerados da mesma arte.
+- **Chaves de armazenamento mantidas** (`folha:perfil`, `folha:versoes`, `folha:tema`): trocá-las faria quem já usou a app perder o perfil salvo, e a pessoa nunca vê esses nomes. Só trocar com migração.

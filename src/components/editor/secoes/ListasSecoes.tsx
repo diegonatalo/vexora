@@ -116,7 +116,7 @@ export function CertificacoesSecao() {
     <>
       <SecaoCabecalho
         titulo="Certificações"
-        descricao="Só as que reforçam a vaga. Na adaptação à vaga, a Folha pode ocultar as sem relação para manter 1 página."
+        descricao="Só as que reforçam a vaga. Na adaptação à vaga, a Vexora pode ocultar as sem relação para manter 1 página."
       />
       <div className="space-y-4">
         <ListaOrdenavel

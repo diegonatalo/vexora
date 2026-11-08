@@ -181,7 +181,7 @@ export function EditorShell({
             <span className="bg-accent rounded-field text-on-accent grid size-9 place-items-center">
               <Icon name="logo" size={20} />
             </span>
-            <span className="font-display text-2xl font-bold">Folha</span>
+            <span className="font-display text-2xl font-bold">Vexora</span>
           </div>
           <div className="flex-1 sm:flex-none">
             <label htmlFor="versao" className="sr-only">

@@ -19,7 +19,7 @@ export function BackupPerfil({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "folha-perfil.json";
+    a.download = "vexora-perfil.json";
     a.click();
     URL.revokeObjectURL(url);
   }

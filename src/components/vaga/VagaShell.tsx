@@ -203,7 +203,7 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
             <span className="bg-accent rounded-field text-on-accent grid size-9 place-items-center">
               <Icon name="logo" size={20} />
             </span>
-            <span className="font-display text-2xl font-bold">Folha</span>
+            <span className="font-display text-2xl font-bold">Vexora</span>
           </div>
           <Link
             href="/editor"
@@ -228,8 +228,8 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
             Adaptar à vaga
           </h1>
           <p className="text-muted mt-2">
-            Cole a descrição. A Folha compara as palavras-chave com o seu perfil
-            e reorganiza o CV, sem passar de 1 página.
+            Cole a descrição. A Vexora compara as palavras-chave com o seu
+            perfil e reorganiza o CV, sem passar de 1 página.
           </p>
           <form
             className="mt-6 space-y-4"

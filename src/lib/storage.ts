@@ -71,7 +71,7 @@ export function importarJson(texto: string): ResultadoImportacao {
   if (!resultado.success) {
     return {
       ok: false,
-      erro: "O arquivo não parece ser um backup da Folha ou está incompleto.",
+      erro: "O arquivo não parece ser um backup da Vexora ou está incompleto.",
     };
   }
   const { perfil, versoes } = resultado.data;

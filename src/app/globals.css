@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Tokens de design da Folha (ver docs/decisions.md). */
+/* Tokens de design da Vexora (ver docs/decisions.md). */
 @theme {
   --color-paper: #f4f2ec;
   --color-surface: #ffffff;

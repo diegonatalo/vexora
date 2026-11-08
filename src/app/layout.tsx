@@ -9,7 +9,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Folha — CV de 1 página para ATS",
+  title: "Vexora — CV de 1 página para ATS",
   description:
     "Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS. Seus dados ficam só no seu navegador.",
 };

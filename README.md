@@ -1,7 +1,7 @@
-# Folha
+# Vexora
 
 Cadastre seu perfil uma vez e baixe um **CV de 1 página otimizado para ATS**
-(sistemas que leem currículos). Cole a descrição de uma vaga e a Folha compara
+(sistemas que leem currículos). Cole a descrição de uma vaga e a Vexora compara
 as palavras-chave com o seu perfil e reorganiza o CV para ela.
 
 - **Sem backend, sem login, sem IA generativa.** Tudo roda no navegador.

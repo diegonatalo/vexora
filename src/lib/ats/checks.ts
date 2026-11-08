@@ -85,7 +85,7 @@ export function checarColunaUnica({ cv, pdf }: ContextoAts): Checagem {
         titulo,
         severidade: "erro",
         problema: "A ordem de leitura do PDF está fora do layout.",
-        correcao: "Gere o PDF de novo com o layout padrão da Folha.",
+        correcao: "Gere o PDF de novo com o layout padrão da Vexora.",
       };
 }
 
@@ -103,7 +103,7 @@ export function checarTitulosPadrao({ cv, pdf }: ContextoAts): Checagem {
         titulo,
         severidade: "erro",
         problema: `Título não encontrado: ${faltando.join(", ")}.`,
-        correcao: "Use apenas os títulos padrão da Folha.",
+        correcao: "Use apenas os títulos padrão da Vexora.",
       };
 }
 
