@@ -1,9 +1,9 @@
 /**
  * Endereço público do site, usado em sitemap, robots e Open Graph.
  * Defina NEXT_PUBLIC_SITE_URL para um domínio próprio; em desenvolvimento usa
- * localhost; no resto, https://vexora.vercel.app.
+ * localhost; no resto, https://vexoradn.vercel.app.
  */
-const ENDERECO_PADRAO = "https://vexora.vercel.app";
+const ENDERECO_PADRAO = "https://vexoradn.vercel.app";
 
 function resolverUrl(): string {
   const definido = process.env.NEXT_PUBLIC_SITE_URL;
