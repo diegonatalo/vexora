@@ -3,7 +3,6 @@ import {
   criarExperienciaVazia,
   criarPerfilVazio,
   experienciaSchema,
-  LIMITES,
   perfilSchema,
 } from "@/lib/schema";
 
@@ -23,10 +22,23 @@ describe("perfilSchema", () => {
     expect(caminhos).toContain("links.linkedin");
   });
 
-  it(`limita a ${LIMITES.experiencias} experiências`, () => {
+  it("não limita a quantidade de itens das listas", () => {
     const perfil = criarPerfilVazio();
-    perfil.experiencias = Array.from({ length: 4 }, criarExperienciaVazia);
-    expect(perfilSchema.safeParse(perfil).success).toBe(false);
+    perfil.experiencias = Array.from({ length: 8 }, criarExperienciaVazia);
+    perfil.certificacoes = Array.from({ length: 10 }, (_, i) => ({
+      id: `c${i}`,
+      nome: "",
+      instituicao: "",
+      ano: "",
+    }));
+    expect(perfilSchema.safeParse(perfil).success).toBe(true);
+  });
+
+  it("aceita item sem a marca exibir (dados antigos) e com exibir false", () => {
+    const perfil = criarPerfilVazio();
+    const { exibir: _ignorado, ...semMarca } = criarExperienciaVazia();
+    perfil.experiencias = [semMarca, { ...semMarca, id: "x", exibir: false }];
+    expect(perfilSchema.safeParse(perfil).success).toBe(true);
   });
 });
 

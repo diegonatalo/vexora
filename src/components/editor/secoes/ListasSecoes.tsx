@@ -2,15 +2,16 @@
 
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import {
-  AdicionarOuLimite,
+  AdicionarItem,
   CampoLista,
   CampoMesAno,
   CartaoItem,
+  InterruptorExibir,
   SecaoCabecalho,
 } from "@/components/editor/campos";
 import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
 import { CheckboxField, TextField } from "@/components/ui/fields";
-import { novoId, LIMITES, type Perfil } from "@/lib/schema";
+import { novoId, type Perfil } from "@/lib/schema";
 
 export function FormacaoSecao() {
   const { control } = useFormContext<Perfil>();
@@ -44,6 +45,12 @@ export function FormacaoSecao() {
                     rotuloRemover={`Remover formação ${i + 1}`}
                     onRemover={() => remove(i)}
                     alca={alca}
+                    exibir={
+                      <InterruptorExibir
+                        name={`formacoes.${i}.exibir`}
+                        rotulo={`Exibir formação ${i + 1} no CV`}
+                      />
+                    }
                   >
                     <FormacaoCampos indice={i} />
                   </CartaoItem>
@@ -52,9 +59,7 @@ export function FormacaoSecao() {
             ))}
           </div>
         </ListaOrdenavel>
-        <AdicionarOuLimite
-          atingiuLimite={fields.length >= LIMITES.formacoes}
-          textoLimite={`Limite de ${LIMITES.formacoes} formações para manter 1 página`}
+        <AdicionarItem
           textoAdicionar="Adicionar formação"
           onAdicionar={() =>
             append({
@@ -64,6 +69,7 @@ export function FormacaoSecao() {
               inicio: "",
               fim: "",
               atual: false,
+              exibir: true,
             })
           }
         />
@@ -138,6 +144,12 @@ export function CertificacoesSecao() {
                     rotuloRemover={`Remover certificação ${i + 1}`}
                     onRemover={() => remove(i)}
                     alca={alca}
+                    exibir={
+                      <InterruptorExibir
+                        name={`certificacoes.${i}.exibir`}
+                        rotulo={`Exibir certificação ${i + 1} no CV`}
+                      />
+                    }
                   >
                     <CertificacaoCampos indice={i} />
                   </CartaoItem>
@@ -146,12 +158,16 @@ export function CertificacoesSecao() {
             ))}
           </div>
         </ListaOrdenavel>
-        <AdicionarOuLimite
-          atingiuLimite={fields.length >= LIMITES.certificacoes}
-          textoLimite={`Limite de ${LIMITES.certificacoes} certificações para manter 1 página`}
+        <AdicionarItem
           textoAdicionar="Adicionar certificação"
           onAdicionar={() =>
-            append({ id: novoId(), nome: "", instituicao: "", ano: "" })
+            append({
+              id: novoId(),
+              nome: "",
+              instituicao: "",
+              ano: "",
+              exibir: true,
+            })
           }
         />
       </div>
@@ -194,8 +210,6 @@ function CertificacaoCampos({ indice }: { indice: number }) {
   );
 }
 
-const MAX_IDIOMAS = LIMITES.idiomas;
-
 export function HabilidadesSecao() {
   const { control, register } = useFormContext<Perfil>();
   const { fields, append, remove } = useFieldArray({
@@ -234,6 +248,12 @@ export function HabilidadesSecao() {
             titulo={`Idioma ${i + 1}`}
             rotuloRemover={`Remover idioma ${i + 1}`}
             onRemover={() => remove(i)}
+            exibir={
+              <InterruptorExibir
+                name={`idiomas.${i}.exibir`}
+                rotulo={`Exibir idioma ${i + 1} no CV`}
+              />
+            }
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <TextField
@@ -249,11 +269,9 @@ export function HabilidadesSecao() {
             </div>
           </CartaoItem>
         ))}
-        <AdicionarOuLimite
-          atingiuLimite={fields.length >= MAX_IDIOMAS}
-          textoLimite={`Limite de ${MAX_IDIOMAS} idiomas para manter 1 página`}
+        <AdicionarItem
           textoAdicionar="Adicionar idioma"
-          onAdicionar={() => append({ idioma: "", nivel: "" })}
+          onAdicionar={() => append({ idioma: "", nivel: "", exibir: true })}
         />
       </div>
     </>

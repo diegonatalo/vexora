@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
 import {
-  AdicionarOuLimite,
+  AdicionarItem,
   CampoMesAno,
   CartaoItem,
+  InterruptorExibir,
   SecaoCabecalho,
 } from "@/components/editor/campos";
 import {
@@ -35,7 +36,7 @@ export function ExperienciaSecao() {
     <>
       <SecaoCabecalho
         titulo="Experiência"
-        descricao={`Até ${LIMITES.experiencias} experiências com ${LIMITES.topicosPorExperiencia} tópicos cada. É o que garante 1 página sem reduzir a fonte.`}
+        descricao={`Até ${LIMITES.topicosPorExperiencia} tópicos por experiência. Use "Exibir no CV" para ocultar uma experiência sem apagá-la.`}
       />
       <div className="space-y-4">
         <ListaOrdenavel
@@ -60,6 +61,12 @@ export function ExperienciaSecao() {
                         aside="Mais recente primeiro"
                         rotuloRemover={`Remover experiência ${i + 1}`}
                         alca={alca}
+                        exibir={
+                          <InterruptorExibir
+                            name={`experiencias.${i}.exibir`}
+                            rotulo={`Exibir experiência ${i + 1} no CV`}
+                          />
+                        }
                         onRemover={() => {
                           remove(i);
                           setAberta(null);
@@ -68,7 +75,7 @@ export function ExperienciaSecao() {
                         <ExperienciaCampos indice={i} />
                       </CartaoItem>
                     ) : (
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         {alca}
                         <ExperienciaRecolhida
                           indice={i}
@@ -81,6 +88,10 @@ export function ExperienciaSecao() {
                           }
                           onAbrir={() => setAberta(campo.id)}
                         />
+                        <InterruptorExibir
+                          name={`experiencias.${i}.exibir`}
+                          rotulo={`Exibir experiência ${i + 1} no CV`}
+                        />
                       </div>
                     )
                   }
@@ -89,9 +100,7 @@ export function ExperienciaSecao() {
             })}
           </div>
         </ListaOrdenavel>
-        <AdicionarOuLimite
-          atingiuLimite={fields.length >= LIMITES.experiencias}
-          textoLimite={`Limite de ${LIMITES.experiencias} experiências para manter 1 página`}
+        <AdicionarItem
           textoAdicionar="Adicionar experiência"
           onAdicionar={() => {
             const nova = criarExperienciaVazia();

@@ -8,14 +8,18 @@ import { z } from "zod";
  * checagens de ATS, não pelo schema. O que for preenchido precisa ser válido.
  */
 
+/**
+ * Só os tópicos têm limite (3 por experiência, 110 caracteres cada). A
+ * quantidade de experiências, formações, certificações e idiomas é livre: o
+ * ajuste para 1 página e o "Exibir no CV" controlam o que entra no PDF.
+ */
 export const LIMITES = {
-  experiencias: 3,
-  formacoes: 3,
-  certificacoes: 4,
   topicosPorExperiencia: 3,
   caracteresPorTopico: 110,
-  idiomas: 4,
 } as const;
+
+/** `undefined` conta como exibido (dados salvos antes deste campo existir). */
+const exibir = z.boolean().optional();
 
 const DATA_MM_AAAA = /^(0[1-9]|1[0-2])\/\d{4}$/;
 
@@ -57,6 +61,7 @@ export const experienciaSchema = z
     inicio: dataMesAno,
     fim: dataMesAno,
     atual: z.boolean(),
+    exibir,
     topicos: z
       .array(
         z.string().max(LIMITES.caracteresPorTopico, {
@@ -76,6 +81,7 @@ export const formacaoSchema = z
     fim: dataMesAno,
     /** "Cursando": o fim é exibido como "Atual". */
     atual: z.boolean(),
+    exibir,
   })
   .superRefine(validarPeriodo);
 
@@ -87,11 +93,13 @@ export const certificacaoSchema = z.object({
     z.literal(""),
     z.string().regex(/^\d{4}$/, { message: "Use um ano com 4 dígitos." }),
   ]),
+  exibir,
 });
 
 export const idiomaSchema = z.object({
   idioma: z.string().trim().max(40),
   nivel: z.string().trim().max(40),
+  exibir,
 });
 
 export const habilidadesSchema = z.object({
@@ -116,11 +124,11 @@ export const perfilSchema = z.object({
     portfolio: urlOpcional,
   }),
   resumo: z.string().max(500),
-  experiencias: z.array(experienciaSchema).max(LIMITES.experiencias),
-  formacoes: z.array(formacaoSchema).max(LIMITES.formacoes),
-  certificacoes: z.array(certificacaoSchema).max(LIMITES.certificacoes),
+  experiencias: z.array(experienciaSchema),
+  formacoes: z.array(formacaoSchema),
+  certificacoes: z.array(certificacaoSchema),
   habilidades: habilidadesSchema,
-  idiomas: z.array(idiomaSchema).max(LIMITES.idiomas),
+  idiomas: z.array(idiomaSchema),
 });
 
 export const ajustesSchema = z.object({
@@ -182,6 +190,7 @@ export function criarExperienciaVazia(): Experiencia {
     inicio: "",
     fim: "",
     atual: false,
+    exibir: true,
     topicos: ["", "", ""],
   };
 }

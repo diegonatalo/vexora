@@ -20,7 +20,6 @@ import {
   criarExperienciaVazia,
   criarPerfilVazio,
   criarVersaoPadrao,
-  LIMITES,
   type Perfil,
 } from "@/lib/schema";
 import type { Dados } from "@/lib/storage";
@@ -109,7 +108,7 @@ describe("navegação", () => {
     await irPara(usuario, "Experiência");
     const item = screen.getByRole("button", { name: /^Experiência/ });
     expect(item).toHaveAttribute("aria-current", "step");
-    expect(item).toHaveTextContent("1/3");
+    expect(item).toHaveTextContent("1/1");
     expect(
       screen.getByRole("button", { name: /^Certificações/ }),
     ).toHaveTextContent("vazio");
@@ -160,22 +159,40 @@ describe("experiência", () => {
     expect(screen.getByRole("textbox", { name: "Fim" })).toBeDisabled();
   });
 
-  it(`limita a ${LIMITES.experiencias} experiências`, async () => {
+  it("não limita a quantidade de experiências", async () => {
     const { usuario } = montar();
     await irPara(usuario, "Experiência");
-    const adicionar = () =>
-      usuario.click(
+    for (let i = 0; i < 5; i++) {
+      await usuario.click(
         screen.getByRole("button", { name: "Adicionar experiência" }),
       );
-    await adicionar();
-    await adicionar();
-    await adicionar();
+    }
     expect(
-      screen.queryByRole("button", { name: "Adicionar experiência" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByText("Limite de 3 experiências para manter 1 página"),
+      screen.getByRole("button", { name: "Adicionar experiência" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("checkbox", { name: /Exibir experiência \d no CV/ }),
+    ).toHaveLength(5);
+  });
+
+  it('"Exibir no CV" oculta o item do CV sem apagá-lo', async () => {
+    const { usuario, onAlterar } = montar((d) => {
+      d.perfil.certificacoes = [
+        { id: "c1", nome: "Curso A", instituicao: "X", ano: "2023" },
+        { id: "c2", nome: "Curso B", instituicao: "Y", ano: "2022" },
+      ];
+    });
+    await irPara(usuario, "Certificações");
+    const caixa = screen.getByRole("checkbox", {
+      name: "Exibir certificação 2 no CV",
+    });
+    expect(caixa).toBeChecked();
+    await usuario.click(caixa);
+    expect(caixa).not.toBeChecked();
+    const ultimo = onAlterar.mock.calls.at(-1)![0];
+    expect(ultimo.perfil.certificacoes).toHaveLength(2);
+    expect(ultimo.perfil.certificacoes[1].exibir).toBe(false);
+    expect(ultimo.perfil.certificacoes[0].exibir).not.toBe(false);
   });
 
   it("recolhe as demais experiências e abre ao clicar", async () => {

@@ -92,3 +92,10 @@ Registro curto das decisões que não estavam no prompt original.
 - **Endereço:** `SITE_URL` vem de `NEXT_PUBLIC_SITE_URL`; sem ela, localhost em desenvolvimento e `https://vexoradn.vercel.app` (endereço definido pelo autor) no resto.
 - **Sitemap lista `/editor` e `/vaga`**; `/` só redireciona, então fica de fora. Robots libera tudo e aponta para o sitemap.
 - **Imagem OG estática** (PNG 1200x630 gerada da mesma arte do favicon), copiada como `twitter-image.png`, com texto alternativo em `.alt.txt`.
+
+## Sem limite de itens e "Exibir no CV"
+
+- **Removi os limites de quantidade** de experiências, formações, certificações e idiomas (no schema e na interface). Continuam só os limites de texto: 3 tópicos por experiência e 110 caracteres por tópico. O que protege a regra de 1 página agora é o ajuste automático (Fase 4): se não couber, avisa e bloqueia o download; a pessoa decide o que cortar.
+- **Interruptor "Exibir no CV"** em cada item (inclusive nas experiências recolhidas): liga e desliga sem apagar. Campo `exibir?: boolean` nos itens; **`undefined` conta como exibido**, então dados salvos antes continuam válidos sem migração.
+- **Um único ponto de filtro:** `somenteVisiveis(perfil)` devolve uma cópia sem os ocultos. É usado em `montarCv`, no editor (preview, checagens e download), e em `/vaga` (análise de palavras-chave e geração). Item oculto não conta como "no seu CV". Combina com os ajustes da vaga: `perfilParaCv` = visíveis + ajustes.
+- **Contador da navegação** passou a "exibidos/total" (ex.: `2/3` = 2 de 3 itens aparecem no CV).

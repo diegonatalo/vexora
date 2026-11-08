@@ -1,4 +1,5 @@
-import { LIMITES, type Perfil } from "@/lib/schema";
+import type { Perfil } from "@/lib/schema";
+import { estaVisivel } from "@/lib/visiveis";
 
 export const SECOES = [
   { id: "dados", titulo: "Dados pessoais" },
@@ -30,9 +31,16 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
     preenchido(p.telefone) &&
     EMAIL_SIMPLES.test(p.email);
 
-  const nExp = p.experiencias.length;
-  const nFor = p.formacoes.length;
-  const nCert = p.certificacoes.length;
+  // "no CV/total": quantos itens estão marcados como "Exibir no CV".
+  const contar = (itens: { exibir?: boolean }[]) => ({
+    total: itens.length,
+    noCv: itens.filter(estaVisivel).length,
+  });
+  const exp = contar(p.experiencias);
+  const form = contar(p.formacoes);
+  const cert = contar(p.certificacoes);
+  const rotulo = (c: { total: number; noCv: number }) =>
+    c.total > 0 ? `${c.noCv}/${c.total}` : "vazio";
   const nLinks = Object.values(p.links).filter(preenchido).length;
   const temHabilidades =
     p.habilidades.linguagens.length +
@@ -44,16 +52,16 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
     dados: { concluida: dadosCompletos },
     resumo: { concluida: preenchido(p.resumo) },
     experiencia: {
-      concluida: nExp > 0,
-      contador: nExp > 0 ? `${nExp}/${LIMITES.experiencias}` : "vazio",
+      concluida: exp.noCv > 0,
+      contador: rotulo(exp),
     },
     formacao: {
-      concluida: nFor > 0,
-      contador: nFor > 0 ? `${nFor}/${LIMITES.formacoes}` : "vazio",
+      concluida: form.noCv > 0,
+      contador: rotulo(form),
     },
     certificacoes: {
-      concluida: nCert > 0,
-      contador: nCert > 0 ? `${nCert}/${LIMITES.certificacoes}` : "vazio",
+      concluida: cert.noCv > 0,
+      contador: rotulo(cert),
     },
     habilidades: { concluida: temHabilidades },
     links: {

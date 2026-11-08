@@ -1,3 +1,4 @@
+import { somenteVisiveis } from "@/lib/visiveis";
 import type { Perfil } from "@/lib/schema";
 
 /** Títulos fixos de seção (a checagem de ATS na Fase 4 usa esta lista). */
@@ -75,7 +76,11 @@ const limpar = (v: string | undefined) => (v ?? "").trim();
 const juntar = (partes: string[], sep: string) =>
   partes.filter(Boolean).join(sep);
 
-export function montarCv(perfil: Perfil, opcoes: OpcoesCv = {}): CvModel {
+export function montarCv(
+  perfilCompleto: Perfil,
+  opcoes: OpcoesCv = {},
+): CvModel {
+  const perfil = somenteVisiveis(perfilCompleto);
   const ph = opcoes.placeholders ?? false;
   const ou = (valor: string, placeholder: string) =>
     valor || (ph ? placeholder : "");

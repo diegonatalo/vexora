@@ -1,4 +1,5 @@
 import { ajustesSchema, type Habilidades, type Perfil } from "@/lib/schema";
+import { somenteVisiveis } from "@/lib/visiveis";
 import { textoTemPalavra, type AnaliseVaga } from "@/lib/vaga/analisar";
 
 export type Ajustes = ReturnType<typeof ajustesSchema.parse>;
@@ -255,4 +256,10 @@ export function aplicarAjustes(perfil: Perfil, ajustes: Ajustes): Perfil {
       (c) => !ajustes.certificacoesOcultas.includes(c.id),
     ),
   };
+}
+
+/** O perfil como vai para o CV: itens ocultos fora e, se houver, os ajustes. */
+export function perfilParaCv(perfil: Perfil, ajustes?: Ajustes): Perfil {
+  const visiveis = somenteVisiveis(perfil);
+  return ajustes ? aplicarAjustes(visiveis, ajustes) : visiveis;
 }

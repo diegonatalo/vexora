@@ -9,10 +9,11 @@ import { Icon } from "@/components/ui/icons";
 import { nomeDoArquivo } from "@/lib/pdf/gerar";
 import { prepararPdf } from "@/lib/pdf/preparar";
 import { novoId, type VersaoCv } from "@/lib/schema";
+import { somenteVisiveis } from "@/lib/visiveis";
 import type { Dados } from "@/lib/storage";
 import {
-  aplicarAjustes,
   combinarAjustes,
+  perfilParaCv,
   sugerirAjustes,
   type Sugestao,
 } from "@/lib/vaga/ajustes";
@@ -113,8 +114,10 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
       return;
     }
     setErro(null);
-    const analise = analisarVaga(descricao, dados.perfil);
-    const sugestoes = sugerirAjustes(dados.perfil, analise);
+    // Itens ocultos não estão no CV, então não contam para a comparação.
+    const perfil = somenteVisiveis(dados.perfil);
+    const analise = analisarVaga(descricao, perfil);
+    const sugestoes = sugerirAjustes(perfil, analise);
     setResultado({
       analise,
       sugestoes,
@@ -145,7 +148,7 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
     setErro(null);
     setAviso(null);
     try {
-      const perfil = aplicarAjustes(dados.perfil, ajustes);
+      const perfil = perfilParaCv(dados.perfil, ajustes);
       if (!perfil.nomeCompleto.trim()) {
         setErro("Preencha seu nome no editor para gerar o PDF.");
         return;

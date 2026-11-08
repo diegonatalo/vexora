@@ -28,7 +28,7 @@ import { sugerirEnxugar } from "@/lib/ats/enxugar";
 import { nomeDoArquivo } from "@/lib/pdf/gerar";
 import { prepararPdf } from "@/lib/pdf/preparar";
 import { perfilSchema, type Perfil } from "@/lib/schema";
-import { aplicarAjustes } from "@/lib/vaga/ajustes";
+import { perfilParaCv } from "@/lib/vaga/ajustes";
 import { SECOES, statusDasSecoes, type SecaoId } from "@/lib/secoes";
 import type { Dados } from "@/lib/storage";
 import type { EstadoSalvamento } from "@/lib/use-dados";
@@ -111,11 +111,9 @@ export function EditorShell({
   const ajustesDaVersao = dadosIniciais.versoes.find(
     (v) => v.id === versaoId,
   )?.ajustes;
+  // O que vai para o CV: sem os itens ocultos e com os ajustes da versão.
   const perfil = useMemo(
-    () =>
-      ajustesDaVersao
-        ? aplicarAjustes(perfilOriginal, ajustesDaVersao)
-        : perfilOriginal,
+    () => perfilParaCv(perfilOriginal, ajustesDaVersao),
     [perfilOriginal, ajustesDaVersao],
   );
   const [baixando, setBaixando] = useState(false);
@@ -127,9 +125,7 @@ export function EditorShell({
     try {
       // Refaz o ajuste com os dados de agora (a análise pode estar 400ms atrasada).
       const atual = form.getValues();
-      const pronto = await prepararPdf(
-        ajustesDaVersao ? aplicarAjustes(atual, ajustesDaVersao) : atual,
-      );
+      const pronto = await prepararPdf(perfilParaCv(atual, ajustesDaVersao));
       if (!pronto.coube) {
         setErroPdf(
           "O CV passa de 1 página. Enxugue o conteúdo para baixar (veja as sugestões em Espaço da página).",

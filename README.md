@@ -34,6 +34,8 @@ Requer Node 22+.
 - O PDF é gerado como texto selecionável (`@react-pdf/renderer`) e **lido de
   volta com `pdfjs-dist`**: as checagens e a contagem de páginas usam o arquivo
   real, não uma estimativa.
+- Sem limite de itens: cada experiência, formação, certificação e idioma tem
+  "Exibir no CV" para ocultar sem apagar.
 - Ajuste automático para **1 página** (espaçamento, fonte de 11 a 10pt e margens
   até 36pt). Se mesmo assim não couber, o download é bloqueado e há sugestões do
   que enxugar.
