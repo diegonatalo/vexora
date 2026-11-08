@@ -29,8 +29,18 @@ export function ExperienciaSecao() {
     control,
     name: "experiencias",
   });
-  // Guarda o id (não a posição): a experiência aberta acompanha a reordenação.
-  const [aberta, setAberta] = useState<string | null>(fields[0]?.id ?? null);
+  // Guarda os ids (não as posições): as abertas acompanham a reordenação.
+  // Pode haver várias abertas; cada uma tem "Recolher".
+  const [abertas, setAbertas] = useState<Set<string>>(
+    () => new Set(fields.slice(0, 1).map((f) => f.id)),
+  );
+  const alternar = (id: string, abrir: boolean) =>
+    setAbertas((atual) => {
+      const novo = new Set(atual);
+      if (abrir) novo.add(id);
+      else novo.delete(id);
+      return novo;
+    });
 
   return (
     <>
@@ -55,7 +65,7 @@ export function ExperienciaSecao() {
                   desabilitado={fields.length < 2}
                 >
                   {(alca) =>
-                    campo.id === aberta ? (
+                    abertas.has(campo.id) ? (
                       <CartaoItem
                         titulo={`Experiência ${i + 1}`}
                         aside="Mais recente primeiro"
@@ -67,9 +77,11 @@ export function ExperienciaSecao() {
                             rotulo={`Exibir experiência ${i + 1} no CV`}
                           />
                         }
+                        onRecolher={() => alternar(campo.id, false)}
+                        rotuloRecolher={`Recolher experiência ${i + 1}`}
                         onRemover={() => {
                           remove(i);
-                          setAberta(null);
+                          alternar(campo.id, false);
                         }}
                       >
                         <ExperienciaCampos indice={i} />
@@ -86,7 +98,7 @@ export function ExperienciaSecao() {
                                 ? "Revise os campos"
                                 : undefined
                           }
-                          onAbrir={() => setAberta(campo.id)}
+                          onAbrir={() => alternar(campo.id, true)}
                         />
                         <InterruptorExibir
                           name={`experiencias.${i}.exibir`}
@@ -105,7 +117,7 @@ export function ExperienciaSecao() {
           onAdicionar={() => {
             const nova = criarExperienciaVazia();
             append(nova);
-            setAberta(nova.id);
+            alternar(nova.id, true);
           }}
         />
       </div>

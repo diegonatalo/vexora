@@ -134,6 +134,8 @@ export function CartaoItem({
   rotuloRemover,
   alca,
   exibir,
+  onRecolher,
+  rotuloRecolher,
   children,
 }: {
   titulo: string;
@@ -142,6 +144,9 @@ export function CartaoItem({
   alca?: ReactNode;
   /** Interruptor "Exibir no CV" (ver InterruptorExibir). */
   exibir?: ReactNode;
+  /** Mostra o botão "Recolher" (card que pode ser recolhido). */
+  onRecolher?: () => void;
+  rotuloRecolher?: string;
   onRemover?: () => void;
   rotuloRemover: string;
   children: ReactNode;
@@ -157,6 +162,18 @@ export function CartaoItem({
           {exibir}
           {alca}
           {aside && <span className="text-muted text-sm">{aside}</span>}
+          {onRecolher && (
+            <button
+              type="button"
+              onClick={onRecolher}
+              aria-expanded={true}
+              aria-label={rotuloRecolher}
+              className={`${BOTAO.secundario} px-3`}
+            >
+              <Icon name="chevron-up" size={18} />
+              <span className="hidden sm:inline">Recolher</span>
+            </button>
+          )}
           {onRemover && (
             <button
               type="button"

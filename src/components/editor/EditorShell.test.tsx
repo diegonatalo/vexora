@@ -204,9 +204,37 @@ describe("experiência", () => {
     await irPara(usuario, "Experiência");
     expect(screen.getAllByRole("textbox", { name: "Cargo" })).toHaveLength(1);
     await usuario.click(screen.getByRole("button", { name: /Estagiário/ }));
-    expect(screen.getByRole("textbox", { name: "Cargo" })).toHaveValue(
+    const cargos = screen.getAllByRole("textbox", { name: "Cargo" });
+    expect(cargos.map((c) => (c as HTMLInputElement).value)).toContain(
       "Estagiário",
     );
+  });
+
+  it("recolhe e exibe de novo uma experiência pelo botão", async () => {
+    const { usuario } = montar((d) => {
+      d.perfil.experiencias = [{ ...criarExperienciaVazia(), cargo: "Dev" }];
+    });
+    await irPara(usuario, "Experiência");
+    await usuario.click(
+      screen.getByRole("button", { name: "Recolher experiência 1" }),
+    );
+    expect(
+      screen.queryByRole("textbox", { name: "Cargo" }),
+    ).not.toBeInTheDocument();
+    await usuario.click(screen.getByRole("button", { name: /Experiência 1/ }));
+    expect(screen.getByRole("textbox", { name: "Cargo" })).toHaveValue("Dev");
+  });
+
+  it("permite várias experiências abertas ao mesmo tempo", async () => {
+    const { usuario } = montar((d) => {
+      d.perfil.experiencias = [
+        { ...criarExperienciaVazia(), cargo: "Dev" },
+        { ...criarExperienciaVazia(), cargo: "Estagiário" },
+      ];
+    });
+    await irPara(usuario, "Experiência");
+    await usuario.click(screen.getByRole("button", { name: /Estagiário/ }));
+    expect(screen.getAllByRole("textbox", { name: "Cargo" })).toHaveLength(2);
   });
 });
 
