@@ -89,6 +89,6 @@ Registro curto das decisões que não estavam no prompt original.
 
 ## SEO
 
-- **Sem domínio fixo no código:** `SITE_URL` vem de `NEXT_PUBLIC_SITE_URL`, depois do domínio de produção da Vercel, depois de localhost. Assim não adivinho um endereço que ainda não existe.
+- **Endereço:** `SITE_URL` vem de `NEXT_PUBLIC_SITE_URL`; sem ela, localhost em desenvolvimento e `https://vexora.vercel.app` (endereço definido pelo autor) no resto.
 - **Sitemap lista `/editor` e `/vaga`**; `/` só redireciona, então fica de fora. Robots libera tudo e aponta para o sitemap.
 - **Imagem OG estática** (PNG 1200x630 gerada da mesma arte do favicon), copiada como `twitter-image.png`, com texto alternativo em `.alt.txt`.

@@ -68,14 +68,14 @@ Lighthouse (acessibilidade): **100** em `/editor` e `/vaga` (build de produção
 - Open Graph e Twitter Card: título, descrição e imagem (`opengraph-image.png`,
   1200x630) definidos em `src/app/layout.tsx`; `/editor` e `/vaga` têm título próprio.
 - O endereço público vem de `src/lib/site.ts`: `NEXT_PUBLIC_SITE_URL` se definida;
-  senão o domínio de produção da Vercel; senão `http://localhost:3000`.
+  em desenvolvimento, `http://localhost:3000`; no resto, `https://vexora.vercel.app`.
 - Favicon: `icon.svg`, `favicon.ico` e `apple-icon.png` em `src/app/`.
 
 ## Deploy
 
-Sem variáveis obrigatórias. Na Vercel: importar o repositório e usar as
+Endereço: <https://vexora.vercel.app>. Sem variáveis obrigatórias. Na Vercel: importar o repositório e usar as
 configurações padrão do Next.js. Para um domínio próprio, defina
-`NEXT_PUBLIC_SITE_URL` (ex.: `https://vexora.app`) para o sitemap e as imagens
+`NEXT_PUBLIC_SITE_URL` (ex.: `https://vexora.app`, se um dia trocar o domínio) para o sitemap e as imagens
 de compartilhamento apontarem para ele.
 
 ## Repositório
