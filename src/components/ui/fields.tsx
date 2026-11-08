@@ -4,7 +4,7 @@ import { useId, type ComponentProps, type ReactNode } from "react";
 import { Icon } from "@/components/ui/icons";
 
 const BASE_CAMPO =
-  "w-full rounded-field border bg-surface px-3 text-ink placeholder:text-muted disabled:bg-paper disabled:text-muted";
+  "w-full rounded-field border bg-sunken px-4 text-ink shadow-[inset_0_1px_0_rgb(0_0_0/0.02)] transition duration-150 placeholder:text-muted/70 hover:bg-surface focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-stage disabled:text-muted";
 
 type FieldBaseProps = {
   label: string;
@@ -36,8 +36,8 @@ function Campo({ label, error, hint, aside, render }: CampoProps) {
 
   return (
     <div>
-      <div className="mb-1 flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium">
+      <div className="mb-1.5 flex items-baseline justify-between gap-3">
+        <label htmlFor={id} className="text-sm font-semibold">
           {label}
         </label>
         {aside && <span className="text-muted text-sm">{aside}</span>}
@@ -46,10 +46,10 @@ function Campo({ label, error, hint, aside, render }: CampoProps) {
         id,
         "aria-invalid": error ? true : undefined,
         "aria-describedby": describedBy,
-        className: `${BASE_CAMPO} ${error ? "border-warn-icon" : "border-field"}`,
+        className: `${BASE_CAMPO} ${error ? "border-warn-icon ring-4 ring-warn-icon/10" : "border-field"}`,
       })}
       {hint && (
-        <p id={dicaId} className="text-muted mt-1 text-sm">
+        <p id={dicaId} className="text-muted mt-1.5 text-sm">
           {hint}
         </p>
       )}
@@ -127,9 +127,11 @@ export function CheckboxField({
         {...input}
         id={id}
         type="checkbox"
-        className="accent-accent size-5 shrink-0"
+        className="accent-accent size-5 shrink-0 cursor-pointer rounded-md"
       />
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className="cursor-pointer">
+        {label}
+      </label>
     </div>
   );
 }

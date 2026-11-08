@@ -46,6 +46,7 @@ export function ExperienciaSecao() {
     <>
       <SecaoCabecalho
         titulo="Experiência"
+        icone="briefcase"
         descricao={`Até ${LIMITES.topicosPorExperiencia} tópicos por experiência. Use "Exibir no CV" para ocultar uma experiência sem apagá-la.`}
       />
       <div className="space-y-4">
@@ -144,15 +145,19 @@ function ExperienciaRecolhida({
       type="button"
       onClick={onAbrir}
       aria-expanded={false}
-      className="border-line bg-paper rounded-card flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 border px-5 py-3 text-left"
+      className="border-line bg-surface hover:border-accent flex min-h-16 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left shadow-sm transition duration-150 hover:shadow-md"
     >
-      <span>
-        <span className="font-display font-semibold">
-          Experiência {indice + 1}
+      <span className="flex min-w-0 items-center gap-3">
+        <span className="bg-accent text-on-accent grid size-7 shrink-0 place-items-center rounded-full text-sm font-semibold">
+          {indice + 1}
         </span>
-        <span className="text-muted">
-          {" "}
-          · {cargo || "[Cargo]"} · {empresa || "[Empresa]"}
+        <span className="min-w-0">
+          <span className="font-display block truncate font-semibold">
+            Experiência {indice + 1}
+          </span>
+          <span className="text-muted block truncate text-sm">
+            {cargo || "[Cargo]"} · {empresa || "[Empresa]"}
+          </span>
         </span>
       </span>
       <span className="flex shrink-0 items-center gap-3">
@@ -162,7 +167,7 @@ function ExperienciaRecolhida({
             {aviso}
           </span>
         )}
-        <Icon name="chevron-down" />
+        <Icon name="chevron-down" className="text-muted" />
       </span>
     </button>
   );

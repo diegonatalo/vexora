@@ -65,13 +65,13 @@ export default function PdfPreview({ bytes, paginas, gerando, erro }: Props) {
 
   const comErro = erro || falhouAoDesenhar;
   return (
-    <div>
+    <div className="bg-stage border-line rounded-card border p-4 sm:p-6">
       <div className="relative">
         <canvas
           ref={canvasRef}
           role="img"
           aria-label="Pré-visualização do CV em A4"
-          className="border-line aspect-[1/1.4142] h-auto w-full border bg-white"
+          className="shadow-sheet aspect-[1/1.4142] h-auto w-full rounded-[3px] bg-white"
         />
         {!bytes && !comErro && (
           <p
@@ -82,7 +82,7 @@ export default function PdfPreview({ bytes, paginas, gerando, erro }: Props) {
           </p>
         )}
       </div>
-      <p className="text-muted mt-3 text-center text-sm" role="status">
+      <p className="text-muted mt-4 text-center text-sm" role="status">
         {comErro ? (
           <span className="text-warn-ink inline-flex items-center gap-1.5">
             <Icon name="alert" size={16} className="text-warn-icon" />

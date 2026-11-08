@@ -360,10 +360,9 @@ describe("verificação ATS e espaço da página", () => {
     expect(
       screen.getByText("Restam cerca de 5 linhas antes de estourar a página."),
     ).toBeInTheDocument();
-    expect(screen.getByRole("progressbar")).toHaveAttribute(
-      "aria-valuenow",
-      "78",
-    );
+    expect(
+      screen.getByRole("progressbar", { name: "Espaço da página usado" }),
+    ).toHaveAttribute("aria-valuenow", "78");
   });
 
   it("mostra o problema e a correção das checagens que falham", async () => {

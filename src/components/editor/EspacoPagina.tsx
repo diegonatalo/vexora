@@ -23,7 +23,17 @@ export function EspacoPagina({ medicao, ajuste, coube, sugestoes }: Props) {
         <h2 id="espaco-titulo" className="font-display text-lg font-semibold">
           Espaço da página
         </h2>
-        {medicao && <span className="text-sm font-semibold">{pct}% usado</span>}
+        {medicao && (
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-sm font-semibold ${
+              estourou
+                ? "bg-warn-bg text-warn-ink"
+                : "bg-accent-soft text-accent-deep"
+            }`}
+          >
+            {pct}% usado
+          </span>
+        )}
       </div>
 
       <div
@@ -36,7 +46,7 @@ export function EspacoPagina({ medicao, ajuste, coube, sugestoes }: Props) {
         className="bg-line mt-3 h-2.5 overflow-hidden rounded-full"
       >
         <div
-          className={`h-full rounded-full ${estourou ? "bg-warn-icon" : "bg-accent"}`}
+          className={`h-full rounded-full transition-[width] duration-500 ${estourou ? "bg-warn-icon" : "bg-accent"}`}
           style={{ width: `${Math.min(pct, 100)}%` }}
         />
       </div>
@@ -66,7 +76,7 @@ export function EspacoPagina({ medicao, ajuste, coube, sugestoes }: Props) {
       {estourou && (
         <div
           role="alert"
-          className="bg-warn-bg text-warn-ink rounded-field mt-3 flex items-start gap-2.5 p-3 text-sm"
+          className="bg-warn-bg text-warn-ink mt-3 flex items-start gap-2.5 rounded-xl p-3.5 text-sm"
         >
           <Icon
             name="alert"

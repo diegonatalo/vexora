@@ -79,6 +79,8 @@ export function EditorShell({
     mode: "onTouched",
   });
   const [ativa, setAtiva] = useState<SecaoId>("dados");
+  // Em telas estreitas só um painel aparece por vez (editar ou pré-visualizar).
+  const [painel, setPainel] = useState<"editar" | "previa">("editar");
   const primeiraRenderizacao = useRef(true);
 
   // Todo rascunho é salvo, mesmo com campos inválidos (ver sanitizar.ts).
@@ -157,20 +159,25 @@ export function EditorShell({
   const proxima = SECOES[indice + 1];
   const SecaoAtiva = SECAO_COMPONENTE[ativa];
 
+  const concluidas = SECOES.filter((x) => status[x.id].concluida).length;
+  const semNome = !perfil.nomeCompleto.trim();
+
   return (
     <FormProvider {...form}>
-      <header className="border-line bg-surface border-b">
-        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-2">
-            <span className="bg-accent rounded-field text-on-accent grid size-9 place-items-center">
-              <Icon name="logo" size={20} />
+      <header className="border-line/70 bg-paper/80 sticky top-0 z-30 border-b backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <span className="bg-accent text-on-accent grid size-10 place-items-center rounded-xl shadow-sm">
+              <Icon name="logo" size={22} />
             </span>
-            <span className="font-display text-2xl font-bold">Vexora</span>
+            <span className="font-display text-2xl font-bold tracking-tight">
+              Vexora
+            </span>
           </div>
-          <div className="ml-auto flex flex-wrap items-center gap-3">
+          <div className="ml-auto flex flex-wrap items-center gap-2 sm:gap-3">
             <p
               role="status"
-              className="text-muted flex items-center gap-1.5 text-sm"
+              className="border-line bg-surface text-muted flex min-h-9 items-center gap-1.5 rounded-full border px-3 text-sm"
             >
               {estado === "salvo" && (
                 <Icon name="check" size={16} className="text-accent" />
@@ -178,15 +185,15 @@ export function EditorShell({
               {estado === "erro" && (
                 <Icon name="alert" size={16} className="text-warn-icon" />
               )}
-              {TEXTO_ESTADO[estado]}
+              <span className="max-sm:sr-only">{TEXTO_ESTADO[estado]}</span>
             </p>
             <AlternarTema />
             <button
               type="button"
-              className={BOTAO.primario}
-              disabled={!perfil.nomeCompleto.trim() || baixando || naoCabe}
+              className={`${BOTAO.primario} min-h-12 px-5`}
+              disabled={semNome || baixando || naoCabe}
               title={
-                !perfil.nomeCompleto.trim()
+                semNome
                   ? "Preencha seu nome para baixar o PDF"
                   : naoCabe
                     ? "O CV passa de 1 página: enxugue o conteúdo para baixar"
@@ -197,26 +204,37 @@ export function EditorShell({
               <Icon name="download" size={18} />
               {baixando ? "Gerando…" : "Baixar PDF"}
             </button>
-            {erroPdf && (
-              <p
-                role="alert"
-                className="text-warn-ink flex basis-full items-center justify-end gap-1.5 text-sm"
-              >
-                <Icon name="alert" size={16} className="text-warn-icon" />
-                {erroPdf}
-              </p>
-            )}
           </div>
+          {erroPdf && (
+            <p
+              role="alert"
+              className="text-warn-ink bg-warn-bg flex basis-full items-center justify-end gap-1.5 rounded-xl px-3 py-2 text-sm"
+            >
+              <Icon name="alert" size={16} className="text-warn-icon" />
+              {erroPdf}
+            </p>
+          )}
         </div>
       </header>
 
-      <div className="mx-auto grid w-full max-w-[1600px] items-start gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[264px_minmax(0,1fr)] lg:grid-rows-[auto_auto_auto_1fr] xl:grid-cols-[264px_minmax(0,1fr)_380px]">
-        <div className="lg:col-start-1 lg:row-start-1">
-          <SectionNav ativa={ativa} status={status} onSelecionar={setAtiva} />
+      <div className="mx-auto grid w-full max-w-[1680px] items-start gap-6 px-4 pt-6 pb-28 sm:px-6 lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_460px] xl:pb-8">
+        <div
+          className={`space-y-6 lg:sticky lg:top-24 ${
+            painel === "previa" ? "max-xl:hidden" : ""
+          }`}
+        >
+          <SectionNav
+            ativa={ativa}
+            status={status}
+            concluidas={concluidas}
+            onSelecionar={setAtiva}
+          />
         </div>
 
         <main
-          className={`${CARTAO} p-6 sm:p-8 lg:col-start-2 lg:row-span-4 lg:row-start-1`}
+          className={`${CARTAO} p-5 sm:p-8 lg:p-10 ${
+            painel === "previa" ? "max-xl:hidden" : ""
+          }`}
         >
           <form
             onSubmit={(e) => e.preventDefault()}
@@ -224,7 +242,7 @@ export function EditorShell({
             aria-label="Editor do perfil"
           >
             <SecaoAtiva />
-            <div className="mt-8 flex items-center justify-between gap-3">
+            <div className="border-line mt-10 flex items-center justify-between gap-3 border-t pt-6">
               {anterior ? (
                 <button
                   type="button"
@@ -249,22 +267,23 @@ export function EditorShell({
               )}
             </div>
           </form>
+          <div className="mt-8">{backup}</div>
         </main>
 
-        <div className="w-full lg:col-start-1 lg:row-start-2">
-          <AtsCard checagens={checagens} />
-        </div>
-
-        <div className="w-full lg:col-start-1 lg:row-start-3">{backup}</div>
-
-        <aside className="w-full space-y-6 lg:col-span-2 lg:row-start-5 xl:col-span-1 xl:col-start-3 xl:row-span-4 xl:row-start-1">
+        <aside
+          className={`w-full space-y-5 xl:sticky xl:top-24 xl:max-h-[calc(100vh-7.5rem)] xl:overflow-y-auto xl:pr-1 ${
+            painel === "editar"
+              ? "max-xl:hidden"
+              : "max-xl:mx-auto max-xl:max-w-xl lg:col-span-2 xl:col-span-1"
+          }`}
+        >
           <EspacoPagina
             medicao={preparado?.medicao ?? null}
             ajuste={preparado?.ajuste ?? null}
             coube={preparado?.coube ?? true}
             sugestoes={sugestoes}
           />
-          <section className={CARTAO + " p-5"} aria-labelledby="previa-titulo">
+          <section aria-labelledby="previa-titulo">
             <h2 id="previa-titulo" className="sr-only">
               Pré-visualização do CV
             </h2>
@@ -275,7 +294,36 @@ export function EditorShell({
               erro={analise.estado === "erro"}
             />
           </section>
+          <AtsCard checagens={checagens} />
         </aside>
+      </div>
+
+      <div
+        role="group"
+        aria-label="Alternar entre editar e pré-visualizar"
+        className="border-line bg-surface shadow-pop fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 gap-1 rounded-full border p-1 xl:hidden"
+      >
+        {(
+          [
+            ["editar", "Editar", "pencil"],
+            ["previa", "Pré-visualizar", "eye"],
+          ] as const
+        ).map(([id, rotulo, icone]) => (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={painel === id}
+            onClick={() => setPainel(id)}
+            className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 font-medium transition-colors ${
+              painel === id
+                ? "bg-accent text-on-accent"
+                : "text-muted hover:text-ink"
+            }`}
+          >
+            <Icon name={icone} size={18} />
+            {rotulo}
+          </button>
+        ))}
       </div>
     </FormProvider>
   );

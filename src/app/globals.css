@@ -1,23 +1,38 @@
 @import "tailwindcss";
 
-/* Tokens de design da Vexora (ver docs/decisions.md). */
+/*
+ * Tokens de design da Vexora (ver docs/decisions.md).
+ * Superfícies quentes e claras, esmeralda como única cor de destaque,
+ * sombras suaves em camadas e cantos generosos.
+ */
 @theme {
-  --color-paper: #f4f2ec;
+  --color-paper: #f6f4ee;
+  --color-stage: #ebe8df;
   --color-surface: #ffffff;
-  --color-ink: #15181c;
-  --color-muted: #565b63;
-  --color-line: #dedad0;
-  --color-field: #8f8a7c;
+  --color-sunken: #faf9f5;
+  --color-ink: #16191d;
+  --color-muted: #5b6068;
+  --color-line: #e6e2d8;
+  --color-field: #9c978a;
   --color-accent: #0b6b4d;
+  --color-accent-strong: #095a41;
   --color-accent-deep: #074732;
-  --color-accent-soft: #e3f1eb;
+  --color-accent-soft: #e2f1ea;
+  --color-glow: #d9efe4;
   --color-warn-bg: #fff1d6;
   --color-warn-ink: #5e3300;
   --color-warn-icon: #8a4b00;
   --color-on-accent: #ffffff;
 
-  --radius-field: 8px;
-  --radius-card: 12px;
+  --radius-field: 12px;
+  --radius-card: 20px;
+
+  --shadow-card:
+    0 1px 2px rgb(22 25 29 / 0.04), 0 12px 32px -16px rgb(22 25 29 / 0.14);
+  --shadow-pop:
+    0 1px 2px rgb(22 25 29 / 0.06), 0 24px 48px -20px rgb(22 25 29 / 0.28);
+  --shadow-sheet:
+    0 2px 4px rgb(22 25 29 / 0.08), 0 28px 60px -24px rgb(22 25 29 / 0.38);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display:
@@ -31,46 +46,107 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-paper: #0e1114;
-  --color-surface: #171b1f;
+  --color-paper: #0c0f11;
+  --color-stage: #080a0c;
+  --color-surface: #15191d;
+  --color-sunken: #101316;
   --color-ink: #ecebe6;
   --color-muted: #a4a9b1;
-  --color-line: #2b3137;
+  --color-line: #262c32;
   --color-field: #7f8791;
   --color-accent: #46c79b;
+  --color-accent-strong: #5dd4ac;
   --color-accent-deep: #9be3c8;
-  --color-accent-soft: #14302a;
+  --color-accent-soft: #12302a;
+  --color-glow: #0f2b23;
   --color-warn-bg: #3a2a0b;
   --color-warn-ink: #ffd9a0;
   --color-warn-icon: #f0a64a;
   --color-on-accent: #04261b;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.5), 0 24px 48px -20px rgb(0 0 0 / 0.8);
+  --shadow-sheet:
+    0 2px 4px rgb(0 0 0 / 0.5), 0 28px 60px -24px rgb(0 0 0 / 0.9);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --color-paper: #0e1114;
-    --color-surface: #171b1f;
+    --color-paper: #0c0f11;
+    --color-stage: #080a0c;
+    --color-surface: #15191d;
+    --color-sunken: #101316;
     --color-ink: #ecebe6;
     --color-muted: #a4a9b1;
-    --color-line: #2b3137;
+    --color-line: #262c32;
     --color-field: #7f8791;
     --color-accent: #46c79b;
+    --color-accent-strong: #5dd4ac;
     --color-accent-deep: #9be3c8;
-    --color-accent-soft: #14302a;
+    --color-accent-soft: #12302a;
+    --color-glow: #0f2b23;
     --color-warn-bg: #3a2a0b;
     --color-warn-ink: #ffd9a0;
     --color-warn-icon: #f0a64a;
     --color-on-accent: #04261b;
+    --shadow-card:
+      0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+    --shadow-pop:
+      0 1px 2px rgb(0 0 0 / 0.5), 0 24px 48px -20px rgb(0 0 0 / 0.8);
+    --shadow-sheet:
+      0 2px 4px rgb(0 0 0 / 0.5), 0 28px 60px -24px rgb(0 0 0 / 0.9);
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--color-paper);
+  background:
+    radial-gradient(
+      900px 420px at 8% -8%,
+      color-mix(in srgb, var(--color-glow) 80%, transparent),
+      transparent 70%
+    ),
+    var(--color-paper);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-deep);
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animar-entrada {
+  animation: subir 0.28s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

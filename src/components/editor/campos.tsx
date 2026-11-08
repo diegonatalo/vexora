@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Controller, useFormContext, type FieldPath } from "react-hook-form";
 import { TextField } from "@/components/ui/fields";
-import { Icon } from "@/components/ui/icons";
+import { Icon, type IconName } from "@/components/ui/icons";
 import { BOTAO } from "@/components/ui/estilos";
 import { mascaraMesAno } from "@/lib/mascara";
 import type { Perfil } from "@/lib/schema";
@@ -109,20 +109,31 @@ function CampoListaInterno({
 export function SecaoCabecalho({
   titulo,
   descricao,
+  icone,
 }: {
   titulo: string;
   descricao?: ReactNode;
+  icone?: IconName;
 }) {
   return (
-    <header className="mb-6">
-      <h2
-        id="secao-titulo"
-        tabIndex={-1}
-        className="font-display text-3xl font-bold outline-none"
-      >
-        {titulo}
-      </h2>
-      {descricao && <p className="text-muted mt-2">{descricao}</p>}
+    <header className="animar-entrada mb-8 flex items-start gap-4">
+      {icone && (
+        <span className="bg-accent-soft text-accent-deep grid size-12 shrink-0 place-items-center rounded-2xl">
+          <Icon name={icone} size={24} />
+        </span>
+      )}
+      <div className="min-w-0">
+        <h2
+          id="secao-titulo"
+          tabIndex={-1}
+          className="font-display text-3xl font-bold tracking-tight outline-none"
+        >
+          {titulo}
+        </h2>
+        {descricao && (
+          <p className="text-muted mt-1.5 max-w-prose">{descricao}</p>
+        )}
+      </div>
     </header>
   );
 }
@@ -140,6 +151,8 @@ export function CartaoItem({
 }: {
   titulo: string;
   aside?: ReactNode;
+  onRemover?: () => void;
+  rotuloRemover: string;
   /** Alça de arrastar (ver Ordenavel.tsx). */
   alca?: ReactNode;
   /** Interruptor "Exibir no CV" (ver InterruptorExibir). */
@@ -147,42 +160,55 @@ export function CartaoItem({
   /** Mostra o botão "Recolher" (card que pode ser recolhido). */
   onRecolher?: () => void;
   rotuloRecolher?: string;
-  onRemover?: () => void;
-  rotuloRemover: string;
   children: ReactNode;
 }) {
+  const numero = titulo.match(/\d+$/)?.[0];
   return (
-    <fieldset className="border-field rounded-card border p-5">
+    <fieldset className="border-line bg-sunken/60 rounded-2xl border p-4 sm:p-5">
       <legend className="sr-only">{titulo}</legend>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h3 className="font-display text-lg font-semibold" aria-hidden="true">
-          {titulo}
-        </h3>
-        <div className="flex items-center gap-3">
-          {exibir}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <div className="flex min-w-0 items-center gap-3">
           {alca}
-          {aside && <span className="text-muted text-sm">{aside}</span>}
+          <h3
+            className="font-display flex items-center gap-2.5 text-lg font-semibold"
+            aria-hidden="true"
+          >
+            {numero && (
+              <span className="bg-accent text-on-accent grid size-7 place-items-center rounded-full text-sm">
+                {numero}
+              </span>
+            )}
+            {titulo.replace(/\s*\d+$/, "")}
+          </h3>
+          {aside && (
+            <span className="bg-accent-soft text-accent-deep hidden rounded-full px-2.5 py-0.5 text-xs font-medium sm:inline">
+              {aside}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {exibir}
           {onRecolher && (
             <button
               type="button"
               onClick={onRecolher}
               aria-expanded={true}
               aria-label={rotuloRecolher}
-              className={`${BOTAO.secundario} px-3`}
+              title="Recolher"
+              className={BOTAO.icone}
             >
               <Icon name="chevron-up" size={18} />
-              <span className="hidden sm:inline">Recolher</span>
             </button>
           )}
           {onRemover && (
             <button
               type="button"
               onClick={onRemover}
-              className={`${BOTAO.secundario} px-3`}
               aria-label={rotuloRemover}
+              title="Remover"
+              className={`${BOTAO.icone} hover:border-warn-icon hover:bg-warn-bg hover:text-warn-ink`}
             >
               <Icon name="trash" size={18} />
-              <span className="hidden sm:inline">Remover</span>
             </button>
           )}
         </div>
@@ -200,7 +226,11 @@ export function AdicionarItem({
   onAdicionar: () => void;
 }) {
   return (
-    <button type="button" onClick={onAdicionar} className={BOTAO.secundario}>
+    <button
+      type="button"
+      onClick={onAdicionar}
+      className="border-line text-muted hover:border-accent hover:bg-accent-soft hover:text-accent-deep flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed font-medium transition duration-150"
+    >
       <Icon name="plus" size={18} />
       {textoAdicionar}
     </button>
@@ -209,7 +239,7 @@ export function AdicionarItem({
 
 /**
  * "Exibir no CV": liga e desliga um item sem apagá-lo. Item sem a marca
- * (dados antigos) conta como exibido.
+ * (dados antigos) conta como exibido. Visualmente é um interruptor.
  */
 export function InterruptorExibir({
   name,
@@ -225,17 +255,23 @@ export function InterruptorExibir({
       control={control}
       name={name}
       render={({ field }) => (
-        <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            className="accent-accent size-5 shrink-0"
-            aria-label={rotulo}
-            checked={field.value !== false}
-            onChange={(e) => field.onChange(e.target.checked)}
-            onBlur={field.onBlur}
-            ref={field.ref}
-          />
-          <span aria-hidden="true">Exibir no CV</span>
+        <label className="text-muted inline-flex min-h-11 cursor-pointer items-center gap-2.5 text-sm font-medium select-none">
+          <span className="relative inline-flex h-6 w-11 shrink-0">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              aria-label={rotulo}
+              checked={field.value !== false}
+              onChange={(e) => field.onChange(e.target.checked)}
+              onBlur={field.onBlur}
+              ref={field.ref}
+            />
+            <span className="bg-stage border-field peer-checked:bg-accent peer-checked:border-accent peer-focus-visible:outline-accent absolute inset-0 rounded-full border transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2" />
+            <span className="absolute top-1 left-1 size-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
+          </span>
+          <span aria-hidden="true" className="hidden sm:inline">
+            Exibir no CV
+          </span>
         </label>
       )}
     />

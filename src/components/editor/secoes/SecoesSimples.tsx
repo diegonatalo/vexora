@@ -22,6 +22,7 @@ export function DadosPessoaisSecao() {
     <>
       <SecaoCabecalho
         titulo="Dados pessoais"
+        icone="user"
         descricao="Aparecem no topo do CV. E-mail e telefone são obrigatórios para o ATS."
       />
       <div className="space-y-4">
@@ -92,6 +93,7 @@ export function ResumoSecao() {
     <>
       <SecaoCabecalho
         titulo="Resumo"
+        icone="file-text"
         descricao="De 2 a 3 linhas: quem você é, sua área, anos de experiência ou formação e as tecnologias que mais importam para a vaga."
       />
       <TextAreaField
@@ -160,6 +162,7 @@ export function LinksSecao() {
     <>
       <SecaoCabecalho
         titulo="Links e portfólio"
+        icone="link"
         descricao="O LinkedIn é recomendado: muitos recrutadores o conferem. GitHub e portfólio são opcionais."
       />
       <div className="space-y-4">

@@ -10,11 +10,21 @@ export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
   return (
     <section className={`${CARTAO} p-5`} aria-labelledby="ats-titulo">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="ats-titulo" className="font-display text-lg font-semibold">
+        <h2
+          id="ats-titulo"
+          className="font-display flex items-center gap-2 text-lg font-semibold"
+        >
+          <Icon name="shield" size={20} className="text-accent" />
           Verificação ATS
         </h2>
         {checagens && (
-          <span className="text-accent-deep text-sm font-semibold">
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-sm font-semibold ${
+              falhas.length === 0
+                ? "bg-accent-soft text-accent-deep"
+                : "bg-warn-bg text-warn-ink"
+            }`}
+          >
             {ok.length} de {checagens.length} ok
           </span>
         )}
@@ -31,11 +41,12 @@ export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
           <ul className="mt-3 space-y-2.5">
             {ok.map((c) => (
               <li key={c.id} className="flex items-start gap-2.5 text-sm">
-                <Icon
-                  name="check"
-                  size={18}
-                  className="text-accent mt-0.5 shrink-0"
-                />
+                <span
+                  aria-hidden="true"
+                  className="bg-accent-soft text-accent-deep mt-0.5 grid size-5 shrink-0 place-items-center rounded-full"
+                >
+                  <Icon name="check" size={12} />
+                </span>
                 <span>
                   <span className="sr-only">Ok: </span>
                   {c.titulo}
@@ -48,7 +59,7 @@ export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
               {falhas.map((c) => (
                 <li
                   key={c.id}
-                  className="bg-warn-bg text-warn-ink rounded-field flex items-start gap-2.5 p-3 text-sm"
+                  className="bg-warn-bg text-warn-ink flex items-start gap-2.5 rounded-xl p-3.5 text-sm"
                 >
                   <Icon
                     name="alert"

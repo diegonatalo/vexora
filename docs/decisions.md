@@ -118,3 +118,11 @@ Registro curto das decisões que não estavam no prompt original.
 ## Recolher experiências
 
 - Cada experiência aberta ganhou o botão **Recolher** (ícone de seta para cima); a recolhida abre ao clicar na linha. Deixei de ter só uma aberta por vez: agora pode haver várias abertas, controladas por um conjunto de ids (acompanham a reordenação). O botão tem nome acessível por item ("Recolher experiência 2") e `aria-expanded`.
+
+## Redesign da interface
+
+- **Direção visual:** superfícies quentes (papel/palco), esmeralda como única cor de destaque, cantos generosos (20px) e sombras suaves em camadas. Tudo vem de tokens em `@theme` (`globals.css`); o tema escuro só redefine os mesmos nomes.
+- **Layout em 3 zonas (xl):** navegação de seções à esquerda (sticky, com barra de progresso e passos numerados/concluídos), formulário no centro, e à direita espaço da página + pré-visualização + verificação ATS (sticky). Em telas menores a navegação vira faixa rolável e um seletor fixo "Editar / Prévia" alterna os painéis.
+- **Primeiro foco:** a ação principal ("Baixar PDF") fica no cabeçalho fixo, sempre visível; o status de salvamento vira um selo discreto.
+- **Componentes:** cartões de item numerados com ações só-ícone (com `aria-label`), interruptor "Exibir no CV", botão de adicionar tracejado e backup como seção plana ao fim do formulário.
+- **Acessibilidade mantida:** foco visível, alvos ≥ 44px, `aria-current`/`progressbar`, movimento reduzido respeitado; Lighthouse de acessibilidade 100 no editor.

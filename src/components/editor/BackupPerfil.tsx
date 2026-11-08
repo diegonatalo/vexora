@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { BOTAO, CARTAO } from "@/components/ui/estilos";
+import { BOTAO } from "@/components/ui/estilos";
+import { Icon } from "@/components/ui/icons";
 import { exportarJson, importarJson, type Dados } from "@/lib/storage";
 
 export function BackupPerfil({
@@ -38,16 +39,24 @@ export function BackupPerfil({
   }
 
   return (
-    <section className={`${CARTAO} p-5`} aria-labelledby="backup-titulo">
-      <h2 id="backup-titulo" className="font-display text-lg font-semibold">
+    <section
+      className="border-line bg-sunken/60 rounded-2xl border p-5"
+      aria-labelledby="backup-titulo"
+    >
+      <h2
+        id="backup-titulo"
+        className="font-display flex items-center gap-2 text-lg font-semibold"
+      >
+        <Icon name="shield" size={20} className="text-accent" />
         Backup do perfil
       </h2>
-      <p className="text-muted mt-1 text-sm">
+      <p className="text-muted mt-1.5 text-sm">
         Seus dados ficam só neste navegador. Exporte para guardar ou levar para
         outro computador.
       </p>
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <button type="button" className={BOTAO.secundario} onClick={baixar}>
+          <Icon name="download" size={18} />
           Exportar (JSON)
         </button>
         <button
@@ -55,6 +64,7 @@ export function BackupPerfil({
           className={BOTAO.secundario}
           onClick={() => arquivoRef.current?.click()}
         >
+          <Icon name="upload" size={18} />
           Importar (JSON)
         </button>
         <input

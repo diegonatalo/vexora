@@ -15,7 +15,7 @@ export function AlternarTema() {
   return (
     <button
       type="button"
-      className={`${BOTAO.secundario} px-3`}
+      className={BOTAO.icone}
       aria-pressed={escuro}
       aria-label="Tema escuro"
       title={escuro ? "Voltar ao tema claro" : "Usar o tema escuro"}

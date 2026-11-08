@@ -113,7 +113,7 @@ export function ItemOrdenavel({
       type="button"
       ref={setActivatorNodeRef}
       aria-label={rotuloAlca}
-      className="border-field bg-surface rounded-field text-muted inline-flex min-h-11 min-w-11 cursor-grab touch-none items-center justify-center border active:cursor-grabbing"
+      className="text-muted hover:bg-accent-soft hover:text-accent-deep inline-flex size-11 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg transition-colors active:cursor-grabbing"
       {...attributes}
       {...listeners}
     >

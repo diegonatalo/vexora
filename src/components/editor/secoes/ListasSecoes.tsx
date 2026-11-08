@@ -23,6 +23,7 @@ export function FormacaoSecao() {
     <>
       <SecaoCabecalho
         titulo="Formação"
+        icone="graduation"
         descricao="Graduação, técnico ou curso relevante, do mais recente para o mais antigo."
       />
       <div className="space-y-4">
@@ -122,6 +123,7 @@ export function CertificacoesSecao() {
     <>
       <SecaoCabecalho
         titulo="Certificações"
+        icone="award"
         descricao="Só as que reforçam a vaga. Use “Exibir no CV” para ocultar uma sem apagá-la."
       />
       <div className="space-y-4">
@@ -220,6 +222,7 @@ export function HabilidadesSecao() {
     <>
       <SecaoCabecalho
         titulo="Habilidades"
+        icone="sparkles"
         descricao="Liste só o que você realmente conhece. Separe os itens por vírgula."
       />
       <div className="space-y-4">
