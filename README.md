@@ -62,7 +62,22 @@ docs/decisions.md decisões de projeto
 
 Lighthouse (acessibilidade): **100** em `/editor` e `/vaga` (build de produção).
 
+## SEO e compartilhamento
+
+- `sitemap.xml` e `robots.txt` são gerados por `src/app/sitemap.ts` e `src/app/robots.ts`.
+- Open Graph e Twitter Card: título, descrição e imagem (`opengraph-image.png`,
+  1200x630) definidos em `src/app/layout.tsx`; `/editor` e `/vaga` têm título próprio.
+- O endereço público vem de `src/lib/site.ts`: `NEXT_PUBLIC_SITE_URL` se definida;
+  senão o domínio de produção da Vercel; senão `http://localhost:3000`.
+- Favicon: `icon.svg`, `favicon.ico` e `apple-icon.png` em `src/app/`.
+
 ## Deploy
 
-Projeto estático, sem variáveis de ambiente. Na Vercel: importar o repositório
-e usar as configurações padrão do Next.js.
+Sem variáveis obrigatórias. Na Vercel: importar o repositório e usar as
+configurações padrão do Next.js. Para um domínio próprio, defina
+`NEXT_PUBLIC_SITE_URL` (ex.: `https://vexora.app`) para o sitemap e as imagens
+de compartilhamento apontarem para ele.
+
+## Repositório
+
+<https://github.com/diegonatalo/vexora>

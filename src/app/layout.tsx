@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { SITE_DESCRICAO, SITE_NOME, SITE_URL } from "@/lib/site";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -9,9 +10,25 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Vexora — CV de 1 página para ATS",
-  description:
-    "Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS. Seus dados ficam só no seu navegador.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NOME} — CV de 1 página para ATS`,
+    template: `%s | ${SITE_NOME}`,
+  },
+  description: SITE_DESCRICAO,
+  applicationName: SITE_NOME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NOME,
+    locale: "pt_BR",
+    title: `${SITE_NOME} — CV de 1 página para ATS`,
+    description: SITE_DESCRICAO,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NOME} — CV de 1 página para ATS`,
+    description: SITE_DESCRICAO,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

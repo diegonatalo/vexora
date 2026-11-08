@@ -86,3 +86,9 @@ Registro curto das decisões que não estavam no prompt original.
 
 - A aplicação passou a se chamar **Vexora** (textos, título da página, nome do pacote, nome dos arquivos baixados `vexora-perfil.json` e fallback `cv-vexora.pdf`). Marca: um "V" branco sobre quadrado verde, em `src/app/icon.svg`, `favicon.ico` (16/32/48) e `apple-icon.png` (180), todos gerados da mesma arte.
 - **Chaves de armazenamento mantidas** (`folha:perfil`, `folha:versoes`, `folha:tema`): trocá-las faria quem já usou a app perder o perfil salvo, e a pessoa nunca vê esses nomes. Só trocar com migração.
+
+## SEO
+
+- **Sem domínio fixo no código:** `SITE_URL` vem de `NEXT_PUBLIC_SITE_URL`, depois do domínio de produção da Vercel, depois de localhost. Assim não adivinho um endereço que ainda não existe.
+- **Sitemap lista `/editor` e `/vaga`**; `/` só redireciona, então fica de fora. Robots libera tudo e aponta para o sitemap.
+- **Imagem OG estática** (PNG 1200x630 gerada da mesma arte do favicon), copiada como `twitter-image.png`, com texto alternativo em `.alt.txt`.
