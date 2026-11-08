@@ -1,6 +1,18 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
+// jsdom não desenha canvas nem roda o react-pdf: a geração real é testada em CvDocument.test.
+vi.mock("@/components/preview/PdfPreview", () => ({
+  default: () => <div data-testid="previa" />,
+}));
+vi.mock("@/lib/pdf/gerar", () => ({
+  gerarPdfBlob: vi.fn(
+    async () => new Blob(["%PDF"], { type: "application/pdf" }),
+  ),
+  nomeDoArquivo: (nome: string) => `cv-${nome}.pdf`,
+}));
+import { gerarPdfBlob } from "@/lib/pdf/gerar";
 import { EditorShell } from "@/components/editor/EditorShell";
 import {
   criarExperienciaVazia,
@@ -189,6 +201,51 @@ describe("habilidades", () => {
           }),
         }),
       }),
+    );
+  });
+});
+
+describe("baixar PDF", () => {
+  it("fica desabilitado sem nome e habilita ao preencher", async () => {
+    const { usuario } = montar();
+    const botao = screen.getByRole("button", { name: "Baixar PDF" });
+    expect(botao).toBeDisabled();
+    await usuario.type(
+      screen.getByRole("textbox", { name: "Nome completo" }),
+      "Ana",
+    );
+    expect(botao).toBeEnabled();
+  });
+
+  it("gera o PDF com o perfil atual (sem placeholders) ao clicar", async () => {
+    URL.createObjectURL = vi.fn(() => "blob:teste");
+    URL.revokeObjectURL = vi.fn();
+    const clique = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    const { usuario } = montar();
+    await usuario.type(
+      screen.getByRole("textbox", { name: "Nome completo" }),
+      "Ana",
+    );
+    await usuario.click(screen.getByRole("button", { name: "Baixar PDF" }));
+    expect(gerarPdfBlob).toHaveBeenCalledWith(
+      expect.objectContaining({ nome: "Ana", experiencias: [] }),
+    );
+    expect(clique).toHaveBeenCalled();
+    clique.mockRestore();
+  });
+
+  it("avisa quando a geração falha", async () => {
+    vi.mocked(gerarPdfBlob).mockRejectedValueOnce(new Error("falhou"));
+    const { usuario } = montar();
+    await usuario.type(
+      screen.getByRole("textbox", { name: "Nome completo" }),
+      "Ana",
+    );
+    await usuario.click(screen.getByRole("button", { name: "Baixar PDF" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Não foi possível gerar o PDF",
     );
   });
 });

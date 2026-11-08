@@ -27,3 +27,16 @@ Registro curto das decisões que não estavam no prompt original.
 - **Foco ao trocar de seção:** vai para o título (`#secao-titulo`), para teclado e leitores de tela.
 - **Cartões "chegam na Fase N":** Verificação ATS (Fase 4), Espaço da página (Fase 4) e Pré-visualização (Fase 3) são marcadores de posição; "Baixar PDF" está desabilitado até a Fase 3. `/vaga` é uma página provisória (Fase 5).
 - **Seletor de versão:** já é um `<select>` ligado às versões salvas, mas só existe a "CV geral" até a Fase 5.
+
+## Fase 3
+
+- **Modelo intermediário (`CvModel`):** `montarCv(perfil, opcoes)` transforma o `Perfil` em dados prontos para imprimir (datas formatadas, links sem `https://`, tópicos vazios descartados). O `CvDocument` só desenha; a lógica de conteúdo é função pura e testada. As Fases 4 e 5 (ajuste de página, adaptação à vaga) vão operar sobre este modelo.
+- **Placeholders só na pré-visualização:** o design mostra `[Seu Nome Completo]` etc. no preview. `montarCv(..., { placeholders: true })` os usa; o PDF baixado omite seções vazias em vez de imprimir colchetes.
+- **Pré-visualização = o mesmo PDF do download**, desenhado em `<canvas>` com `pdfjs-dist` (a 1000px de largura, nítido em telas 2x/3x). Escolhi canvas em vez de `<iframe>` porque iOS e vários Androids não exibem PDF em iframe. Desenha em um canvas fora da tela e copia, para não piscar e não conflitar entre renderizações sobrepostas. Debounce de 400ms.
+- **Bibliotecas sob demanda:** `react-pdf` e `pdfjs-dist` são importados dinamicamente (`next/dynamic` com `ssr: false` e `import()`), fora do bundle inicial e do servidor.
+- **Sem hifenização automática:** o hifenizador padrão do react-pdf é em inglês e partiria palavras ("pro-gramação"). Registrei um callback que nunca hifeniza; há teste.
+- **Marcador de lista:** o react-pdf não tem listas nativas; cada tópico é uma linha com `•` e o texto em coluna separada (o texto sai selecionável e na ordem certa).
+- **`CvDocument` é chamado como função** (`CvDocument({ cv })`), não como componente JSX, porque `pdf()` e `renderToBuffer()` exigem o elemento `<Document>` na raiz.
+- **Testes de PDF em Node:** `renderToBuffer` + `pdfjs-dist/legacy` extraem texto e contam páginas (`src/tests/pdf-utils.ts`). Passa a pasta `standard_fonts` ao pdfjs, porque a Helvetica não é embutida.
+- **"Baixar PDF" desabilitado sem nome** (dica via `title`). A obrigatoriedade de e-mail e telefone continua na Fase 4.
+- **Estouro de página:** na Fase 3 o conteúdo que passa de 1 página vira 2 páginas (a legenda da pré-visualização mostra "2 páginas"). O ajuste automático e o aviso são a Fase 4.

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -18,10 +19,22 @@ import {
 } from "@/components/editor/secoes/ListasSecoes";
 import { BOTAO, CARTAO } from "@/components/ui/estilos";
 import { Icon } from "@/components/ui/icons";
+import { montarCv } from "@/lib/pdf/cv-model";
+import { gerarPdfBlob, nomeDoArquivo } from "@/lib/pdf/gerar";
 import { perfilSchema, type Perfil } from "@/lib/schema";
 import { SECOES, statusDasSecoes, type SecaoId } from "@/lib/secoes";
 import type { Dados } from "@/lib/storage";
 import type { EstadoSalvamento } from "@/lib/use-dados";
+
+// pdfjs e react-pdf só no navegador, e fora do bundle inicial.
+const PdfPreview = dynamic(() => import("@/components/preview/PdfPreview"), {
+  ssr: false,
+  loading: () => (
+    <p className="text-muted py-10 text-center text-sm" role="status">
+      Gerando pré-visualização…
+    </p>
+  ),
+});
 
 const TEXTO_ESTADO: Record<EstadoSalvamento, string> = {
   carregando: "Carregando…",
@@ -82,6 +95,27 @@ export function EditorShell({
   }, [ativa]);
 
   const perfil = useWatch({ control: form.control }) as Perfil;
+  const [baixando, setBaixando] = useState(false);
+  const [erroPdf, setErroPdf] = useState<string | null>(null);
+
+  async function baixarPdf() {
+    setBaixando(true);
+    setErroPdf(null);
+    try {
+      const blob = await gerarPdfBlob(montarCv(form.getValues()));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nomeDoArquivo(perfil.nomeCompleto);
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      setErroPdf("Não foi possível gerar o PDF. Tente de novo.");
+    } finally {
+      setBaixando(false);
+    }
+  }
+
   const status = statusDasSecoes(perfil);
   const indice = SECOES.findIndex((s) => s.id === ativa);
   const anterior = SECOES[indice - 1];
@@ -133,12 +167,26 @@ export function EditorShell({
             <button
               type="button"
               className={BOTAO.primario}
-              disabled
-              title="Disponível na Fase 3"
+              disabled={!perfil.nomeCompleto.trim() || baixando}
+              title={
+                perfil.nomeCompleto.trim()
+                  ? undefined
+                  : "Preencha seu nome para baixar o PDF"
+              }
+              onClick={baixarPdf}
             >
               <Icon name="download" size={18} />
-              Baixar PDF
+              {baixando ? "Gerando…" : "Baixar PDF"}
             </button>
+            {erroPdf && (
+              <p
+                role="alert"
+                className="text-warn-ink flex basis-full items-center justify-end gap-1.5 text-sm"
+              >
+                <Icon name="alert" size={16} className="text-warn-icon" />
+                {erroPdf}
+              </p>
+            )}
           </div>
         </div>
       </header>
@@ -204,13 +252,11 @@ export function EditorShell({
               O cálculo de espaço chega na Fase 4.
             </p>
           </section>
-          <section className={CARTAO + " p-5"}>
-            <h2 className="font-display text-lg font-semibold">
-              Pré-visualização
+          <section className={CARTAO + " p-5"} aria-labelledby="previa-titulo">
+            <h2 id="previa-titulo" className="sr-only">
+              Pré-visualização do CV
             </h2>
-            <p className="text-muted mt-1 text-sm">
-              A pré-visualização do PDF chega na Fase 3.
-            </p>
+            <PdfPreview perfil={perfil} />
           </section>
         </aside>
       </div>
