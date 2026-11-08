@@ -63,3 +63,10 @@ Registro curto das decisões que não estavam no prompt original.
 - **Resumo alternativo sem inventar fatos:** monta uma frase com o cargo desejado, os termos que o perfil já cita e o título da vaga, seguida do resumo original quando cabe nos 500 caracteres. Vem desmarcado por padrão.
 - **Perfil original intocado:** `aplicarAjustes(perfil, ajustes)` devolve uma cópia; um teste compara o perfil antes e depois. O modelo `Ajustes` (do schema) guarda ids e índices, não texto, então tolera o perfil mudar depois (itens que sumiram são ignorados).
 - **Versões:** "Salvar como nova versão" grava `VersaoCv` com `vaga` e `ajustes`. No editor, o seletor de versão passa a aplicar os ajustes à pré-visualização, às checagens e ao PDF baixado, mas a edição continua sempre no perfil original. "Gerar CV para esta vaga" usa o mesmo caminho do editor (`prepararPdf`), então mantém o ajuste para 1 página e se recusa a baixar se estourar.
+
+## Fase 6
+
+- **Acessibilidade medida:** Lighthouse (Edge headless, build de produção) deu 98 em `/vaga` por falta de `<main>`; corrigido, ficou 100 nas duas telas.
+- **Estados vazios e erros:** `/vaga` sem análise explica o que fazer; sem palavras-chave reconhecidas e sem ajustes há mensagens próprias; falhas de armazenamento e de PDF mostram texto com ícone (nunca só cor). O editor mostra placeholders do design quando o perfil está vazio.
+- **README sem GIF/prints:** não gravei GIF nem capturas nesta sessão; ficam como pendência manual.
+- **Deploy:** não publiquei na Vercel (ação externa, depende da conta do usuário). O projeto não precisa de variáveis de ambiente.

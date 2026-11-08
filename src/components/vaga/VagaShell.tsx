@@ -218,7 +218,7 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1200px] items-start gap-6 px-4 py-6 sm:px-6 lg:grid-cols-2">
+      <main className="mx-auto grid w-full max-w-[1200px] items-start gap-6 px-4 py-6 sm:px-6 lg:grid-cols-2">
         <section className={`${CARTAO} p-6 sm:p-8`} aria-labelledby="vaga-h1">
           <h1 id="vaga-h1" className="font-display text-3xl font-bold">
             Adaptar à vaga
@@ -386,7 +386,7 @@ export function VagaShell({ dados, onSalvarVersoes }: Props) {
             </p>
           )}
         </div>
-      </div>
+      </main>
     </>
   );
 }

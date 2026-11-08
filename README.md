@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Folha
 
-## Getting Started
+Cadastre seu perfil uma vez e baixe um **CV de 1 página otimizado para ATS**
+(sistemas que leem currículos). Cole a descrição de uma vaga e a Folha compara
+as palavras-chave com o seu perfil e reorganiza o CV para ela.
 
-First, run the development server:
+- **Sem backend, sem login, sem IA generativa.** Tudo roda no navegador.
+- **Privacidade (LGPD):** seus dados ficam só neste navegador (IndexedDB). Nada é
+  enviado a servidor. Há exportar/importar em JSON para backup.
+- Interface em português do Brasil.
+
+## Como rodar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run check      # typecheck + lint + testes
+npm run build      # build de produção
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requer Node 22+.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Telas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/editor`: formulário por seções, verificação ATS, espaço da página e
+  pré-visualização do PDF final. Botão "Baixar PDF".
+- `/vaga`: cola a descrição, vê palavras-chave encontradas e ausentes, escolhe
+  ajustes e gera o CV ou salva como nova versão. O perfil original não muda.
 
-## Learn More
+## Decisões de ATS
 
-To learn more about Next.js, take a look at the following resources:
+- PDF de **1 coluna, só texto**, fonte padrão (Helvetica), sem imagens, ícones
+  nem tabelas; títulos de seção padrão ("Experiência", "Formação"...).
+- O PDF é gerado como texto selecionável (`@react-pdf/renderer`) e **lido de
+  volta com `pdfjs-dist`**: as checagens e a contagem de páginas usam o arquivo
+  real, não uma estimativa.
+- Ajuste automático para **1 página** (espaçamento, fonte de 11 a 10pt e margens
+  até 36pt). Se mesmo assim não couber, o download é bloqueado e há sugestões do
+  que enxugar.
+- Adaptação à vaga é determinística (`src/lib/vaga/`): glossário editável
+  (`glossario.json`) com sinônimos, nunca acrescenta habilidade que você não
+  cadastrou.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Todas as decisões, com o porquê, estão em [`docs/decisions.md`](docs/decisions.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stack
 
-## Deploy on Vercel
+Next.js (App Router), React, TypeScript, Tailwind CSS v4, Zod, React Hook Form,
+`idb-keyval`, `@react-pdf/renderer`, `pdfjs-dist`, Vitest + Testing Library.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Estrutura
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/app/          rotas (/editor, /vaga)
+src/components/   editor, vaga, preview, ui
+src/lib/          schema, storage, pdf, ats, vaga
+src/pdf/          documento do CV (react-pdf)
+docs/decisions.md decisões de projeto
+```
+
+## Acessibilidade
+
+Lighthouse (acessibilidade): **100** em `/editor` e `/vaga` (build de produção).
+
+## Deploy
+
+Projeto estático, sem variáveis de ambiente. Na Vercel: importar o repositório
+e usar as configurações padrão do Next.js.
