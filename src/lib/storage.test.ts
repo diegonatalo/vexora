@@ -36,7 +36,9 @@ describe("storage", () => {
   it("exporta e reimporta sem perda", async () => {
     const dados = await carregarDados();
     dados.perfil.nomeCompleto = "Ana";
-    dados.perfil.habilidades.linguagens = ["TypeScript", "C#"];
+    dados.perfil.habilidades = [
+      { titulo: "Linguagens", itens: ["TypeScript", "C#"], exibir: true },
+    ];
     const resultado = importarJson(exportarJson(dados));
     expect(resultado).toEqual({ ok: true, dados });
   });

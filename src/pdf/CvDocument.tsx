@@ -187,7 +187,8 @@ export function CvDocument({
           <Secao s={s} titulo={TITULOS_SECAO.habilidades}>
             {cv.habilidades.map((h, i) => (
               <Text key={i} style={s.itemCompacto}>
-                <Text style={s.negrito}>{h.rotulo}</Text> {h.itens}
+                {h.rotulo ? <Text style={s.negrito}>{h.rotulo} </Text> : null}
+                {h.itens}
               </Text>
             ))}
           </Secao>

@@ -11,6 +11,7 @@ export function somenteVisiveis(perfil: Perfil): Perfil {
     experiencias: perfil.experiencias.filter(estaVisivel),
     formacoes: perfil.formacoes.filter(estaVisivel),
     certificacoes: perfil.certificacoes.filter(estaVisivel),
+    habilidades: perfil.habilidades.filter(estaVisivel),
     idiomas: perfil.idiomas.filter(estaVisivel),
   };
 }

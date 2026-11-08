@@ -32,11 +32,9 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
   const nExp = p.experiencias.filter(estaVisivel).length;
   const nFor = p.formacoes.filter(estaVisivel).length;
   const nCert = p.certificacoes.filter(estaVisivel).length;
-  const temHabilidades =
-    p.habilidades.linguagens.length +
-      p.habilidades.frameworks.length +
-      p.habilidades.ferramentas.length >
-    0;
+  const temHabilidades = p.habilidades.some(
+    (g) => estaVisivel(g) && g.itens.length > 0,
+  );
 
   return {
     dados: { concluida: dadosCompletos },

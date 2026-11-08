@@ -31,7 +31,9 @@ describe("sugerirEnxugar", () => {
       },
     ];
     p.resumo = "r".repeat(400);
-    p.habilidades.linguagens = Array.from({ length: 30 }, (_, i) => `L${i}`);
+    p.habilidades = [
+      { titulo: "Geral", itens: Array.from({ length: 30 }, (_, i) => `L${i}`) },
+    ];
     p.certificacoes = [1, 2, 3].map((n) => ({
       id: String(n),
       nome: "x",

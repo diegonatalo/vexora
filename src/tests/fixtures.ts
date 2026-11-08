@@ -52,11 +52,11 @@ export function perfilCompleto(): Perfil {
       ano: "2022",
     },
   ];
-  p.habilidades = {
-    linguagens: ["TypeScript", "JavaScript"],
-    frameworks: ["React", "Next.js"],
-    ferramentas: ["Git", "Docker"],
-  };
+  p.habilidades = [
+    { titulo: "Linguagens", itens: ["TypeScript", "JavaScript"] },
+    { titulo: "Frameworks e bibliotecas", itens: ["React", "Next.js"] },
+    { titulo: "Ferramentas", itens: ["Git", "Docker"] },
+  ];
   p.idiomas = [
     { idioma: "Português", nivel: "nativo" },
     { idioma: "Inglês", nivel: "avançado" },

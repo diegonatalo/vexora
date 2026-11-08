@@ -126,3 +126,10 @@ Registro curto das decisões que não estavam no prompt original.
 - **Primeiro foco:** a ação principal ("Baixar PDF") fica no cabeçalho fixo, sempre visível; o status de salvamento vira um selo discreto.
 - **Componentes:** cartões de item numerados com ações só-ícone (com `aria-label`), interruptor "Exibir no CV", botão de adicionar tracejado e backup como seção plana ao fim do formulário.
 - **Acessibilidade mantida:** foco visível, alvos ≥ 44px, `aria-current`/`progressbar`, movimento reduzido respeitado; Lighthouse de acessibilidade 100 no editor.
+
+## Habilidades genéricas (grupos livres)
+
+- **Problema:** as três listas fixas (Linguagens, Frameworks, Ferramentas) só serviam para quem trabalha com tecnologia.
+- **Decisão:** `habilidades` virou uma lista de grupos `{ titulo, itens[], exibir? }`. A pessoa nomeia cada grupo ("Atendimento", "Técnicas", "Ferramentas"…), pode reordenar, ocultar com "Exibir no CV" e adicionar quantos quiser. Sem grupos, aparecem sugestões de nomes como atalho.
+- **PDF:** a seção chama-se "Habilidades" (antes "Habilidades técnicas") e cada linha sai como `Grupo: item, item`. Grupo sem nome mostra só os itens.
+- **Migração:** `src/lib/migrar.ts` converte o formato antigo (três listas) em grupos ao carregar do navegador e ao importar backups, sem perder dados. O formato do backup continua `formato: 1`.

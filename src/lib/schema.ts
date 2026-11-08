@@ -102,10 +102,14 @@ export const idiomaSchema = z.object({
   exibir,
 });
 
-export const habilidadesSchema = z.object({
-  linguagens: z.array(z.string().trim().min(1)),
-  frameworks: z.array(z.string().trim().min(1)),
-  ferramentas: z.array(z.string().trim().min(1)),
+/**
+ * Habilidades são grupos livres: a pessoa dá o nome ("Técnicas", "Ferramentas",
+ * "Atendimento"…) e lista os itens. Serve para qualquer profissão.
+ */
+export const grupoHabilidadesSchema = z.object({
+  titulo: z.string().trim().max(60),
+  itens: z.array(z.string().trim().min(1)),
+  exibir,
 });
 
 export const perfilSchema = z.object({
@@ -127,7 +131,7 @@ export const perfilSchema = z.object({
   experiencias: z.array(experienciaSchema),
   formacoes: z.array(formacaoSchema),
   certificacoes: z.array(certificacaoSchema),
-  habilidades: habilidadesSchema,
+  habilidades: z.array(grupoHabilidadesSchema),
   idiomas: z.array(idiomaSchema),
 });
 
@@ -143,7 +147,7 @@ export type Experiencia = z.infer<typeof experienciaSchema>;
 export type Formacao = z.infer<typeof formacaoSchema>;
 export type Certificacao = z.infer<typeof certificacaoSchema>;
 export type Idioma = z.infer<typeof idiomaSchema>;
-export type Habilidades = z.infer<typeof habilidadesSchema>;
+export type GrupoHabilidades = z.infer<typeof grupoHabilidadesSchema>;
 export type Backup = z.infer<typeof backupSchema>;
 
 export function novoId(): string {
@@ -176,7 +180,7 @@ export function criarPerfilVazio(): Perfil {
     experiencias: [],
     formacoes: [],
     certificacoes: [],
-    habilidades: { linguagens: [], frameworks: [], ferramentas: [] },
+    habilidades: [],
     idiomas: [],
   };
 }

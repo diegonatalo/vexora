@@ -267,15 +267,25 @@ describe("habilidades", () => {
   it("aceita vírgulas e espaços ao digitar e salva como lista", async () => {
     const { usuario, onAlterar } = montar();
     await irPara(usuario, "Habilidades");
-    const campo = screen.getByRole("textbox", { name: "Linguagens" });
+    await usuario.click(
+      screen.getByRole("button", { name: "Adicionar grupo de habilidades" }),
+    );
+    await usuario.type(
+      screen.getByRole("textbox", { name: "Nome do grupo" }),
+      "Atendimento",
+    );
+    const campo = screen.getByRole("textbox", { name: "Habilidades" });
     await usuario.type(campo, "TypeScript, C#, ");
     expect(campo).toHaveValue("TypeScript, C#, ");
     expect(onAlterar).toHaveBeenLastCalledWith(
       expect.objectContaining({
         perfil: expect.objectContaining({
-          habilidades: expect.objectContaining({
-            linguagens: ["TypeScript", "C#"],
-          }),
+          habilidades: [
+            expect.objectContaining({
+              titulo: "Atendimento",
+              itens: ["TypeScript", "C#"],
+            }),
+          ],
         }),
       }),
     );

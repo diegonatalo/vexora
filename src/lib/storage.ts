@@ -6,6 +6,7 @@ import {
   type Backup,
   type Perfil,
 } from "@/lib/schema";
+import { migrarPerfil } from "@/lib/migrar";
 import { sanitizar } from "@/lib/sanitizar";
 
 const CHAVE_PERFIL = "folha:perfil";
@@ -21,7 +22,8 @@ export type Dados = { perfil: Perfil };
  */
 export async function carregarDados(): Promise<Dados> {
   const perfil =
-    sanitizar(perfilSchema, await get(CHAVE_PERFIL)) ?? criarPerfilVazio();
+    sanitizar(perfilSchema, migrarPerfil(await get(CHAVE_PERFIL))) ??
+    criarPerfilVazio();
 
   return { perfil };
 }
@@ -53,6 +55,9 @@ export function importarJson(texto: string): ResultadoImportacao {
     bruto = JSON.parse(texto);
   } catch {
     return { ok: false, erro: "O arquivo não é um JSON válido." };
+  }
+  if (typeof bruto === "object" && bruto !== null && "perfil" in bruto) {
+    bruto = { ...bruto, perfil: migrarPerfil(bruto.perfil) };
   }
   const resultado = backupSchema.safeParse(bruto);
   if (!resultado.success) {

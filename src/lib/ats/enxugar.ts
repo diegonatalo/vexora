@@ -31,10 +31,10 @@ export function sugerirEnxugar(perfil: Perfil): string[] {
     );
   }
 
-  const totalHabilidades =
-    perfil.habilidades.linguagens.length +
-    perfil.habilidades.frameworks.length +
-    perfil.habilidades.ferramentas.length;
+  const totalHabilidades = perfil.habilidades.reduce(
+    (soma, g) => soma + g.itens.length,
+    0,
+  );
   if (totalHabilidades > LIMITE_HABILIDADES) {
     sugestoes.push(
       `Deixe só as habilidades mais relevantes (hoje são ${totalHabilidades}).`,

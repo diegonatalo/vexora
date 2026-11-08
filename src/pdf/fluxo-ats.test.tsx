@@ -12,11 +12,10 @@ import { perfilCompleto } from "@/tests/fixtures";
 function perfilGigante(): Perfil {
   const p = perfilCompleto();
   p.resumo = "Resumo extenso. ".repeat(30).trim().slice(0, 500);
-  p.habilidades = {
-    linguagens: Array.from({ length: 45 }, (_, i) => `Linguagem ${i}`),
-    frameworks: Array.from({ length: 45 }, (_, i) => `Framework ${i}`),
-    ferramentas: Array.from({ length: 45 }, (_, i) => `Ferramenta ${i}`),
-  };
+  p.habilidades = ["Linguagem", "Framework", "Ferramenta"].map((titulo) => ({
+    titulo,
+    itens: Array.from({ length: 45 }, (_, i) => `${titulo} ${i}`),
+  }));
   p.formacoes = [1, 2, 3].map((n) => ({
     id: `f${n}`,
     curso: `Curso ${n} com nome razoavelmente longo`,

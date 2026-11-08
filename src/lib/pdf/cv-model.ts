@@ -7,14 +7,8 @@ export const TITULOS_SECAO = {
   experiencia: "Experiência profissional",
   formacao: "Formação acadêmica",
   certificacoes: "Certificações",
-  habilidades: "Habilidades técnicas",
+  habilidades: "Habilidades",
   idiomas: "Idiomas",
-} as const;
-
-export const ROTULOS_HABILIDADES = {
-  linguagens: "Linguagens",
-  frameworks: "Frameworks e bibliotecas",
-  ferramentas: "Ferramentas",
 } as const;
 
 /** `href` torna o item clicável no PDF (https:, mailto: ou tel:). */
@@ -53,7 +47,7 @@ export function perfilSemConteudo(p: Perfil): boolean {
     p.formacoes.length === 0 &&
     p.certificacoes.length === 0 &&
     p.idiomas.length === 0 &&
-    Object.values(p.habilidades).every((l) => l.length === 0)
+    p.habilidades.length === 0
   );
 }
 
@@ -151,12 +145,10 @@ export function montarCv(
     )
     .filter(Boolean);
 
-  const habilidades = (
-    Object.keys(ROTULOS_HABILIDADES) as (keyof typeof ROTULOS_HABILIDADES)[]
-  )
-    .map((chave) => ({
-      rotulo: `${ROTULOS_HABILIDADES[chave]}:`,
-      itens: perfil.habilidades[chave].join(", "),
+  const habilidades = perfil.habilidades
+    .map((g) => ({
+      rotulo: limpar(g.titulo) ? `${limpar(g.titulo)}:` : "",
+      itens: g.itens.join(", "),
     }))
     .filter((h) => h.itens);
 
@@ -220,16 +212,8 @@ export function montarCv(
       habilidades.length === 0 && ph
         ? [
             {
-              rotulo: "Linguagens:",
-              itens: "[Tecnologia 1], [Tecnologia 2], [Tecnologia 3]",
-            },
-            {
-              rotulo: "Frameworks e bibliotecas:",
-              itens: "[Tecnologia 1], [Tecnologia 2], [Tecnologia 3]",
-            },
-            {
-              rotulo: "Ferramentas:",
-              itens: "[Ferramenta 1], [Ferramenta 2], [Ferramenta 3]",
+              rotulo: "[Grupo de habilidades]:",
+              itens: "[Habilidade 1], [Habilidade 2], [Habilidade 3]",
             },
           ]
         : habilidades,

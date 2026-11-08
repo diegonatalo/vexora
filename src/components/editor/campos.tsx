@@ -43,16 +43,13 @@ export function CampoMesAno({
   );
 }
 
-/** Lista separada por vírgulas (habilidades) <-> array de strings. */
+/** Lista separada por vírgulas (itens de um grupo de habilidades) <-> array. */
 export function CampoLista({
   name,
   label,
   hint,
 }: {
-  name:
-    | "habilidades.linguagens"
-    | "habilidades.frameworks"
-    | "habilidades.ferramentas";
+  name: `habilidades.${number}.itens`;
   label: string;
   hint?: string;
 }) {

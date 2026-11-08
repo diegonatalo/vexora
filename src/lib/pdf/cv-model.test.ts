@@ -47,9 +47,7 @@ describe("montarCv", () => {
     expect(cv.nome).toBe("[Seu Nome Completo]");
     expect(cv.experiencias).toHaveLength(1);
     expect(cv.habilidades.map((h) => h.rotulo)).toEqual([
-      "Linguagens:",
-      "Frameworks e bibliotecas:",
-      "Ferramentas:",
+      "[Grupo de habilidades]:",
     ]);
   });
 

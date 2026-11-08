@@ -10,6 +10,7 @@ import {
   SecaoCabecalho,
 } from "@/components/editor/campos";
 import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
+import { BOTAO } from "@/components/ui/estilos";
 import { CheckboxField, TextField } from "@/components/ui/fields";
 import { novoId, type Perfil } from "@/lib/schema";
 
@@ -212,45 +213,110 @@ function CertificacaoCampos({ indice }: { indice: number }) {
   );
 }
 
+const SUGESTOES_GRUPOS = [
+  "Competências",
+  "Ferramentas",
+  "Técnicas",
+  "Comportamentais",
+  "Sistemas",
+] as const;
+
 export function HabilidadesSecao() {
   const { control, register } = useFormContext<Perfil>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
-    name: "idiomas",
+    name: "habilidades",
   });
+  const {
+    fields: idiomas,
+    append: adicionarIdioma,
+    remove: removerIdioma,
+  } = useFieldArray({ control, name: "idiomas" });
   return (
     <>
       <SecaoCabecalho
         titulo="Habilidades"
         icone="sparkles"
-        descricao="Liste só o que você realmente conhece. Separe os itens por vírgula."
+        descricao="Agrupe do seu jeito: dê um nome ao grupo e liste os itens separados por vírgula. Vale para qualquer área."
       />
       <div className="space-y-4">
-        <CampoLista
-          name="habilidades.linguagens"
-          label="Linguagens"
-          hint="Ex.: TypeScript, JavaScript, HTML, CSS"
-        />
-        <CampoLista
-          name="habilidades.frameworks"
-          label="Frameworks e bibliotecas"
-          hint="Ex.: React, Next.js, Tailwind CSS"
-        />
-        <CampoLista
-          name="habilidades.ferramentas"
-          label="Ferramentas"
-          hint="Ex.: Git, Docker, Figma"
+        <ListaOrdenavel
+          ids={fields.map((f) => f.id)}
+          rotulo="grupo de habilidades"
+          onMover={move}
+        >
+          <div className="space-y-4">
+            {fields.map((campo, i) => (
+              <ItemOrdenavel
+                key={campo.id}
+                id={campo.id}
+                rotuloAlca={`Reordenar grupo de habilidades ${i + 1}`}
+                desabilitado={fields.length < 2}
+              >
+                {(alca) => (
+                  <CartaoItem
+                    titulo={`Grupo ${i + 1}`}
+                    rotuloRemover={`Remover grupo de habilidades ${i + 1}`}
+                    onRemover={() => remove(i)}
+                    alca={alca}
+                    exibir={
+                      <InterruptorExibir
+                        name={`habilidades.${i}.exibir`}
+                        rotulo={`Exibir grupo de habilidades ${i + 1} no CV`}
+                      />
+                    }
+                  >
+                    <TextField
+                      label="Nome do grupo"
+                      placeholder="[Ex.: Técnicas, Ferramentas, Atendimento]"
+                      {...register(`habilidades.${i}.titulo`)}
+                    />
+                    <CampoLista
+                      name={`habilidades.${i}.itens`}
+                      label="Habilidades"
+                      hint="Separe por vírgula. Ex.: Excel, Atendimento ao cliente, Liderança de equipe"
+                    />
+                  </CartaoItem>
+                )}
+              </ItemOrdenavel>
+            ))}
+          </div>
+        </ListaOrdenavel>
+        {fields.length === 0 && (
+          <div
+            className="flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label="Sugestões de grupos"
+          >
+            <span className="text-muted text-sm">Comece por um grupo:</span>
+            {SUGESTOES_GRUPOS.map((nome) => (
+              <button
+                key={nome}
+                type="button"
+                className={`${BOTAO.secundario} min-h-11 rounded-full px-4 text-sm`}
+                onClick={() =>
+                  append({ titulo: nome, itens: [], exibir: true })
+                }
+              >
+                {nome}
+              </button>
+            ))}
+          </div>
+        )}
+        <AdicionarItem
+          textoAdicionar="Adicionar grupo de habilidades"
+          onAdicionar={() => append({ titulo: "", itens: [], exibir: true })}
         />
       </div>
 
       <h3 className="font-display mt-8 mb-3 text-xl font-semibold">Idiomas</h3>
       <div className="space-y-4">
-        {fields.map((campo, i) => (
+        {idiomas.map((campo, i) => (
           <CartaoItem
             key={campo.id}
             titulo={`Idioma ${i + 1}`}
             rotuloRemover={`Remover idioma ${i + 1}`}
-            onRemover={() => remove(i)}
+            onRemover={() => removerIdioma(i)}
             exibir={
               <InterruptorExibir
                 name={`idiomas.${i}.exibir`}
@@ -274,7 +340,9 @@ export function HabilidadesSecao() {
         ))}
         <AdicionarItem
           textoAdicionar="Adicionar idioma"
-          onAdicionar={() => append({ idioma: "", nivel: "", exibir: true })}
+          onAdicionar={() =>
+            adicionarIdioma({ idioma: "", nivel: "", exibir: true })
+          }
         />
       </div>
     </>
