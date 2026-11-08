@@ -2,9 +2,11 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AtsCard } from "@/components/editor/AtsCard";
+import { EspacoPagina } from "@/components/editor/EspacoPagina";
 import { SectionNav } from "@/components/editor/SectionNav";
 import {
   DadosPessoaisSecao,
@@ -17,10 +19,13 @@ import {
   FormacaoSecao,
   HabilidadesSecao,
 } from "@/components/editor/secoes/ListasSecoes";
+import { useAnalise } from "@/components/preview/use-analise";
 import { BOTAO, CARTAO } from "@/components/ui/estilos";
 import { Icon } from "@/components/ui/icons";
-import { montarCv } from "@/lib/pdf/cv-model";
-import { gerarPdfBlob, nomeDoArquivo } from "@/lib/pdf/gerar";
+import { rodarChecagens } from "@/lib/ats/checks";
+import { sugerirEnxugar } from "@/lib/ats/enxugar";
+import { nomeDoArquivo } from "@/lib/pdf/gerar";
+import { prepararPdf } from "@/lib/pdf/preparar";
 import { perfilSchema, type Perfil } from "@/lib/schema";
 import { SECOES, statusDasSecoes, type SecaoId } from "@/lib/secoes";
 import type { Dados } from "@/lib/storage";
@@ -102,7 +107,17 @@ export function EditorShell({
     setBaixando(true);
     setErroPdf(null);
     try {
-      const blob = await gerarPdfBlob(montarCv(form.getValues()));
+      // Refaz o ajuste com os dados de agora (a análise pode estar 400ms atrasada).
+      const pronto = await prepararPdf(form.getValues());
+      if (!pronto.coube) {
+        setErroPdf(
+          "O CV passa de 1 página. Enxugue o conteúdo para baixar (veja as sugestões em Espaço da página).",
+        );
+        return;
+      }
+      const blob = new Blob([pronto.bytes.slice()], {
+        type: "application/pdf",
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -115,6 +130,21 @@ export function EditorShell({
       setBaixando(false);
     }
   }
+
+  const analise = useAnalise(perfil);
+  const preparado = analise.preparado;
+  const naoCabe = preparado !== null && !preparado.coube;
+  const checagens = useMemo(
+    () =>
+      preparado
+        ? rodarChecagens({ perfil, cv: preparado.cv, pdf: preparado.medicao })
+        : null,
+    [perfil, preparado],
+  );
+  const sugestoes = useMemo(
+    () => (naoCabe ? sugerirEnxugar(perfil) : []),
+    [naoCabe, perfil],
+  );
 
   const status = statusDasSecoes(perfil);
   const indice = SECOES.findIndex((s) => s.id === ativa);
@@ -167,11 +197,13 @@ export function EditorShell({
             <button
               type="button"
               className={BOTAO.primario}
-              disabled={!perfil.nomeCompleto.trim() || baixando}
+              disabled={!perfil.nomeCompleto.trim() || baixando || naoCabe}
               title={
-                perfil.nomeCompleto.trim()
-                  ? undefined
-                  : "Preencha seu nome para baixar o PDF"
+                !perfil.nomeCompleto.trim()
+                  ? "Preencha seu nome para baixar o PDF"
+                  : naoCabe
+                    ? "O CV passa de 1 página: enxugue o conteúdo para baixar"
+                    : undefined
               }
               onClick={baixarPdf}
             >
@@ -232,31 +264,29 @@ export function EditorShell({
           </form>
         </main>
 
-        <section className={`${CARTAO} p-5 lg:col-start-1 lg:row-start-2`}>
-          <h2 className="font-display text-lg font-semibold">
-            Verificação ATS
-          </h2>
-          <p className="text-muted mt-1 text-sm">
-            As checagens chegam na Fase 4.
-          </p>
-        </section>
+        <div className="w-full lg:col-start-1 lg:row-start-2">
+          <AtsCard checagens={checagens} />
+        </div>
 
         <div className="w-full lg:col-start-1 lg:row-start-3">{backup}</div>
 
         <aside className="w-full space-y-6 lg:col-span-2 lg:row-start-5 xl:col-span-1 xl:col-start-3 xl:row-span-4 xl:row-start-1">
-          <section className={CARTAO + " p-5"}>
-            <h2 className="font-display text-lg font-semibold">
-              Espaço da página
-            </h2>
-            <p className="text-muted mt-1 text-sm">
-              O cálculo de espaço chega na Fase 4.
-            </p>
-          </section>
+          <EspacoPagina
+            medicao={preparado?.medicao ?? null}
+            ajuste={preparado?.ajuste ?? null}
+            coube={preparado?.coube ?? true}
+            sugestoes={sugestoes}
+          />
           <section className={CARTAO + " p-5"} aria-labelledby="previa-titulo">
             <h2 id="previa-titulo" className="sr-only">
               Pré-visualização do CV
             </h2>
-            <PdfPreview perfil={perfil} />
+            <PdfPreview
+              bytes={preparado?.bytes ?? null}
+              paginas={preparado?.medicao.paginas ?? null}
+              gerando={analise.estado === "gerando"}
+              erro={analise.estado === "erro"}
+            />
           </section>
         </aside>
       </div>

@@ -39,6 +39,20 @@ export type OpcoesCv = {
 
 const PERIODO_VAZIO = "MM/AAAA – MM/AAAA";
 
+/** Perfil sem nada preenchido: a pré-visualização mostra o modelo com [placeholders]. */
+export function perfilSemConteudo(p: Perfil): boolean {
+  return (
+    !p.nomeCompleto.trim() &&
+    !p.cargoDesejado.trim() &&
+    !p.resumo.trim() &&
+    p.experiencias.length === 0 &&
+    p.formacoes.length === 0 &&
+    p.certificacoes.length === 0 &&
+    p.idiomas.length === 0 &&
+    Object.values(p.habilidades).every((l) => l.length === 0)
+  );
+}
+
 export function linkCurto(url: string): string {
   return url
     .trim()
