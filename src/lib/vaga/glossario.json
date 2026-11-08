@@ -1,0 +1,263 @@
+[
+  {
+    "termo": "JavaScript",
+    "sinonimos": ["js", "ecmascript", "es6"],
+    "categoria": "linguagem"
+  },
+  { "termo": "TypeScript", "sinonimos": ["ts"], "categoria": "linguagem" },
+  { "termo": "HTML", "sinonimos": ["html5"], "categoria": "linguagem" },
+  { "termo": "CSS", "sinonimos": ["css3"], "categoria": "linguagem" },
+  { "termo": "Sass", "sinonimos": ["scss"], "categoria": "linguagem" },
+  { "termo": "Python", "sinonimos": [], "categoria": "linguagem" },
+  { "termo": "Java", "sinonimos": [], "categoria": "linguagem" },
+  { "termo": "Kotlin", "sinonimos": [], "categoria": "linguagem" },
+  { "termo": "Swift", "sinonimos": [], "categoria": "linguagem" },
+  {
+    "termo": "C#",
+    "sinonimos": ["csharp", "c sharp"],
+    "categoria": "linguagem"
+  },
+  { "termo": "C++", "sinonimos": ["cpp"], "categoria": "linguagem" },
+  { "termo": "PHP", "sinonimos": [], "categoria": "linguagem" },
+  { "termo": "Ruby", "sinonimos": [], "categoria": "linguagem" },
+  {
+    "termo": "Go",
+    "sinonimos": ["golang"],
+    "categoria": "linguagem",
+    "apenasSinonimos": true
+  },
+  { "termo": "Rust", "sinonimos": [], "categoria": "linguagem" },
+  { "termo": "SQL", "sinonimos": [], "categoria": "linguagem" },
+
+  {
+    "termo": "React",
+    "sinonimos": ["reactjs", "react js"],
+    "categoria": "framework"
+  },
+  {
+    "termo": "React Native",
+    "sinonimos": ["reactnative"],
+    "categoria": "framework"
+  },
+  { "termo": "Next.js", "sinonimos": ["next js"], "categoria": "framework" },
+  {
+    "termo": "Vue",
+    "sinonimos": ["vuejs", "vue js"],
+    "categoria": "framework"
+  },
+  { "termo": "Nuxt", "sinonimos": ["nuxtjs"], "categoria": "framework" },
+  { "termo": "Angular", "sinonimos": ["angularjs"], "categoria": "framework" },
+  { "termo": "Svelte", "sinonimos": ["sveltekit"], "categoria": "framework" },
+  {
+    "termo": "Node.js",
+    "sinonimos": ["node", "node js"],
+    "categoria": "framework"
+  },
+  {
+    "termo": "Express",
+    "sinonimos": ["expressjs", "express js"],
+    "categoria": "framework"
+  },
+  { "termo": "NestJS", "sinonimos": ["nest js"], "categoria": "framework" },
+  { "termo": "Django", "sinonimos": [], "categoria": "framework" },
+  { "termo": "Flask", "sinonimos": [], "categoria": "framework" },
+  { "termo": "Spring", "sinonimos": ["spring boot"], "categoria": "framework" },
+  { "termo": "Laravel", "sinonimos": [], "categoria": "framework" },
+  {
+    "termo": ".NET",
+    "sinonimos": ["dotnet", "aspnet", "net core"],
+    "categoria": "framework",
+    "apenasSinonimos": true
+  },
+  {
+    "termo": "Tailwind CSS",
+    "sinonimos": ["tailwind", "tailwindcss"],
+    "categoria": "framework"
+  },
+  { "termo": "Bootstrap", "sinonimos": [], "categoria": "framework" },
+  { "termo": "Material UI", "sinonimos": ["mui"], "categoria": "framework" },
+  {
+    "termo": "Redux",
+    "sinonimos": ["redux toolkit"],
+    "categoria": "framework"
+  },
+  { "termo": "jQuery", "sinonimos": [], "categoria": "framework" },
+  { "termo": "GraphQL", "sinonimos": [], "categoria": "framework" },
+  {
+    "termo": "APIs REST",
+    "sinonimos": [
+      "api rest",
+      "apis rest",
+      "rest api",
+      "rest apis",
+      "restful",
+      "api restful",
+      "apis restful"
+    ],
+    "categoria": "framework"
+  },
+
+  { "termo": "Git", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "GitHub", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "GitLab", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "GitHub Actions", "sinonimos": [], "categoria": "ferramenta" },
+  {
+    "termo": "Docker",
+    "sinonimos": ["containers", "conteineres"],
+    "categoria": "ferramenta"
+  },
+  { "termo": "Kubernetes", "sinonimos": ["k8s"], "categoria": "ferramenta" },
+  {
+    "termo": "AWS",
+    "sinonimos": ["amazon web services"],
+    "categoria": "ferramenta"
+  },
+  { "termo": "Azure", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Google Cloud", "sinonimos": ["gcp"], "categoria": "ferramenta" },
+  { "termo": "Linux", "sinonimos": [], "categoria": "ferramenta" },
+  {
+    "termo": "CI/CD",
+    "sinonimos": ["ci cd", "integracao continua", "continuous integration"],
+    "categoria": "ferramenta"
+  },
+  { "termo": "Jenkins", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Terraform", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Figma", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Jira", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Postman", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Webpack", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Vite", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "npm", "sinonimos": ["yarn", "pnpm"], "categoria": "ferramenta" },
+  { "termo": "Storybook", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Jest", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Vitest", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Cypress", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Playwright", "sinonimos": [], "categoria": "ferramenta" },
+  {
+    "termo": "Testing Library",
+    "sinonimos": ["react testing library"],
+    "categoria": "ferramenta"
+  },
+  {
+    "termo": "PostgreSQL",
+    "sinonimos": ["postgres"],
+    "categoria": "ferramenta"
+  },
+  { "termo": "MySQL", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "MongoDB", "sinonimos": ["mongo"], "categoria": "ferramenta" },
+  { "termo": "Redis", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Firebase", "sinonimos": [], "categoria": "ferramenta" },
+  { "termo": "Prisma", "sinonimos": [], "categoria": "ferramenta" },
+
+  {
+    "termo": "Testes automatizados",
+    "sinonimos": [
+      "teste automatizado",
+      "testes automatizado",
+      "automated testing",
+      "test automation",
+      "testes unitarios",
+      "teste unitario",
+      "unit testing",
+      "unit tests",
+      "testes de integracao"
+    ],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "TDD",
+    "sinonimos": [
+      "test driven development",
+      "desenvolvimento orientado a testes"
+    ],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "Metodologias ágeis",
+    "sinonimos": [
+      "metodologia agil",
+      "metodos ageis",
+      "metodologias ageis",
+      "agile",
+      "agil"
+    ],
+    "categoria": "pratica"
+  },
+  { "termo": "Scrum", "sinonimos": [], "categoria": "pratica" },
+  { "termo": "Kanban", "sinonimos": [], "categoria": "pratica" },
+  {
+    "termo": "Clean Code",
+    "sinonimos": ["codigo limpo"],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "Design System",
+    "sinonimos": ["design systems"],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "Acessibilidade",
+    "sinonimos": ["a11y", "wcag"],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "Responsividade",
+    "sinonimos": [
+      "responsivo",
+      "design responsivo",
+      "responsive design",
+      "mobile first"
+    ],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "Performance web",
+    "sinonimos": ["web performance", "core web vitals"],
+    "categoria": "pratica"
+  },
+  { "termo": "SEO", "sinonimos": [], "categoria": "pratica" },
+  {
+    "termo": "Microsserviços",
+    "sinonimos": ["microservicos", "microservices", "microsservicos"],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "Code review",
+    "sinonimos": ["revisao de codigo"],
+    "categoria": "pratica"
+  },
+  {
+    "termo": "UX",
+    "sinonimos": ["user experience", "experiencia do usuario"],
+    "categoria": "pratica"
+  },
+
+  { "termo": "Inglês", "sinonimos": ["english"], "categoria": "idioma" },
+  { "termo": "Espanhol", "sinonimos": ["spanish"], "categoria": "idioma" },
+
+  {
+    "termo": "Comunicação",
+    "sinonimos": ["comunicacao", "communication"],
+    "categoria": "competencia"
+  },
+  {
+    "termo": "Trabalho em equipe",
+    "sinonimos": ["teamwork"],
+    "categoria": "competencia"
+  },
+  {
+    "termo": "Liderança",
+    "sinonimos": ["lideranca", "leadership"],
+    "categoria": "competencia"
+  },
+  {
+    "termo": "Resolução de problemas",
+    "sinonimos": ["resolucao de problemas", "problem solving"],
+    "categoria": "competencia"
+  },
+  {
+    "termo": "Proatividade",
+    "sinonimos": ["proativo", "proativa"],
+    "categoria": "competencia"
+  }
+]

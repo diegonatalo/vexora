@@ -27,6 +27,7 @@ import { sugerirEnxugar } from "@/lib/ats/enxugar";
 import { nomeDoArquivo } from "@/lib/pdf/gerar";
 import { prepararPdf } from "@/lib/pdf/preparar";
 import { perfilSchema, type Perfil } from "@/lib/schema";
+import { aplicarAjustes } from "@/lib/vaga/ajustes";
 import { SECOES, statusDasSecoes, type SecaoId } from "@/lib/secoes";
 import type { Dados } from "@/lib/storage";
 import type { EstadoSalvamento } from "@/lib/use-dados";
@@ -64,6 +65,8 @@ type Props = {
   onAlterar: (dados: Dados) => void;
   /** Slot do rodapé da coluna 1 (exportar/importar). */
   backup?: React.ReactNode;
+  /** Seção aberta ao entrar (ex.: vindo de /vaga). */
+  secaoInicial?: SecaoId;
 };
 
 export function EditorShell({
@@ -71,6 +74,7 @@ export function EditorShell({
   estado,
   onAlterar,
   backup,
+  secaoInicial,
 }: Props) {
   const form = useForm<Perfil>({
     resolver: zodResolver(perfilSchema),
@@ -78,7 +82,7 @@ export function EditorShell({
     mode: "onTouched",
   });
   const versoes = useRef(dadosIniciais.versoes);
-  const [ativa, setAtiva] = useState<SecaoId>("dados");
+  const [ativa, setAtiva] = useState<SecaoId>(secaoInicial ?? "dados");
   const primeiraRenderizacao = useRef(true);
 
   // Todo rascunho é salvo, mesmo com campos inválidos (ver sanitizar.ts).
@@ -99,7 +103,20 @@ export function EditorShell({
     document.getElementById("secao-titulo")?.focus();
   }, [ativa]);
 
-  const perfil = useWatch({ control: form.control }) as Perfil;
+  const perfilOriginal = useWatch({ control: form.control }) as Perfil;
+  // O editor sempre edita o perfil original. A versão escolhida só muda o que
+  // vai para o PDF (ordem e itens ocultos), sem tocar nos dados.
+  const [versaoId, setVersaoId] = useState(dadosIniciais.versoes[0]?.id);
+  const ajustesDaVersao = dadosIniciais.versoes.find(
+    (v) => v.id === versaoId,
+  )?.ajustes;
+  const perfil = useMemo(
+    () =>
+      ajustesDaVersao
+        ? aplicarAjustes(perfilOriginal, ajustesDaVersao)
+        : perfilOriginal,
+    [perfilOriginal, ajustesDaVersao],
+  );
   const [baixando, setBaixando] = useState(false);
   const [erroPdf, setErroPdf] = useState<string | null>(null);
 
@@ -108,7 +125,10 @@ export function EditorShell({
     setErroPdf(null);
     try {
       // Refaz o ajuste com os dados de agora (a análise pode estar 400ms atrasada).
-      const pronto = await prepararPdf(form.getValues());
+      const atual = form.getValues();
+      const pronto = await prepararPdf(
+        ajustesDaVersao ? aplicarAjustes(atual, ajustesDaVersao) : atual,
+      );
       if (!pronto.coube) {
         setErroPdf(
           "O CV passa de 1 página. Enxugue o conteúdo para baixar (veja as sugestões em Espaço da página).",
@@ -146,7 +166,7 @@ export function EditorShell({
     [naoCabe, perfil],
   );
 
-  const status = statusDasSecoes(perfil);
+  const status = statusDasSecoes(perfilOriginal);
   const indice = SECOES.findIndex((s) => s.id === ativa);
   const anterior = SECOES[indice - 1];
   const proxima = SECOES[indice + 1];
@@ -169,11 +189,13 @@ export function EditorShell({
             <select
               id="versao"
               className="border-field bg-surface rounded-field min-h-11 w-full border px-3"
-              defaultValue={dadosIniciais.versoes[0]?.id}
+              value={versaoId}
+              onChange={(e) => setVersaoId(e.target.value)}
             >
               {dadosIniciais.versoes.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.nome} — {perfil.cargoDesejado || "[Cargo desejado]"}
+                  {v.nome} —{" "}
+                  {perfilOriginal.cargoDesejado || "[Cargo desejado]"}
                 </option>
               ))}
             </select>
