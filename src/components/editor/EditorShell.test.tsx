@@ -108,7 +108,7 @@ describe("navegação", () => {
     await irPara(usuario, "Experiência");
     const item = screen.getByRole("button", { name: /^Experiência/ });
     expect(item).toHaveAttribute("aria-current", "step");
-    expect(item).toHaveTextContent("1/1");
+    expect(item).toHaveTextContent(/^Experiência1/);
     expect(
       screen.getByRole("button", { name: /^Certificações/ }),
     ).toHaveTextContent("vazio");

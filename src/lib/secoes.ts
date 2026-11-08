@@ -31,7 +31,7 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
     preenchido(p.telefone) &&
     EMAIL_SIMPLES.test(p.email);
 
-  // "no CV/total": quantos itens estão marcados como "Exibir no CV".
+  // Sem limite de itens: mostra quantos são e, se houver, quantos estão ocultos.
   const contar = (itens: { exibir?: boolean }[]) => ({
     total: itens.length,
     noCv: itens.filter(estaVisivel).length,
@@ -39,8 +39,12 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
   const exp = contar(p.experiencias);
   const form = contar(p.formacoes);
   const cert = contar(p.certificacoes);
-  const rotulo = (c: { total: number; noCv: number }) =>
-    c.total > 0 ? `${c.noCv}/${c.total}` : "vazio";
+  const rotulo = ({ total, noCv }: { total: number; noCv: number }) => {
+    if (total === 0) return "vazio";
+    const ocultos = total - noCv;
+    if (ocultos === 0) return String(total);
+    return `${noCv} · ${ocultos} ${ocultos === 1 ? "oculto" : "ocultos"}`;
+  };
   const nLinks = Object.values(p.links).filter(preenchido).length;
   const temHabilidades =
     p.habilidades.linguagens.length +

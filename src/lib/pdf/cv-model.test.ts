@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatarPeriodo, linkCurto, montarCv } from "@/lib/pdf/cv-model";
+import {
+  formatarPeriodo,
+  hrefEmail,
+  hrefLink,
+  hrefTelefone,
+  linkCurto,
+  montarCv,
+} from "@/lib/pdf/cv-model";
 import { criarExperienciaVazia, criarPerfilVazio } from "@/lib/schema";
 
 describe("linkCurto", () => {
@@ -67,7 +74,7 @@ describe("montarCv", () => {
       { id: "1", nome: "AWS CCP", instituicao: "AWS", ano: "2024" },
     ];
     const cv = montarCv(p);
-    expect(cv.contato).toEqual([
+    expect(cv.contato.map((c) => c.texto)).toEqual([
       "São Paulo, SP",
       "ana@exemplo.com",
       "linkedin.com/in/ana",
@@ -78,5 +85,29 @@ describe("montarCv", () => {
       topicos: ["Reduzi o tempo de build em 40%"],
     });
     expect(cv.certificacoes).toEqual(["AWS CCP — AWS, 2024"]);
+  });
+});
+
+describe("hrefs de contato", () => {
+  it.each([
+    ["linkedin.com/in/ana", "https://linkedin.com/in/ana"],
+    ["https://github.com/ana", "https://github.com/ana"],
+    ["", undefined],
+  ])("hrefLink %j", (entrada, esperado) => {
+    expect(hrefLink(entrada)).toBe(esperado);
+  });
+
+  it.each([
+    ["(11) 98765-4321", "tel:+5511987654321"],
+    ["(11) 3456-7890", "tel:+551134567890"],
+    ["+55 11 98765-4321", "tel:+5511987654321"],
+    ["123", undefined],
+  ])("hrefTelefone %j", (entrada, esperado) => {
+    expect(hrefTelefone(entrada)).toBe(esperado);
+  });
+
+  it("hrefEmail", () => {
+    expect(hrefEmail(" ana@x.com ")).toBe("mailto:ana@x.com");
+    expect(hrefEmail("")).toBeUndefined();
   });
 });

@@ -1,6 +1,8 @@
+import { Fragment } from "react";
 import {
   Document,
   Font,
+  Link,
   Page,
   StyleSheet,
   Text,
@@ -39,6 +41,8 @@ function criarEstilos(a: Ajuste) {
       color: COR_SECUNDARIA,
       marginTop: 5,
     },
+    // Clicável, mas com a mesma aparência do texto (layout limpo para ATS).
+    link: { color: COR_SECUNDARIA, textDecoration: "none" },
     secao: { marginTop: a.espacoSecao },
     tituloSecao: {
       fontFamily: FONTE_NEGRITO,
@@ -117,7 +121,20 @@ export function CvDocument({
           <Text style={s.nome}>{cv.nome}</Text>
           {cv.cargo ? <Text style={s.cargo}>{cv.cargo}</Text> : null}
           {cv.contato.length > 0 ? (
-            <Text style={s.contato}>{cv.contato.join(" · ")}</Text>
+            <Text style={s.contato}>
+              {cv.contato.map((c, i) => (
+                <Fragment key={i}>
+                  {i > 0 ? " · " : ""}
+                  {c.href ? (
+                    <Link src={c.href} style={s.link}>
+                      {c.texto}
+                    </Link>
+                  ) : (
+                    c.texto
+                  )}
+                </Fragment>
+              ))}
+            </Text>
           ) : null}
         </View>
 

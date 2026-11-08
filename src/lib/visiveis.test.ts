@@ -34,9 +34,9 @@ describe("exibir no CV", () => {
     expect(cv.certificacoes).toHaveLength(0);
   });
 
-  it("o contador da navegação mostra no CV / total", () => {
+  it("o contador da navegação mostra o total e quantos estão ocultos", () => {
     const p = perfilCompleto();
     p.experiencias[2].exibir = false;
-    expect(statusDasSecoes(p).experiencia.contador).toBe("2/3");
+    expect(statusDasSecoes(p).experiencia.contador).toBe("2 · 1 oculto");
   });
 });

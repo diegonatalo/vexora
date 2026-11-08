@@ -99,3 +99,8 @@ Registro curto das decisões que não estavam no prompt original.
 - **Interruptor "Exibir no CV"** em cada item (inclusive nas experiências recolhidas): liga e desliga sem apagar. Campo `exibir?: boolean` nos itens; **`undefined` conta como exibido**, então dados salvos antes continuam válidos sem migração.
 - **Um único ponto de filtro:** `somenteVisiveis(perfil)` devolve uma cópia sem os ocultos. É usado em `montarCv`, no editor (preview, checagens e download), e em `/vaga` (análise de palavras-chave e geração). Item oculto não conta como "no seu CV". Combina com os ajustes da vaga: `perfilParaCv` = visíveis + ajustes.
 - **Contador da navegação** passou a "exibidos/total" (ex.: `2/3` = 2 de 3 itens aparecem no CV).
+
+## Contadores e links clicáveis
+
+- **Contador da navegação sem "x/y":** como não há mais limite, mostra só quantos itens existem (`3`) e, se houver ocultos, `2 · 1 oculto`. "Links e portfólio" mantém `n/3`, porque são 3 campos fixos.
+- **Links clicáveis no PDF:** e-mail (`mailto:`), telefone (`tel:+55…`) e LinkedIn/GitHub/portfólio (`https://…`) viram anotações de link com o componente `Link` do react-pdf, **mantendo o texto e a aparência de antes** (sem https:// no texto, sem sublinhado nem cor), então a extração de texto do ATS não muda. `CvModel.contato` passou de `string[]` para `{ texto, href? }[]`. Teste lê as anotações de link do PDF com pdfjs e confere URL e área clicável; sem contato, não há links. Placeholders do preview não são clicáveis.

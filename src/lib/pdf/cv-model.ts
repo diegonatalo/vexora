@@ -17,11 +17,14 @@ export const ROTULOS_HABILIDADES = {
   ferramentas: "Ferramentas",
 } as const;
 
+/** `href` torna o item clicável no PDF (https:, mailto: ou tel:). */
+export type ItemContato = { texto: string; href?: string };
+
 export type CvModel = {
   nome: string;
   cargo: string;
   /** Itens da linha de contato; o documento os junta com " · ". */
-  contato: string[];
+  contato: ItemContato[];
   resumo: string;
   experiencias: { titulo: string; periodo: string; topicos: string[] }[];
   formacoes: { curso: string; instituicao: string; periodo: string }[];
@@ -52,6 +55,28 @@ export function perfilSemConteudo(p: Perfil): boolean {
     p.idiomas.length === 0 &&
     Object.values(p.habilidades).every((l) => l.length === 0)
   );
+}
+
+/** Endereço clicável de um link do perfil (garante o esquema https://). */
+export function hrefLink(url: string): string | undefined {
+  const texto = url.trim();
+  if (texto === "") return undefined;
+  return /^https?:\/\//i.test(texto) ? texto : `https://${texto}`;
+}
+
+export function hrefEmail(email: string): string | undefined {
+  const texto = email.trim();
+  return texto === "" ? undefined : `mailto:${texto}`;
+}
+
+/** "(11) 98765-4321" -> "tel:+5511987654321" (DDD + número; assume Brasil). */
+export function hrefTelefone(telefone: string): string | undefined {
+  const digitos = telefone.replace(/\D/g, "");
+  if (digitos.length === 10 || digitos.length === 11)
+    return `tel:+55${digitos}`;
+  if (digitos.startsWith("55") && digitos.length >= 12)
+    return `tel:+${digitos}`;
+  return undefined;
 }
 
 export function linkCurto(url: string): string {
@@ -139,14 +164,15 @@ export function montarCv(
     .map((i) => juntar([limpar(i.idioma), limpar(i.nivel)], " — "))
     .filter(Boolean);
 
-  const contato = [
-    limpar(perfil.cidadeUf),
-    limpar(perfil.telefone),
-    limpar(perfil.email),
-    linkCurto(perfil.links.linkedin),
-    linkCurto(perfil.links.github),
-    linkCurto(perfil.links.portfolio),
-  ].filter(Boolean);
+  const contato: ItemContato[] = [
+    { texto: limpar(perfil.cidadeUf) },
+    { texto: limpar(perfil.telefone), href: hrefTelefone(perfil.telefone) },
+    { texto: limpar(perfil.email), href: hrefEmail(perfil.email) },
+    ...(["linkedin", "github", "portfolio"] as const).map((chave) => ({
+      texto: linkCurto(perfil.links[chave]),
+      href: hrefLink(perfil.links[chave]),
+    })),
+  ].filter((i) => i.texto !== "");
 
   return {
     nome: ou(limpar(perfil.nomeCompleto), "[Seu Nome Completo]"),
@@ -158,7 +184,7 @@ export function montarCv(
             "[(00) 00000-0000]",
             "[email@dominio.com]",
             "[linkedin.com/in/usuario]",
-          ]
+          ].map((texto) => ({ texto }))
         : contato,
     resumo: ou(
       limpar(perfil.resumo),

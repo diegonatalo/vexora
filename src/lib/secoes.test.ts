@@ -20,7 +20,7 @@ describe("statusDasSecoes", () => {
     p.experiencias = [criarExperienciaVazia(), criarExperienciaVazia()];
     const s = statusDasSecoes(p);
     expect(s.dados.concluida).toBe(true);
-    expect(s.experiencia).toEqual({ concluida: true, contador: "2/2" });
+    expect(s.experiencia).toEqual({ concluida: true, contador: "2" });
   });
 
   it("não conclui dados pessoais com e-mail inválido", () => {

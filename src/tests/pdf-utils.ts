@@ -47,3 +47,28 @@ export function ajustarEmNode(cv: CvModel) {
     medir: medirEmNode,
   });
 }
+
+/** Links clicáveis do PDF (anotações do tipo Link), como um leitor os veria. */
+export async function lerLinks(
+  bytes: Uint8Array,
+): Promise<{ url: string; largura: number }[]> {
+  const tarefa = getDocument({
+    data: bytes.slice(),
+    standardFontDataUrl: PASTA_FONTES,
+  });
+  try {
+    const doc = await tarefa.promise;
+    const links: { url: string; largura: number }[] = [];
+    for (let n = 1; n <= doc.numPages; n++) {
+      const pagina = await doc.getPage(n);
+      for (const a of await pagina.getAnnotations()) {
+        if (a.subtype === "Link" && a.url) {
+          links.push({ url: a.url, largura: a.rect[2] - a.rect[0] });
+        }
+      }
+    }
+    return links;
+  } finally {
+    await tarefa.destroy();
+  }
+}
