@@ -1,15 +1,21 @@
 "use client";
 
-import { useFormContext, useWatch } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { TextAreaField, TextField } from "@/components/ui/fields";
 import { SecaoCabecalho } from "@/components/editor/campos";
+import {
+  BASE_GITHUB,
+  BASE_LINKEDIN,
+  mascaraTelefone,
+  normalizarPerfilSocial,
+  normalizarSite,
+} from "@/lib/mascara";
 import type { Perfil } from "@/lib/schema";
-
-const URL_DICA = "Cole o endereço completo, começando com https://";
 
 export function DadosPessoaisSecao() {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<Perfil>();
   return (
@@ -40,13 +46,26 @@ export function DadosPessoaisSecao() {
             error={errors.cidadeUf?.message}
             {...register("cidadeUf")}
           />
-          <TextField
-            label="Telefone"
-            type="tel"
-            autoComplete="tel"
-            placeholder="[(00) 00000-0000]"
-            error={errors.telefone?.message}
-            {...register("telefone")}
+          <Controller
+            control={control}
+            name="telefone"
+            render={({ field }) => (
+              <TextField
+                label="Telefone"
+                type="tel"
+                autoComplete="tel"
+                placeholder="[(00) 00000-0000]"
+                maxLength={15}
+                error={errors.telefone?.message}
+                name={field.name}
+                ref={field.ref}
+                value={field.value}
+                onBlur={field.onBlur}
+                onChange={(e) =>
+                  field.onChange(mascaraTelefone(e.target.value))
+                }
+              />
+            )}
           />
         </div>
         <TextField
@@ -87,11 +106,56 @@ export function ResumoSecao() {
   );
 }
 
-export function LinksSecao() {
+type CampoLinkProps = {
+  name: "links.linkedin" | "links.github" | "links.portfolio";
+  label: string;
+  placeholder: string;
+  hint?: string;
+  normalizar: (texto: string) => string;
+};
+
+/** Normaliza ao sair do campo, para não mexer no texto enquanto a pessoa digita. */
+function CampoLink({
+  name,
+  label,
+  placeholder,
+  hint,
+  normalizar,
+}: CampoLinkProps) {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext<Perfil>();
+  const chave = name.split(".")[1] as keyof Perfil["links"];
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <TextField
+          label={label}
+          inputMode="url"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          placeholder={placeholder}
+          hint={hint}
+          error={errors.links?.[chave]?.message}
+          name={field.name}
+          ref={field.ref}
+          value={field.value}
+          onChange={field.onChange}
+          onBlur={() => {
+            field.onChange(normalizar(field.value));
+            field.onBlur();
+          }}
+        />
+      )}
+    />
+  );
+}
+
+export function LinksSecao() {
   return (
     <>
       <SecaoCabecalho
@@ -99,30 +163,26 @@ export function LinksSecao() {
         descricao="O LinkedIn é recomendado: muitos recrutadores o conferem. GitHub e portfólio são opcionais."
       />
       <div className="space-y-4">
-        <TextField
+        <CampoLink
+          name="links.linkedin"
           label="LinkedIn"
-          type="url"
-          inputMode="url"
-          placeholder="https://linkedin.com/in/usuario"
-          hint={URL_DICA}
-          error={errors.links?.linkedin?.message}
-          {...register("links.linkedin")}
+          placeholder="seu-usuario"
+          hint="Digite só o usuário (o que vem depois de linkedin.com/in/) ou cole o endereço."
+          normalizar={(t) => normalizarPerfilSocial(t, BASE_LINKEDIN)}
         />
-        <TextField
+        <CampoLink
+          name="links.github"
           label="GitHub"
-          type="url"
-          inputMode="url"
-          placeholder="https://github.com/usuario"
-          error={errors.links?.github?.message}
-          {...register("links.github")}
+          placeholder="seu-usuario"
+          hint="Digite só o usuário ou cole o endereço."
+          normalizar={(t) => normalizarPerfilSocial(t, BASE_GITHUB)}
         />
-        <TextField
+        <CampoLink
+          name="links.portfolio"
           label="Portfólio"
-          type="url"
-          inputMode="url"
-          placeholder="https://seusite.dev"
-          error={errors.links?.portfolio?.message}
-          {...register("links.portfolio")}
+          placeholder="seusite.dev"
+          hint="O https:// é adicionado automaticamente."
+          normalizar={normalizarSite}
         />
       </div>
     </>

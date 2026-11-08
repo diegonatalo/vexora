@@ -70,3 +70,9 @@ Registro curto das decisões que não estavam no prompt original.
 - **Estados vazios e erros:** `/vaga` sem análise explica o que fazer; sem palavras-chave reconhecidas e sem ajustes há mensagens próprias; falhas de armazenamento e de PDF mostram texto com ícone (nunca só cor). O editor mostra placeholders do design quando o perfil está vazio.
 - **README sem GIF/prints:** não gravei GIF nem capturas nesta sessão; ficam como pendência manual.
 - **Deploy:** não publiquei na Vercel (ação externa, depende da conta do usuário). O projeto não precisa de variáveis de ambiente.
+
+## Máscaras de contato
+
+- **Telefone:** formata enquanto digita, no padrão `(xx) xxxxx-xxxx` (celular) ou `(xx) xxxx-xxxx` (fixo, 10 dígitos). Só dígitos entram.
+- **LinkedIn e GitHub:** a pessoa pode digitar só o usuário (com ou sem `@`); ao sair do campo vira `https://linkedin.com/in/{usuario}` / `https://github.com/{usuario}`. Se já parece um endereço (tem ponto ou barra), só garante o `https://`. Normaliza no `blur`, não a cada tecla, para não brigar com a digitação.
+- **Portfólio:** acrescenta `https://` quando falta.
