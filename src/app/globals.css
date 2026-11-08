@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Tokens de design da Folha (ver docs/decisions.md). */
+@theme {
+  --color-paper: #f4f2ec;
+  --color-surface: #ffffff;
+  --color-ink: #15181c;
+  --color-muted: #565b63;
+  --color-line: #dedad0;
+  --color-field: #8f8a7c;
+  --color-accent: #0b6b4d;
+  --color-accent-deep: #074732;
+  --color-accent-soft: #e3f1eb;
+  --color-warn-bg: #fff1d6;
+  --color-warn-ink: #5e3300;
+  --color-warn-icon: #8a4b00;
+
+  --radius-field: 8px;
+  --radius-card: 12px;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
