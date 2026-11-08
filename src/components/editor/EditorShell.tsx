@@ -217,7 +217,7 @@ export function EditorShell({
         </div>
       </header>
 
-      <div className="mx-auto grid w-full max-w-[1680px] items-start gap-6 px-4 pt-6 pb-28 sm:px-6 lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_460px] xl:pb-8">
+      <div className="mx-auto grid w-full max-w-[1680px] grid-cols-[minmax(0,1fr)] items-start gap-6 px-4 pt-6 pb-28 sm:px-6 lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_460px] xl:pb-8">
         <div
           className={`space-y-6 lg:sticky lg:top-24 ${
             painel === "previa" ? "max-xl:hidden" : ""
@@ -306,7 +306,7 @@ export function EditorShell({
         {(
           [
             ["editar", "Editar", "pencil"],
-            ["previa", "Pré-visualizar", "eye"],
+            ["previa", "Prévia", "eye"],
           ] as const
         ).map(([id, rotulo, icone]) => (
           <button
@@ -314,7 +314,7 @@ export function EditorShell({
             type="button"
             aria-pressed={painel === id}
             onClick={() => setPainel(id)}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 font-medium transition-colors ${
+            className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 font-medium whitespace-nowrap transition-colors ${
               painel === id
                 ? "bg-accent text-on-accent"
                 : "text-muted hover:text-ink"

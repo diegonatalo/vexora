@@ -42,7 +42,7 @@ export function SectionNav({
         />
       </div>
 
-      <ul className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
+      <ul className="relative -mx-1 flex gap-1 overflow-x-auto px-1 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
         {SECOES.map(({ id, titulo }, i) => {
           const s = status[id];
           const ehAtiva = id === ativa;
