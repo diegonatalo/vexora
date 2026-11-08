@@ -101,17 +101,17 @@ describe("navegação", () => {
     ).toHaveFocus();
   });
 
-  it("marca a seção ativa com aria-current e mostra contadores", async () => {
+  it("marca a seção ativa com aria-current", async () => {
     const { usuario } = montar((d) => {
       d.perfil.experiencias = [criarExperienciaVazia()];
     });
     await irPara(usuario, "Experiência");
     const item = screen.getByRole("button", { name: /^Experiência/ });
     expect(item).toHaveAttribute("aria-current", "step");
-    expect(item).toHaveTextContent(/^Experiência1/);
+    expect(item).toHaveTextContent("(concluída)");
     expect(
       screen.getByRole("button", { name: /^Certificações/ }),
-    ).toHaveTextContent("vazio");
+    ).toHaveTextContent("(incompleta)");
   });
 });
 

@@ -15,8 +15,6 @@ export type SecaoId = (typeof SECOES)[number]["id"];
 
 export type StatusSecao = {
   concluida: boolean;
-  /** Texto à direita do item na navegação (ex.: "3/3" ou "vazio"). */
-  contador?: string;
 };
 
 const preenchido = (v: string) => v.trim() !== "";
@@ -31,21 +29,9 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
     preenchido(p.telefone) &&
     EMAIL_SIMPLES.test(p.email);
 
-  // Sem limite de itens: mostra quantos são e, se houver, quantos estão ocultos.
-  const contar = (itens: { exibir?: boolean }[]) => ({
-    total: itens.length,
-    noCv: itens.filter(estaVisivel).length,
-  });
-  const exp = contar(p.experiencias);
-  const form = contar(p.formacoes);
-  const cert = contar(p.certificacoes);
-  const rotulo = ({ total, noCv }: { total: number; noCv: number }) => {
-    if (total === 0) return "vazio";
-    const ocultos = total - noCv;
-    if (ocultos === 0) return String(total);
-    return `${noCv} · ${ocultos} ${ocultos === 1 ? "oculto" : "ocultos"}`;
-  };
-  const nLinks = Object.values(p.links).filter(preenchido).length;
+  const nExp = p.experiencias.filter(estaVisivel).length;
+  const nFor = p.formacoes.filter(estaVisivel).length;
+  const nCert = p.certificacoes.filter(estaVisivel).length;
   const temHabilidades =
     p.habilidades.linguagens.length +
       p.habilidades.frameworks.length +
@@ -56,21 +42,17 @@ export function statusDasSecoes(p: Perfil): Record<SecaoId, StatusSecao> {
     dados: { concluida: dadosCompletos },
     resumo: { concluida: preenchido(p.resumo) },
     experiencia: {
-      concluida: exp.noCv > 0,
-      contador: rotulo(exp),
+      concluida: nExp > 0,
     },
     formacao: {
-      concluida: form.noCv > 0,
-      contador: rotulo(form),
+      concluida: nFor > 0,
     },
     certificacoes: {
-      concluida: cert.noCv > 0,
-      contador: rotulo(cert),
+      concluida: nCert > 0,
     },
     habilidades: { concluida: temHabilidades },
     links: {
       concluida: preenchido(p.links.linkedin),
-      contador: `${nLinks}/3`,
     },
   };
 }

@@ -104,3 +104,7 @@ Registro curto das decisões que não estavam no prompt original.
 
 - **Contador da navegação sem "x/y":** como não há mais limite, mostra só quantos itens existem (`3`) e, se houver ocultos, `2 · 1 oculto`. "Links e portfólio" mantém `n/3`, porque são 3 campos fixos.
 - **Links clicáveis no PDF:** e-mail (`mailto:`), telefone (`tel:+55…`) e LinkedIn/GitHub/portfólio (`https://…`) viram anotações de link com o componente `Link` do react-pdf, **mantendo o texto e a aparência de antes** (sem https:// no texto, sem sublinhado nem cor), então a extração de texto do ATS não muda. `CvModel.contato` passou de `string[]` para `{ texto, href? }[]`. Teste lê as anotações de link do PDF com pdfjs e confere URL e área clicável; sem contato, não há links. Placeholders do preview não são clicáveis.
+
+## Navegação sem contadores
+
+- Os contadores à direita das seções foram removidos: a navegação mostra só o nome e o ícone de estado (ativa, concluída, pendente). Seção com todos os itens ocultos conta como pendente.

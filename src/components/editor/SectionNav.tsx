@@ -48,11 +48,6 @@ export function SectionNav({
                   }
                 />
                 <span className="flex-1">{titulo}</span>
-                {s.contador && (
-                  <span className="text-muted text-sm font-normal">
-                    {s.contador}
-                  </span>
-                )}
                 <span className="sr-only">
                   {s.concluida ? " (concluída)" : " (incompleta)"}
                 </span>

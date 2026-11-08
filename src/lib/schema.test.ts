@@ -36,7 +36,8 @@ describe("perfilSchema", () => {
 
   it("aceita item sem a marca exibir (dados antigos) e com exibir false", () => {
     const perfil = criarPerfilVazio();
-    const { exibir: _ignorado, ...semMarca } = criarExperienciaVazia();
+    const semMarca = criarExperienciaVazia();
+    delete semMarca.exibir;
     perfil.experiencias = [semMarca, { ...semMarca, id: "x", exibir: false }];
     expect(perfilSchema.safeParse(perfil).success).toBe(true);
   });

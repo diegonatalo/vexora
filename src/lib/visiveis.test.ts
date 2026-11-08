@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { montarCv } from "@/lib/pdf/cv-model";
-import { statusDasSecoes } from "@/lib/secoes";
 import { somenteVisiveis } from "@/lib/visiveis";
 import { perfilCompleto } from "@/tests/fixtures";
 
@@ -32,11 +31,5 @@ describe("exibir no CV", () => {
     expect(cv.experiencias).toHaveLength(2);
     expect(JSON.stringify(cv)).not.toContain("Cargo 1");
     expect(cv.certificacoes).toHaveLength(0);
-  });
-
-  it("o contador da navegação mostra o total e quantos estão ocultos", () => {
-    const p = perfilCompleto();
-    p.experiencias[2].exibir = false;
-    expect(statusDasSecoes(p).experiencia.contador).toBe("2 · 1 oculto");
   });
 });
