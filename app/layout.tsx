@@ -42,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Aplica o tema salvo antes da primeira pintura (evita o "flash" claro). */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("vexora:theme:v1");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`,
+            __html: `try{var t=localStorage.getItem("vexora:theme:v1");if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.classList.toggle("dark",t==="dark")}catch(e){}`,
           }}
         />
       </head>

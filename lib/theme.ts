@@ -4,16 +4,22 @@ const KEY = "vexora:theme:v1";
 const EVENT = "vexora:theme:v1";
 const MEDIA_DARK = "(prefers-color-scheme: dark)";
 
-/** Tema em uso: a escolha da pessoa ou, sem escolha, a do sistema. */
+const hasChoice = () => {
+  try {
+    const stored = localStorage.getItem(KEY);
+    return stored === "dark" || stored === "light";
+  } catch {
+    return false;
+  }
+};
+
+/** Tema em uso: a classe dark do <html> (definida por um script antes da primeira pintura). */
 export function currentTheme(): Theme {
-  const escolhido = document.documentElement.dataset.theme;
-  if (escolhido === "dark") return "escuro";
-  if (escolhido === "light") return "claro";
-  return window.matchMedia(MEDIA_DARK).matches ? "escuro" : "claro";
+  return document.documentElement.classList.contains("dark") ? "escuro" : "claro";
 }
 
 export function setTheme(theme: Theme) {
-  document.documentElement.dataset.theme = theme === "escuro" ? "dark" : "light";
+  document.documentElement.classList.toggle("dark", theme === "escuro");
   try {
     localStorage.setItem(KEY, theme === "escuro" ? "dark" : "light");
   } catch {
@@ -24,10 +30,17 @@ export function setTheme(theme: Theme) {
 
 export function subscribeTheme(onChange: () => void) {
   const media = window.matchMedia(MEDIA_DARK);
+  // Sem escolha salva, acompanha o sistema.
+  const onSystemChange = () => {
+    if (!hasChoice()) {
+      document.documentElement.classList.toggle("dark", media.matches);
+    }
+    onChange();
+  };
   window.addEventListener(EVENT, onChange);
-  media.addEventListener("change", onChange);
+  media.addEventListener("change", onSystemChange);
   return () => {
     window.removeEventListener(EVENT, onChange);
-    media.removeEventListener("change", onChange);
+    media.removeEventListener("change", onSystemChange);
   };
 }

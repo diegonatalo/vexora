@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
  * Tokens de design da Vexora (ver docs/decisions.md).
  * Superfícies quentes e claras, esmeralda como única cor de destaque,
@@ -39,12 +41,12 @@
     var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Tema escuro: mesmos nomes de token, valores novos. Vale quando a pessoa
-   escolheu "escuro" ou, sem escolha, quando o sistema está em modo escuro. */
+/* Tema escuro: mesmos nomes de token, valores novos. A classe dark do <html> é
+   definida antes da primeira pintura (escolha salva ou preferência do sistema). */
 :root {
   color-scheme: light;
 }
-:root[data-theme="dark"] {
+:root.dark {
   color-scheme: dark;
   --color-paper: #0c0f11;
   --color-stage: #080a0c;
@@ -67,34 +69,6 @@
   --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.5), 0 24px 48px -20px rgb(0 0 0 / 0.8);
   --shadow-sheet:
     0 2px 4px rgb(0 0 0 / 0.5), 0 28px 60px -24px rgb(0 0 0 / 0.9);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --color-paper: #0c0f11;
-    --color-stage: #080a0c;
-    --color-surface: #15191d;
-    --color-sunken: #101316;
-    --color-ink: #ecebe6;
-    --color-muted: #a4a9b1;
-    --color-line: #262c32;
-    --color-field: #7f8791;
-    --color-accent: #46c79b;
-    --color-accent-strong: #5dd4ac;
-    --color-accent-deep: #9be3c8;
-    --color-accent-soft: #12302a;
-    --color-glow: #0f2b23;
-    --color-warn-bg: #3a2a0b;
-    --color-warn-ink: #ffd9a0;
-    --color-warn-icon: #f0a64a;
-    --color-on-accent: #04261b;
-    --shadow-card:
-      0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.7);
-    --shadow-pop:
-      0 1px 2px rgb(0 0 0 / 0.5), 0 24px 48px -20px rgb(0 0 0 / 0.8);
-    --shadow-sheet:
-      0 2px 4px rgb(0 0 0 / 0.5), 0 28px 60px -24px rgb(0 0 0 / 0.9);
-  }
 }
 
 html {
