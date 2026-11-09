@@ -1,72 +1,72 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { montarCv, TITULOS_SECAO } from "@/lib/pdf/cv-model";
-import { criarPerfilVazio } from "@/lib/schema";
-import { perfilCompleto } from "@/tests/fixtures";
-import { ajustarEmNode, gerarELer, lerLinks } from "@/tests/pdf-utils";
+import { buildCv, SECTION_TITLES } from "@/lib/pdf/cv-model";
+import { createEmptyProfile } from "@/lib/schema";
+import { completeProfile } from "@/tests/fixtures";
+import { fitInNode, generateAndRead, readLinks } from "@/tests/pdf-utils";
 
 describe("CvDocument", () => {
   it("gera 1 página para um perfil completo (3 experiências x 3 tópicos)", async () => {
-    const r = await ajustarEmNode(montarCv(perfilCompleto()));
-    expect(r.coube).toBe(true);
-    expect(r.medicao.paginas).toBe(1);
+    const r = await fitInNode(buildCv(completeProfile()));
+    expect(r.fitted).toBe(true);
+    expect(r.measurement.pages).toBe(1);
   });
 
   it("mantém texto real e selecionável, com acentos corretos", async () => {
-    const { texto } = await gerarELer(montarCv(perfilCompleto()));
-    expect(texto).toContain("Ana Çéã Souza");
-    expect(texto).toContain("São Paulo, SP");
-    expect(texto).toContain("Certificação ação");
-    expect(texto).toContain("Experiência".toUpperCase());
-    expect(texto).toContain("Órgão");
-    expect(texto).toContain("Bacharelado em Ciência da Computação");
+    const { text } = await generateAndRead(buildCv(completeProfile()));
+    expect(text).toContain("Ana Çéã Souza");
+    expect(text).toContain("São Paulo, SP");
+    expect(text).toContain("Certificação ação");
+    expect(text).toContain("Experiência".toUpperCase());
+    expect(text).toContain("Órgão");
+    expect(text).toContain("Bacharelado em Ciência da Computação");
     // Sem hifenização automática: "migração" não pode virar "mi-gração".
-    expect(texto).toContain("migração");
+    expect(text).toContain("migração");
   });
 
   it("escreve as seções na ordem do layout", async () => {
-    const { texto } = await gerarELer(montarCv(perfilCompleto()));
-    const maiusculo = texto.toUpperCase();
-    const posicoes = [
-      TITULOS_SECAO.resumo,
-      TITULOS_SECAO.experiencia,
-      TITULOS_SECAO.formacao,
-      TITULOS_SECAO.certificacoes,
-      TITULOS_SECAO.habilidades,
-      TITULOS_SECAO.idiomas,
-    ].map((t) => maiusculo.indexOf(t.toUpperCase()));
-    expect(posicoes.every((p) => p >= 0)).toBe(true);
-    expect([...posicoes].sort((a, b) => a - b)).toEqual(posicoes);
+    const { text } = await generateAndRead(buildCv(completeProfile()));
+    const uppercase = text.toUpperCase();
+    const positions = [
+      SECTION_TITLES.summary,
+      SECTION_TITLES.experience,
+      SECTION_TITLES.education,
+      SECTION_TITLES.certifications,
+      SECTION_TITLES.skills,
+      SECTION_TITLES.languages,
+    ].map((t) => uppercase.indexOf(t.toUpperCase()));
+    expect(positions.every((p) => p >= 0)).toBe(true);
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 
   it("mostra datas em MM/AAAA, 'Atual' e as linhas de habilidades", async () => {
-    const { texto } = await gerarELer(montarCv(perfilCompleto()));
-    expect(texto).toContain("01/2020 – Atual");
-    expect(texto).toContain("01/2020 – 12/2021");
-    expect(texto).toContain("Linguagens:");
-    expect(texto).toContain("Frameworks e bibliotecas:");
-    expect(texto).toContain("Ferramentas:");
+    const { text } = await generateAndRead(buildCv(completeProfile()));
+    expect(text).toContain("01/2020 – Atual");
+    expect(text).toContain("01/2020 – 12/2021");
+    expect(text).toContain("Linguagens:");
+    expect(text).toContain("Frameworks e bibliotecas:");
+    expect(text).toContain("Ferramentas:");
   });
 
   it("omite seções sem conteúdo no PDF baixado", async () => {
-    const p = criarPerfilVazio();
-    p.nomeCompleto = "Ana";
-    const { texto, paginas } = await gerarELer(montarCv(p));
-    expect(paginas).toBe(1);
-    expect(texto).toContain("Ana");
-    expect(texto.toUpperCase()).not.toContain("EXPERIÊNCIA PROFISSIONAL");
+    const p = createEmptyProfile();
+    p.fullName = "Ana";
+    const { text, pages } = await generateAndRead(buildCv(p));
+    expect(pages).toBe(1);
+    expect(text).toContain("Ana");
+    expect(text.toUpperCase()).not.toContain("EXPERIÊNCIA PROFISSIONAL");
   });
 
   it("gera 1 página também com os placeholders da pré-visualização", async () => {
-    const { paginas } = await gerarELer(
-      montarCv(criarPerfilVazio(), { placeholders: true }),
+    const { pages } = await generateAndRead(
+      buildCv(createEmptyProfile(), { placeholders: true }),
     );
-    expect(paginas).toBe(1);
+    expect(pages).toBe(1);
   });
 
   it("deixa e-mail, telefone e links clicáveis no PDF", async () => {
-    const { bytes, texto } = await gerarELer(montarCv(perfilCompleto()));
-    const links = await lerLinks(bytes);
+    const { bytes, text } = await generateAndRead(buildCv(completeProfile()));
+    const links = await readLinks(bytes);
     expect(links.map((l) => l.url).sort()).toEqual(
       [
         "mailto:ana@exemplo.com",
@@ -77,14 +77,14 @@ describe("CvDocument", () => {
       ].sort(),
     );
     // A área clicável existe de verdade (não é um retângulo vazio).
-    for (const l of links) expect(l.largura).toBeGreaterThan(20);
+    for (const l of links) expect(l.width).toBeGreaterThan(20);
     // E o texto continua o mesmo para o ATS: sem https:// e na mesma linha.
-    expect(texto).toContain("linkedin.com/in/ana");
-    expect(texto).toContain("ana@exemplo.com");
+    expect(text).toContain("linkedin.com/in/ana");
+    expect(text).toContain("ana@exemplo.com");
   });
 
   it("sem contato preenchido não há links", async () => {
-    const { bytes } = await gerarELer(montarCv(criarPerfilVazio()));
-    expect(await lerLinks(bytes)).toEqual([]);
+    const { bytes } = await generateAndRead(buildCv(createEmptyProfile()));
+    expect(await readLinks(bytes)).toEqual([]);
   });
 });

@@ -1,74 +1,72 @@
 import { del, get, set } from "idb-keyval";
 import {
   backupSchema,
-  criarPerfilVazio,
-  perfilSchema,
+  createEmptyProfile,
+  profileSchema,
   type Backup,
-  type Perfil,
+  type Profile,
 } from "@/lib/schema";
-import { migrarPerfil } from "@/lib/migrar";
-import { sanitizar } from "@/lib/sanitizar";
+import { migrateBackup, migrateProfile } from "@/lib/migrate";
+import { sanitize } from "@/lib/sanitize";
 
-const CHAVE_PERFIL = "folha:perfil";
+const PROFILE_KEY = "folha:perfil";
 // Chave de uma versão antiga do app (que guardava "versões" do CV): só é apagada.
-const CHAVE_LEGADA_VERSOES = "folha:versoes";
+const LEGACY_VERSIONS_KEY = "folha:versoes";
 
-export type Dados = { perfil: Perfil };
+export type AppData = { profile: Profile };
 
 /**
  * Carrega os dados salvos. Rascunhos com campos inválidos são recuperados
  * (campos inválidos esvaziados); dado ausente ou sem conserto (schema mudou,
  * edição manual) cai para um perfil vazio em vez de quebrar a aplicação.
  */
-export async function carregarDados(): Promise<Dados> {
-  const perfil =
-    sanitizar(perfilSchema, migrarPerfil(await get(CHAVE_PERFIL))) ??
-    criarPerfilVazio();
+export async function loadData(): Promise<AppData> {
+  const profile =
+    sanitize(profileSchema, migrateProfile(await get(PROFILE_KEY))) ??
+    createEmptyProfile();
 
-  return { perfil };
+  return { profile };
 }
 
-export async function salvarDados(dados: Dados): Promise<void> {
-  await set(CHAVE_PERFIL, dados.perfil);
+export async function saveData(data: AppData): Promise<void> {
+  await set(PROFILE_KEY, data.profile);
 }
 
-export async function apagarDados(): Promise<void> {
-  await del(CHAVE_PERFIL);
-  await del(CHAVE_LEGADA_VERSOES);
+export async function deleteData(): Promise<void> {
+  await del(PROFILE_KEY);
+  await del(LEGACY_VERSIONS_KEY);
 }
 
-export function exportarJson(dados: Dados, agora = new Date()): string {
+export function exportJson(data: AppData, now = new Date()): string {
   const backup: Backup = {
-    formato: 1,
-    exportadoEm: agora.toISOString(),
-    perfil: dados.perfil,
+    format: 1,
+    exportedAt: now.toISOString(),
+    profile: data.profile,
   };
   return JSON.stringify(backup, null, 2);
 }
 
-export type ResultadoImportacao =
-  { ok: true; dados: Dados } | { ok: false; erro: string };
+export type ImportResult =
+  { ok: true; data: AppData } | { ok: false; error: string };
 
-export function importarJson(texto: string): ResultadoImportacao {
-  let bruto: unknown;
+export function importJson(text: string): ImportResult {
+  let raw: unknown;
   try {
-    bruto = JSON.parse(texto);
+    raw = JSON.parse(text);
   } catch {
-    return { ok: false, erro: "O arquivo não é um JSON válido." };
+    return { ok: false, error: "O arquivo não é um JSON válido." };
   }
-  if (typeof bruto === "object" && bruto !== null && "perfil" in bruto) {
-    bruto = { ...bruto, perfil: migrarPerfil(bruto.perfil) };
-  }
-  const resultado = backupSchema.safeParse(bruto);
-  if (!resultado.success) {
+  raw = migrateBackup(raw);
+  const result = backupSchema.safeParse(raw);
+  if (!result.success) {
     return {
       ok: false,
-      erro: "O arquivo não parece ser um backup da Vexora ou está incompleto.",
+      error: "O arquivo não parece ser um backup da Vexora ou está incompleto.",
     };
   }
-  const { perfil } = resultado.data;
+  const { profile } = result.data;
   return {
     ok: true,
-    dados: { perfil },
+    data: { profile },
   };
 }

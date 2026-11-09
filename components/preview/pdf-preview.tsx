@@ -2,68 +2,68 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icons";
-import { carregarPdfjs } from "@/lib/pdf/pdfjs";
+import { loadPdfjs } from "@/lib/pdf/pdfjs";
 
 /** Largura de renderização do canvas (nítido em telas 2x/3x). */
-const LARGURA_PX = 1000;
+const WIDTH_PX = 1000;
 
 type Props = {
   /** PDF já gerado e ajustado (o mesmo que será baixado). */
   bytes: Uint8Array | null;
-  paginas: number | null;
-  gerando: boolean;
-  erro: boolean;
+  pages: number | null;
+  generating: boolean;
+  error: boolean;
 };
 
 /**
  * Desenha a página 1 do PDF em um canvas com pdfjs (funciona também em
  * celulares, onde <iframe> com PDF não funciona).
  */
-export default function PdfPreview({ bytes, paginas, gerando, erro }: Props) {
+export default function PdfPreview({ bytes, pages, generating, error }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [falhouAoDesenhar, setFalhouAoDesenhar] = useState(false);
+  const [renderFailed, setRenderFailed] = useState(false);
 
   useEffect(() => {
     if (!bytes) return;
-    let cancelado = false;
+    let cancelled = false;
 
     (async () => {
-      const pdfjs = await carregarPdfjs();
+      const pdfjs = await loadPdfjs();
       // O pdfjs entrega o buffer ao worker (e o esvazia): passa uma cópia.
-      const tarefa = pdfjs.getDocument({ data: bytes.slice() });
+      const task = pdfjs.getDocument({ data: bytes.slice() });
       try {
-        const doc = await tarefa.promise;
-        const pagina = await doc.getPage(1);
-        const base = pagina.getViewport({ scale: 1 });
-        const viewport = pagina.getViewport({ scale: LARGURA_PX / base.width });
+        const doc = await task.promise;
+        const page = await doc.getPage(1);
+        const base = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({ scale: WIDTH_PX / base.width });
 
         // Desenha fora da tela e só então copia: evita piscar e conflito
         // entre renderizações que se sobrepõem.
-        const fora = document.createElement("canvas");
-        fora.width = Math.floor(viewport.width);
-        fora.height = Math.floor(viewport.height);
-        await pagina.render({ canvas: fora, viewport }).promise;
-        if (cancelado) return;
+        const outside = document.createElement("canvas");
+        outside.width = Math.floor(viewport.width);
+        outside.height = Math.floor(viewport.height);
+        await page.render({ canvas: outside, viewport }).promise;
+        if (cancelled) return;
 
-        const destino = canvasRef.current;
-        if (!destino) return;
-        destino.width = fora.width;
-        destino.height = fora.height;
-        destino.getContext("2d")?.drawImage(fora, 0, 0);
-        setFalhouAoDesenhar(false);
+        const destination = canvasRef.current;
+        if (!destination) return;
+        destination.width = outside.width;
+        destination.height = outside.height;
+        destination.getContext("2d")?.drawImage(outside, 0, 0);
+        setRenderFailed(false);
       } finally {
-        void tarefa.destroy();
+        void task.destroy();
       }
     })().catch(() => {
-      if (!cancelado) setFalhouAoDesenhar(true);
+      if (!cancelled) setRenderFailed(true);
     });
 
     return () => {
-      cancelado = true;
+      cancelled = true;
     };
   }, [bytes]);
 
-  const comErro = erro || falhouAoDesenhar;
+  const withError = error || renderFailed;
   return (
     <div className="bg-stage border-line rounded-card border p-4 sm:p-6">
       <div className="relative">
@@ -73,7 +73,7 @@ export default function PdfPreview({ bytes, paginas, gerando, erro }: Props) {
           aria-label="Pré-visualização do CV em A4"
           className="shadow-sheet aspect-[1/1.4142] h-auto w-full rounded-[3px] bg-white"
         />
-        {!bytes && !comErro && (
+        {!bytes && !withError && (
           <p
             role="status"
             className="text-muted absolute inset-0 grid place-items-center text-sm"
@@ -83,7 +83,7 @@ export default function PdfPreview({ bytes, paginas, gerando, erro }: Props) {
         )}
       </div>
       <p className="text-muted mt-4 text-center text-sm" role="status">
-        {comErro ? (
+        {withError ? (
           <span className="text-warn-ink inline-flex items-center gap-1.5">
             <Icon name="alert" size={16} className="text-warn-icon" />
             Não foi possível gerar a pré-visualização.
@@ -91,9 +91,9 @@ export default function PdfPreview({ bytes, paginas, gerando, erro }: Props) {
         ) : (
           <>
             Pré-visualização em tempo real · A4
-            {paginas !== null &&
-              ` · ${paginas} ${paginas === 1 ? "página" : "páginas"}`}
-            {gerando && bytes ? " · atualizando…" : ""}
+            {pages !== null &&
+              ` · ${pages} ${pages === 1 ? "página" : "páginas"}`}
+            {generating && bytes ? " · atualizando…" : ""}
           </>
         )}
       </p>

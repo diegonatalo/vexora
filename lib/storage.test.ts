@@ -1,79 +1,79 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
-  apagarDados,
-  carregarDados,
-  exportarJson,
-  importarJson,
-  salvarDados,
+  deleteData,
+  loadData,
+  exportJson,
+  importJson,
+  saveData,
 } from "@/lib/storage";
-import { criarExperienciaVazia } from "@/lib/schema";
+import { createEmptyExperience } from "@/lib/schema";
 
 beforeEach(async () => {
-  await apagarDados();
+  await deleteData();
 });
 
 describe("storage", () => {
   it("cria um perfil vazio na primeira carga", async () => {
-    const { perfil } = await carregarDados();
-    expect(perfil.nomeCompleto).toBe("");
+    const { profile } = await loadData();
+    expect(profile.fullName).toBe("");
   });
 
   it("mantém os dados após salvar e carregar de novo", async () => {
-    const dados = await carregarDados();
-    dados.perfil.nomeCompleto = "Ana Çéã";
-    dados.perfil.experiencias = [
+    const data = await loadData();
+    data.profile.fullName = "Ana Çéã";
+    data.profile.experiences = [
       {
-        ...criarExperienciaVazia(),
-        cargo: "Dev",
-        inicio: "01/2021",
-        atual: true,
+        ...createEmptyExperience(),
+        jobTitle: "Dev",
+        start: "01/2021",
+        current: true,
       },
     ];
-    await salvarDados(dados);
-    expect(await carregarDados()).toEqual(dados);
+    await saveData(data);
+    expect(await loadData()).toEqual(data);
   });
 
   it("exporta e reimporta sem perda", async () => {
-    const dados = await carregarDados();
-    dados.perfil.nomeCompleto = "Ana";
-    dados.perfil.habilidades = [
-      { titulo: "Linguagens", itens: ["TypeScript", "C#"], exibir: true },
+    const data = await loadData();
+    data.profile.fullName = "Ana";
+    data.profile.skills = [
+      { title: "Linguagens", items: ["TypeScript", "C#"], visible: true },
     ];
-    const resultado = importarJson(exportarJson(dados));
-    expect(resultado).toEqual({ ok: true, dados });
+    const result = importJson(exportJson(data));
+    expect(result).toEqual({ ok: true, data });
   });
 
   it("rejeita JSON inválido ou de outro formato", () => {
-    expect(importarJson("{quebrado").ok).toBe(false);
-    expect(importarJson(JSON.stringify({ foo: 1 })).ok).toBe(false);
+    expect(importJson("{quebrado").ok).toBe(false);
+    expect(importJson(JSON.stringify({ foo: 1 })).ok).toBe(false);
   });
 
   it("recupera rascunho com campos inválidos, esvaziando só eles", async () => {
-    const dados = await carregarDados();
-    dados.perfil.nomeCompleto = "Ana";
-    dados.perfil.email = "ana@";
-    dados.perfil.experiencias = [
+    const data = await loadData();
+    data.profile.fullName = "Ana";
+    data.profile.email = "ana@";
+    data.profile.experiences = [
       {
-        ...criarExperienciaVazia(),
-        cargo: "Dev",
-        inicio: "3/2022",
-        topicos: ["x".repeat(130), "", ""],
+        ...createEmptyExperience(),
+        jobTitle: "Dev",
+        start: "3/2022",
+        bullets: ["x".repeat(130), "", ""],
       },
     ];
-    await salvarDados(dados);
+    await saveData(data);
 
-    const { perfil } = await carregarDados();
-    expect(perfil.nomeCompleto).toBe("Ana");
-    expect(perfil.email).toBe("");
-    expect(perfil.experiencias[0].cargo).toBe("Dev");
-    expect(perfil.experiencias[0].inicio).toBe("");
-    expect(perfil.experiencias[0].topicos[0]).toHaveLength(110);
+    const { profile } = await loadData();
+    expect(profile.fullName).toBe("Ana");
+    expect(profile.email).toBe("");
+    expect(profile.experiences[0].jobTitle).toBe("Dev");
+    expect(profile.experiences[0].start).toBe("");
+    expect(profile.experiences[0].bullets[0]).toHaveLength(110);
   });
 
   it("volta ao perfil vazio se o dado salvo estiver corrompido", async () => {
     const { set } = await import("idb-keyval");
-    await set("folha:perfil", { lixo: true });
-    const { perfil } = await carregarDados();
-    expect(perfil.nomeCompleto).toBe("");
+    await set("folha:perfil", { garbage: true });
+    const { profile } = await loadData();
+    expect(profile.fullName).toBe("");
   });
 });

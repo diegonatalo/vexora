@@ -1,58 +1,58 @@
 import { describe, expect, it } from "vitest";
 import {
-  criarExperienciaVazia,
-  criarPerfilVazio,
-  experienciaSchema,
-  perfilSchema,
+  createEmptyExperience,
+  createEmptyProfile,
+  experienceSchema,
+  profileSchema,
 } from "@/lib/schema";
 
 describe("perfilSchema", () => {
   it("aceita um perfil vazio (rascunho)", () => {
-    expect(perfilSchema.safeParse(criarPerfilVazio()).success).toBe(true);
+    expect(profileSchema.safeParse(createEmptyProfile()).success).toBe(true);
   });
 
   it("rejeita e-mail e URL inválidos", () => {
-    const perfil = criarPerfilVazio();
-    perfil.email = "nao-e-email";
-    perfil.links.linkedin = "linkedin sem url";
-    const r = perfilSchema.safeParse(perfil);
+    const profile = createEmptyProfile();
+    profile.email = "nao-e-email";
+    profile.links.linkedin = "linkedin sem url";
+    const r = profileSchema.safeParse(profile);
     expect(r.success).toBe(false);
-    const caminhos = r.error!.issues.map((i) => i.path.join("."));
-    expect(caminhos).toContain("email");
-    expect(caminhos).toContain("links.linkedin");
+    const paths = r.error!.issues.map((i) => i.path.join("."));
+    expect(paths).toContain("email");
+    expect(paths).toContain("links.linkedin");
   });
 
   it("não limita a quantidade de itens das listas", () => {
-    const perfil = criarPerfilVazio();
-    perfil.experiencias = Array.from({ length: 8 }, criarExperienciaVazia);
-    perfil.certificacoes = Array.from({ length: 10 }, (_, i) => ({
+    const profile = createEmptyProfile();
+    profile.experiences = Array.from({ length: 8 }, createEmptyExperience);
+    profile.certifications = Array.from({ length: 10 }, (_, i) => ({
       id: `c${i}`,
-      nome: "",
-      instituicao: "",
-      ano: "",
+      name: "",
+      institution: "",
+      year: "",
     }));
-    expect(perfilSchema.safeParse(perfil).success).toBe(true);
+    expect(profileSchema.safeParse(profile).success).toBe(true);
   });
 
   it("aceita item sem a marca exibir (dados antigos) e com exibir false", () => {
-    const perfil = criarPerfilVazio();
-    const semMarca = criarExperienciaVazia();
-    delete semMarca.exibir;
-    perfil.experiencias = [semMarca, { ...semMarca, id: "x", exibir: false }];
-    expect(perfilSchema.safeParse(perfil).success).toBe(true);
+    const profile = createEmptyProfile();
+    const withoutMark = createEmptyExperience();
+    delete withoutMark.visible;
+    profile.experiences = [withoutMark, { ...withoutMark, id: "x", visible: false }];
+    expect(profileSchema.safeParse(profile).success).toBe(true);
   });
 });
 
 describe("experienciaSchema", () => {
   const base = () => ({
-    ...criarExperienciaVazia(),
-    cargo: "[Cargo]",
-    empresa: "[Empresa]",
+    ...createEmptyExperience(),
+    jobTitle: "[Cargo]",
+    company: "[Empresa]",
   });
 
   it.each(["03/2022", "12/1999", ""])("aceita data %s", (data) => {
     expect(
-      experienciaSchema.safeParse({ ...base(), inicio: data }).success,
+      experienceSchema.safeParse({ ...base(), start: data }).success,
     ).toBe(true);
   });
 
@@ -60,50 +60,50 @@ describe("experienciaSchema", () => {
     "rejeita data fora do padrão %s",
     (data) => {
       expect(
-        experienciaSchema.safeParse({ ...base(), inicio: data }).success,
+        experienceSchema.safeParse({ ...base(), start: data }).success,
       ).toBe(false);
     },
   );
 
   it("exige início <= fim", () => {
-    const r = experienciaSchema.safeParse({
+    const r = experienceSchema.safeParse({
       ...base(),
-      inicio: "06/2023",
-      fim: "05/2023",
+      start: "06/2023",
+      end: "05/2023",
     });
     expect(r.success).toBe(false);
     expect(r.error!.issues[0].path).toEqual(["fim"]);
     expect(
-      experienciaSchema.safeParse({
+      experienceSchema.safeParse({
         ...base(),
-        inicio: "06/2023",
-        fim: "06/2023",
+        start: "06/2023",
+        end: "06/2023",
       }).success,
     ).toBe(true);
   });
 
   it("ignora o fim quando é o trabalho atual", () => {
     expect(
-      experienciaSchema.safeParse({
+      experienceSchema.safeParse({
         ...base(),
-        inicio: "06/2023",
-        fim: "01/2020",
-        atual: true,
+        start: "06/2023",
+        end: "01/2020",
+        current: true,
       }).success,
     ).toBe(true);
   });
 
   it("limita tópicos a 3 e a 110 caracteres", () => {
     expect(
-      experienciaSchema.safeParse({ ...base(), topicos: ["a", "b", "c", "d"] })
+      experienceSchema.safeParse({ ...base(), bullets: ["a", "b", "c", "d"] })
         .success,
     ).toBe(false);
     expect(
-      experienciaSchema.safeParse({ ...base(), topicos: ["x".repeat(111)] })
+      experienceSchema.safeParse({ ...base(), bullets: ["x".repeat(111)] })
         .success,
     ).toBe(false);
     expect(
-      experienciaSchema.safeParse({ ...base(), topicos: ["x".repeat(110)] })
+      experienceSchema.safeParse({ ...base(), bullets: ["x".repeat(110)] })
         .success,
     ).toBe(true);
   });

@@ -1,19 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { BackupPerfil } from "@/components/editor/backup-perfil";
+import { ProfileBackup } from "@/components/editor/profile-backup";
 import { EditorShell } from "@/components/editor/editor-shell";
-import { useDados } from "@/lib/use-dados";
+import { useData } from "@/lib/use-data";
 
 export default function EditorPage() {
-  const { dados, estado, atualizar } = useDados();
+  const { data, state, update } = useData();
   // Muda a cada importação para remontar o formulário com os dados novos.
-  const [geracao, setGeracao] = useState(0);
+  const [generation, setGeneration] = useState(0);
 
-  if (!dados) {
+  if (!data) {
     return (
       <p className="p-6" role="status" aria-busy="true">
-        {estado === "erro"
+        {state === "error"
           ? "Não foi possível abrir o armazenamento deste navegador."
           : "Carregando…"}
       </p>
@@ -22,16 +22,16 @@ export default function EditorPage() {
 
   return (
     <EditorShell
-      key={geracao}
-      dadosIniciais={dados}
-      estado={estado}
-      onAlterar={atualizar}
+      key={generation}
+      initialData={data}
+      state={state}
+      onChange={update}
       backup={
-        <BackupPerfil
-          dados={dados}
-          onImportar={(importados) => {
-            atualizar(importados);
-            setGeracao((g) => g + 1);
+        <ProfileBackup
+          data={data}
+          onImport={(imported) => {
+            update(imported);
+            setGeneration((g) => g + 1);
           }}
         />
       }

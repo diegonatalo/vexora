@@ -5,32 +5,32 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AtsCard } from "@/components/editor/ats-card";
-import { EspacoPagina } from "@/components/editor/espaco-pagina";
+import { PageSpace } from "@/components/editor/page-space";
 import { SectionNav } from "@/components/editor/section-nav";
 import {
-  DadosPessoaisSecao,
-  LinksSecao,
-  ResumoSecao,
-} from "@/components/editor/secoes/secoes-simples";
-import { ExperienciaSecao } from "@/components/editor/secoes/experiencia-secao";
+  PersonalDataSection,
+  LinksSection,
+  SummarySection,
+} from "@/components/editor/sections/secoes-simples";
+import { ExperienceSection } from "@/components/editor/sections/experiencia-secao";
 import {
-  CertificacoesSecao,
-  FormacaoSecao,
-  HabilidadesSecao,
-} from "@/components/editor/secoes/listas-secoes";
-import { useAnalise } from "@/components/preview/use-analise";
-import { AlternarTema } from "@/components/ui/alternar-tema";
-import { BOTAO, CARTAO } from "@/components/ui/estilos";
+  CertificationsSection,
+  EducationSection,
+  SkillsSection,
+} from "@/components/editor/sections/listas-secoes";
+import { useAnalysis } from "@/components/preview/use-analysis";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { BUTTON, CARD } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
-import { rodarChecagens } from "@/lib/ats/checks";
-import { sugerirEnxugar } from "@/lib/ats/enxugar";
-import { nomeDoArquivo } from "@/lib/pdf/gerar";
-import { prepararPdf } from "@/lib/pdf/preparar";
-import { perfilSchema, type Perfil } from "@/lib/schema";
-import { somenteVisiveis } from "@/lib/visiveis";
-import { SECOES, statusDasSecoes, type SecaoId } from "@/lib/secoes";
-import type { Dados } from "@/lib/storage";
-import type { EstadoSalvamento } from "@/lib/use-dados";
+import { runChecks } from "@/lib/ats/checks";
+import { suggestTrim } from "@/lib/ats/trim";
+import { fileName } from "@/lib/pdf/generate";
+import { preparePdf } from "@/lib/pdf/prepare";
+import { profileSchema, type Profile } from "@/lib/schema";
+import { onlyVisible } from "@/lib/visibility";
+import { SECTIONS, sectionStatuses, type SectionId } from "@/lib/sections";
+import type { AppData } from "@/lib/storage";
+import type { SaveState } from "@/lib/use-data";
 
 // pdfjs e react-pdf só no navegador, e fora do bundle inicial.
 const PdfPreview = dynamic(() => import("@/components/preview/pdf-preview"), {
@@ -42,125 +42,125 @@ const PdfPreview = dynamic(() => import("@/components/preview/pdf-preview"), {
   ),
 });
 
-const TEXTO_ESTADO: Record<EstadoSalvamento, string> = {
-  carregando: "Carregando…",
-  salvando: "Salvando…",
-  salvo: "Salvo neste navegador",
-  erro: "Não foi possível salvar",
+const STATE_TEXT: Record<SaveState, string> = {
+  loading: "Carregando…",
+  saving: "Salvando…",
+  saved: "Salvo neste navegador",
+  error: "Não foi possível salvar",
 };
 
-const SECAO_COMPONENTE: Record<SecaoId, () => React.JSX.Element> = {
-  dados: DadosPessoaisSecao,
-  resumo: ResumoSecao,
-  experiencia: ExperienciaSecao,
-  formacao: FormacaoSecao,
-  certificacoes: CertificacoesSecao,
-  habilidades: HabilidadesSecao,
-  links: LinksSecao,
+const SECTION_COMPONENT: Record<SectionId, () => React.JSX.Element> = {
+  personal: PersonalDataSection,
+  summary: SummarySection,
+  experience: ExperienceSection,
+  education: EducationSection,
+  certifications: CertificationsSection,
+  skills: SkillsSection,
+  links: LinksSection,
 };
 
 type Props = {
-  dadosIniciais: Dados;
-  estado: EstadoSalvamento;
-  onAlterar: (dados: Dados) => void;
+  initialData: AppData;
+  state: SaveState;
+  onChange: (data: AppData) => void;
   /** Slot do rodapé da coluna 1 (exportar/importar). */
   backup?: React.ReactNode;
 };
 
 export function EditorShell({
-  dadosIniciais,
-  estado,
-  onAlterar,
+  initialData,
+  state,
+  onChange,
   backup,
 }: Props) {
-  const form = useForm<Perfil>({
-    resolver: zodResolver(perfilSchema),
-    defaultValues: dadosIniciais.perfil,
+  const form = useForm<Profile>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: initialData.profile,
     mode: "onTouched",
   });
-  const [ativa, setAtiva] = useState<SecaoId>("dados");
+  const [active, setActive] = useState<SectionId>("personal");
   // Em telas estreitas só um painel aparece por vez (editar ou pré-visualizar).
-  const [painel, setPainel] = useState<"editar" | "previa">("editar");
-  const primeiraRenderizacao = useRef(true);
+  const [panel, setPanel] = useState<"editar" | "previa">("editar");
+  const firstRender = useRef(true);
 
   // Todo rascunho é salvo, mesmo com campos inválidos (ver sanitizar.ts).
   useEffect(() => {
     return form.subscribe({
       formState: { values: true },
-      callback: ({ values }) => onAlterar({ perfil: values }),
+      callback: ({ values }) => onChange({ profile: values }),
     });
-  }, [form, onAlterar]);
+  }, [form, onChange]);
 
   // Ao trocar de seção, leva o foco ao título (leitores de tela e teclado).
   useEffect(() => {
-    if (primeiraRenderizacao.current) {
-      primeiraRenderizacao.current = false;
+    if (firstRender.current) {
+      firstRender.current = false;
       return;
     }
     document.getElementById("secao-titulo")?.focus();
-  }, [ativa]);
+  }, [active]);
 
-  const perfilOriginal = useWatch({ control: form.control }) as Perfil;
+  const originalProfile = useWatch({ control: form.control }) as Profile;
   // O que vai para o CV: sem os itens com "Exibir no CV" desligado.
-  const perfil = useMemo(
-    () => somenteVisiveis(perfilOriginal),
-    [perfilOriginal],
+  const profile = useMemo(
+    () => onlyVisible(originalProfile),
+    [originalProfile],
   );
-  const [baixando, setBaixando] = useState(false);
-  const [erroPdf, setErroPdf] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
-  async function baixarPdf() {
-    setBaixando(true);
-    setErroPdf(null);
+  async function downloadPdf() {
+    setDownloading(true);
+    setPdfError(null);
     try {
       // Refaz o ajuste com os dados de agora (a análise pode estar 400ms atrasada).
-      const atual = form.getValues();
-      const pronto = await prepararPdf(somenteVisiveis(atual));
-      if (!pronto.coube) {
-        setErroPdf(
+      const current = form.getValues();
+      const ready = await preparePdf(onlyVisible(current));
+      if (!ready.fitted) {
+        setPdfError(
           "O CV passa de 1 página. Enxugue o conteúdo para baixar (veja as sugestões em Espaço da página).",
         );
         return;
       }
-      const blob = new Blob([pronto.bytes.slice()], {
+      const blob = new Blob([ready.bytes.slice()], {
         type: "application/pdf",
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = nomeDoArquivo(perfil.nomeCompleto);
+      a.download = fileName(profile.fullName);
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
-      setErroPdf("Não foi possível gerar o PDF. Tente de novo.");
+      setPdfError("Não foi possível gerar o PDF. Tente de novo.");
     } finally {
-      setBaixando(false);
+      setDownloading(false);
     }
   }
 
-  const analise = useAnalise(perfil);
-  const preparado = analise.preparado;
-  const naoCabe = preparado !== null && !preparado.coube;
-  const checagens = useMemo(
+  const analysis = useAnalysis(profile);
+  const prepared = analysis.prepared;
+  const doesNotFit = prepared !== null && !prepared.fitted;
+  const checks = useMemo(
     () =>
-      preparado
-        ? rodarChecagens({ perfil, cv: preparado.cv, pdf: preparado.medicao })
+      prepared
+        ? runChecks({ profile, cv: prepared.cv, pdf: prepared.measurement })
         : null,
-    [perfil, preparado],
+    [profile, prepared],
   );
-  const sugestoes = useMemo(
-    () => (naoCabe ? sugerirEnxugar(perfil) : []),
-    [naoCabe, perfil],
+  const suggestions = useMemo(
+    () => (doesNotFit ? suggestTrim(profile) : []),
+    [doesNotFit, profile],
   );
 
-  const status = statusDasSecoes(perfilOriginal);
-  const indice = SECOES.findIndex((s) => s.id === ativa);
-  const anterior = SECOES[indice - 1];
-  const proxima = SECOES[indice + 1];
-  const SecaoAtiva = SECAO_COMPONENTE[ativa];
+  const status = sectionStatuses(originalProfile);
+  const index = SECTIONS.findIndex((s) => s.id === active);
+  const previous = SECTIONS[index - 1];
+  const next = SECTIONS[index + 1];
+  const ActiveSection = SECTION_COMPONENT[active];
 
-  const concluidas = SECOES.filter((x) => status[x.id].concluida).length;
-  const semNome = !perfil.nomeCompleto.trim();
+  const completedCount = SECTIONS.filter((x) => status[x.id].completed).length;
+  const withoutName = !profile.fullName.trim();
 
   return (
     <FormProvider {...form}>
@@ -179,39 +179,39 @@ export function EditorShell({
               role="status"
               className="border-line bg-surface text-muted flex min-h-9 items-center gap-1.5 rounded-full border px-3 text-sm"
             >
-              {estado === "salvo" && (
+              {state === "saved" && (
                 <Icon name="check" size={16} className="text-accent" />
               )}
-              {estado === "erro" && (
+              {state === "error" && (
                 <Icon name="alert" size={16} className="text-warn-icon" />
               )}
-              <span className="max-sm:sr-only">{TEXTO_ESTADO[estado]}</span>
+              <span className="max-sm:sr-only">{STATE_TEXT[state]}</span>
             </p>
-            <AlternarTema />
+            <ThemeToggle />
             <button
               type="button"
-              className={`${BOTAO.primario} min-h-12 px-5`}
-              disabled={semNome || baixando || naoCabe}
+              className={`${BUTTON.primary} min-h-12 px-5`}
+              disabled={withoutName || downloading || doesNotFit}
               title={
-                semNome
+                withoutName
                   ? "Preencha seu nome para baixar o PDF"
-                  : naoCabe
+                  : doesNotFit
                     ? "O CV passa de 1 página: enxugue o conteúdo para baixar"
                     : undefined
               }
-              onClick={baixarPdf}
+              onClick={downloadPdf}
             >
               <Icon name="download" size={18} />
-              {baixando ? "Gerando…" : "Baixar PDF"}
+              {downloading ? "Gerando…" : "Baixar PDF"}
             </button>
           </div>
-          {erroPdf && (
+          {pdfError && (
             <p
               role="alert"
               className="text-warn-ink bg-warn-bg flex basis-full items-center justify-end gap-1.5 rounded-xl px-3 py-2 text-sm"
             >
               <Icon name="alert" size={16} className="text-warn-icon" />
-              {erroPdf}
+              {pdfError}
             </p>
           )}
         </div>
@@ -220,20 +220,20 @@ export function EditorShell({
       <div className="mx-auto grid w-full max-w-[1680px] grid-cols-[minmax(0,1fr)] items-start gap-6 px-4 pt-6 pb-28 sm:px-6 lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_460px] xl:pb-8">
         <div
           className={`space-y-6 lg:sticky lg:top-24 ${
-            painel === "previa" ? "max-xl:hidden" : ""
+            panel === "previa" ? "max-xl:hidden" : ""
           }`}
         >
           <SectionNav
-            ativa={ativa}
+            active={active}
             status={status}
-            concluidas={concluidas}
-            onSelecionar={setAtiva}
+            completedCount={completedCount}
+            onSelect={setActive}
           />
         </div>
 
         <main
-          className={`${CARTAO} p-5 sm:p-8 lg:p-10 ${
-            painel === "previa" ? "max-xl:hidden" : ""
+          className={`${CARD} p-5 sm:p-8 lg:p-10 ${
+            panel === "previa" ? "max-xl:hidden" : ""
           }`}
         >
           <form
@@ -241,27 +241,27 @@ export function EditorShell({
             noValidate
             aria-label="Editor do perfil"
           >
-            <SecaoAtiva />
+            <ActiveSection />
             <div className="border-line mt-10 flex items-center justify-between gap-3 border-t pt-6">
-              {anterior ? (
+              {previous ? (
                 <button
                   type="button"
-                  className={BOTAO.secundario}
-                  onClick={() => setAtiva(anterior.id)}
+                  className={BUTTON.secondary}
+                  onClick={() => setActive(previous.id)}
                 >
                   <Icon name="arrow-left" size={18} />
-                  {anterior.titulo}
+                  {previous.title}
                 </button>
               ) : (
                 <span />
               )}
-              {proxima && (
+              {next && (
                 <button
                   type="button"
-                  className={BOTAO.escuro}
-                  onClick={() => setAtiva(proxima.id)}
+                  className={BUTTON.escuro}
+                  onClick={() => setActive(next.id)}
                 >
-                  {proxima.titulo}
+                  {next.title}
                   <Icon name="arrow-right" size={18} />
                 </button>
               )}
@@ -272,29 +272,29 @@ export function EditorShell({
 
         <aside
           className={`w-full space-y-5 xl:sticky xl:top-24 xl:max-h-[calc(100vh-7.5rem)] xl:overflow-y-auto xl:pr-1 ${
-            painel === "editar"
+            panel === "editar"
               ? "max-xl:hidden"
               : "max-xl:mx-auto max-xl:max-w-xl lg:col-span-2 xl:col-span-1"
           }`}
         >
-          <EspacoPagina
-            medicao={preparado?.medicao ?? null}
-            ajuste={preparado?.ajuste ?? null}
-            coube={preparado?.coube ?? true}
-            sugestoes={sugestoes}
+          <PageSpace
+            measurement={prepared?.measurement ?? null}
+            layoutFit={prepared?.layoutFit ?? null}
+            fitted={prepared?.fitted ?? true}
+            suggestions={suggestions}
           />
           <section aria-labelledby="previa-titulo">
             <h2 id="previa-titulo" className="sr-only">
               Pré-visualização do CV
             </h2>
             <PdfPreview
-              bytes={preparado?.bytes ?? null}
-              paginas={preparado?.medicao.paginas ?? null}
-              gerando={analise.estado === "gerando"}
-              erro={analise.estado === "erro"}
+              bytes={prepared?.bytes ?? null}
+              pages={prepared?.measurement.pages ?? null}
+              generating={analysis.state === "generating"}
+              error={analysis.state === "error"}
             />
           </section>
-          <AtsCard checagens={checagens} />
+          <AtsCard checks={checks} />
         </aside>
       </div>
 
@@ -308,20 +308,20 @@ export function EditorShell({
             ["editar", "Editar", "pencil"],
             ["previa", "Prévia", "eye"],
           ] as const
-        ).map(([id, rotulo, icone]) => (
+        ).map(([id, label, icon]) => (
           <button
             key={id}
             type="button"
-            aria-pressed={painel === id}
-            onClick={() => setPainel(id)}
+            aria-pressed={panel === id}
+            onClick={() => setPanel(id)}
             className={`inline-flex min-h-11 items-center gap-2 rounded-full px-5 font-medium whitespace-nowrap transition-colors ${
-              painel === id
+              panel === id
                 ? "bg-accent text-on-accent"
                 : "text-muted hover:text-ink"
             }`}
           >
-            <Icon name={icone} size={18} />
-            {rotulo}
+            <Icon name={icon} size={18} />
+            {label}
           </button>
         ))}
       </div>

@@ -1,65 +1,65 @@
 import {
-  criarExperienciaVazia,
-  criarPerfilVazio,
-  type Perfil,
+  createEmptyExperience,
+  createEmptyProfile,
+  type Profile,
 } from "@/lib/schema";
 
 /** Perfil que usa todas as seções, no limite de 3 experiências x 3 tópicos. */
-export function perfilCompleto(): Perfil {
-  const p = criarPerfilVazio();
-  p.nomeCompleto = "Ana Çéã Souza";
-  p.cargoDesejado = "Desenvolvedora Front-end";
-  p.cidadeUf = "São Paulo, SP";
-  p.telefone = "(11) 90000-0000";
+export function completeProfile(): Profile {
+  const p = createEmptyProfile();
+  p.fullName = "Ana Çéã Souza";
+  p.desiredJobTitle = "Desenvolvedora Front-end";
+  p.cityState = "São Paulo, SP";
+  p.phone = "(11) 90000-0000";
   p.email = "ana@exemplo.com";
   p.links = {
     linkedin: "https://linkedin.com/in/ana",
     github: "https://github.com/ana",
     portfolio: "https://ana.dev",
   };
-  p.resumo =
+  p.summary =
     "Desenvolvedora com formação em computação e foco em aplicações web acessíveis.";
-  p.experiencias = [1, 2, 3].map((n) => ({
-    ...criarExperienciaVazia(),
-    cargo: `Cargo ${n}`,
-    empresa: `Empresa ${n}`,
-    cidadeUf: "São Paulo/SP",
-    inicio: "01/2020",
-    fim: n === 1 ? "" : "12/2021",
-    atual: n === 1,
-    topicos: [
+  p.experiences = [1, 2, 3].map((n) => ({
+    ...createEmptyExperience(),
+    jobTitle: `Cargo ${n}`,
+    company: `Empresa ${n}`,
+    cityState: "São Paulo/SP",
+    start: "01/2020",
+    end: n === 1 ? "" : "12/2021",
+    current: n === 1,
+    bullets: [
       "Implementei a migração do sistema de autenticação para OAuth, reduzindo chamados.",
       "Reduzi o tempo de carregamento em 40% com otimização de imagens e divisão de código.",
       "Liderei a criação de um design system usado por três squads.",
     ],
   }));
-  p.formacoes = [
+  p.educations = [
     {
       id: "f1",
-      curso: "Bacharelado em Ciência da Computação",
-      instituicao: "Universidade Exemplo",
-      inicio: "02/2016",
-      fim: "12/2019",
-      atual: false,
+      course: "Bacharelado em Ciência da Computação",
+      institution: "Universidade Exemplo",
+      start: "02/2016",
+      end: "12/2019",
+      current: false,
     },
   ];
-  p.certificacoes = [
-    { id: "c1", nome: "Certificação ação", instituicao: "Órgão", ano: "2023" },
+  p.certifications = [
+    { id: "c1", name: "Certificação ação", institution: "Órgão", year: "2023" },
     {
       id: "c2",
-      nome: "Outra certificação",
-      instituicao: "Escola",
-      ano: "2022",
+      name: "Outra certificação",
+      institution: "Escola",
+      year: "2022",
     },
   ];
-  p.habilidades = [
-    { titulo: "Linguagens", itens: ["TypeScript", "JavaScript"] },
-    { titulo: "Frameworks e bibliotecas", itens: ["React", "Next.js"] },
-    { titulo: "Ferramentas", itens: ["Git", "Docker"] },
+  p.skills = [
+    { title: "Linguagens", items: ["TypeScript", "JavaScript"] },
+    { title: "Frameworks e bibliotecas", items: ["React", "Next.js"] },
+    { title: "Ferramentas", items: ["Git", "Docker"] },
   ];
-  p.idiomas = [
-    { idioma: "Português", nivel: "nativo" },
-    { idioma: "Inglês", nivel: "avançado" },
+  p.languages = [
+    { language: "Português", level: "nativo" },
+    { language: "Inglês", level: "avançado" },
   ];
   return p;
 }

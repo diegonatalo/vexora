@@ -1,88 +1,88 @@
 import { describe, expect, it } from "vitest";
 import {
-  formatarPeriodo,
-  hrefEmail,
-  hrefLink,
-  hrefTelefone,
+  formatPeriod,
+  emailHref,
+  linkHref,
+  phoneHref,
   linkCurto,
-  montarCv,
+  buildCv,
 } from "@/lib/pdf/cv-model";
-import { criarExperienciaVazia, criarPerfilVazio } from "@/lib/schema";
+import { createEmptyExperience, createEmptyProfile } from "@/lib/schema";
 
 describe("linkCurto", () => {
   it.each([
     ["https://www.linkedin.com/in/ana/", "linkedin.com/in/ana"],
     ["http://github.com/ana", "github.com/ana"],
     ["", ""],
-  ])("%j -> %j", (entrada, esperado) => {
-    expect(linkCurto(entrada)).toBe(esperado);
+  ])("%j -> %j", (input, expected) => {
+    expect(linkCurto(input)).toBe(expected);
   });
 });
 
 describe("formatarPeriodo", () => {
   it("usa 'Atual' quando é o trabalho atual", () => {
-    expect(formatarPeriodo("01/2021", "", true)).toBe("01/2021 – Atual");
-    expect(formatarPeriodo("01/2021", "05/2020", true)).toBe("01/2021 – Atual");
+    expect(formatPeriod("01/2021", "", true)).toBe("01/2021 – Atual");
+    expect(formatPeriod("01/2021", "05/2020", true)).toBe("01/2021 – Atual");
   });
   it("junta início e fim, ou mostra o que existir", () => {
-    expect(formatarPeriodo("01/2021", "06/2022", false)).toBe(
+    expect(formatPeriod("01/2021", "06/2022", false)).toBe(
       "01/2021 – 06/2022",
     );
-    expect(formatarPeriodo("01/2021", "", false)).toBe("01/2021");
-    expect(formatarPeriodo("", "", false)).toBe("");
+    expect(formatPeriod("01/2021", "", false)).toBe("01/2021");
+    expect(formatPeriod("", "", false)).toBe("");
   });
 });
 
 describe("montarCv", () => {
   it("omite seções vazias no PDF real", () => {
-    const cv = montarCv(criarPerfilVazio());
-    expect(cv.resumo).toBe("");
-    expect(cv.experiencias).toEqual([]);
-    expect(cv.habilidades).toEqual([]);
-    expect(cv.contato).toEqual([]);
+    const cv = buildCv(createEmptyProfile());
+    expect(cv.summary).toBe("");
+    expect(cv.experiences).toEqual([]);
+    expect(cv.skills).toEqual([]);
+    expect(cv.contact).toEqual([]);
   });
 
   it("preenche placeholders do design só na pré-visualização", () => {
-    const cv = montarCv(criarPerfilVazio(), { placeholders: true });
-    expect(cv.nome).toBe("[Seu Nome Completo]");
-    expect(cv.experiencias).toHaveLength(1);
-    expect(cv.habilidades.map((h) => h.rotulo)).toEqual([
+    const cv = buildCv(createEmptyProfile(), { placeholders: true });
+    expect(cv.name).toBe("[Seu Nome Completo]");
+    expect(cv.experiences).toHaveLength(1);
+    expect(cv.skills.map((h) => h.label)).toEqual([
       "[Grupo de habilidades]:",
     ]);
   });
 
   it("monta título, período, contato e descarta tópicos vazios", () => {
-    const p = criarPerfilVazio();
-    p.nomeCompleto = "Ana Souza";
-    p.cidadeUf = "São Paulo, SP";
+    const p = createEmptyProfile();
+    p.fullName = "Ana Souza";
+    p.cityState = "São Paulo, SP";
     p.email = "ana@exemplo.com";
     p.links.linkedin = "https://www.linkedin.com/in/ana/";
-    p.experiencias = [
+    p.experiences = [
       {
-        ...criarExperienciaVazia(),
-        cargo: "Dev",
-        empresa: "Acme",
-        cidadeUf: "Remoto",
-        inicio: "01/2021",
-        atual: true,
-        topicos: ["Reduzi o tempo de build em 40%", "  ", ""],
+        ...createEmptyExperience(),
+        jobTitle: "Dev",
+        company: "Acme",
+        cityState: "Remoto",
+        start: "01/2021",
+        current: true,
+        bullets: ["Reduzi o tempo de build em 40%", "  ", ""],
       },
     ];
-    p.certificacoes = [
-      { id: "1", nome: "AWS CCP", instituicao: "AWS", ano: "2024" },
+    p.certifications = [
+      { id: "1", name: "AWS CCP", institution: "AWS", year: "2024" },
     ];
-    const cv = montarCv(p);
-    expect(cv.contato.map((c) => c.texto)).toEqual([
+    const cv = buildCv(p);
+    expect(cv.contact.map((c) => c.text)).toEqual([
       "São Paulo, SP",
       "ana@exemplo.com",
       "linkedin.com/in/ana",
     ]);
-    expect(cv.experiencias[0]).toEqual({
-      titulo: "Dev — Acme, Remoto",
-      periodo: "01/2021 – Atual",
-      topicos: ["Reduzi o tempo de build em 40%"],
+    expect(cv.experiences[0]).toEqual({
+      title: "Dev — Acme, Remoto",
+      period: "01/2021 – Atual",
+      bullets: ["Reduzi o tempo de build em 40%"],
     });
-    expect(cv.certificacoes).toEqual(["AWS CCP — AWS, 2024"]);
+    expect(cv.certifications).toEqual(["AWS CCP — AWS, 2024"]);
   });
 });
 
@@ -91,8 +91,8 @@ describe("hrefs de contato", () => {
     ["linkedin.com/in/ana", "https://linkedin.com/in/ana"],
     ["https://github.com/ana", "https://github.com/ana"],
     ["", undefined],
-  ])("hrefLink %j", (entrada, esperado) => {
-    expect(hrefLink(entrada)).toBe(esperado);
+  ])("hrefLink %j", (input, expected) => {
+    expect(linkHref(input)).toBe(expected);
   });
 
   it.each([
@@ -100,12 +100,12 @@ describe("hrefs de contato", () => {
     ["(11) 3456-7890", "tel:+551134567890"],
     ["+55 11 98765-4321", "tel:+5511987654321"],
     ["123", undefined],
-  ])("hrefTelefone %j", (entrada, esperado) => {
-    expect(hrefTelefone(entrada)).toBe(esperado);
+  ])("hrefTelefone %j", (input, expected) => {
+    expect(phoneHref(input)).toBe(expected);
   });
 
   it("hrefEmail", () => {
-    expect(hrefEmail(" ana@x.com ")).toBe("mailto:ana@x.com");
-    expect(hrefEmail("")).toBeUndefined();
+    expect(emailHref(" ana@x.com ")).toBe("mailto:ana@x.com");
+    expect(emailHref("")).toBeUndefined();
   });
 });

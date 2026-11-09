@@ -1,14 +1,14 @@
 import { Icon } from "@/components/ui/icons";
-import { CARTAO } from "@/components/ui/estilos";
-import type { Checagem } from "@/lib/ats/checks";
+import { CARD } from "@/components/ui/styles";
+import type { Check } from "@/lib/ats/checks";
 
 /** Cartão "Verificação ATS". `checagens` é null enquanto o PDF é gerado. */
-export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
-  const ok = checagens?.filter((c) => c.ok) ?? [];
-  const falhas = checagens?.filter((c) => !c.ok) ?? [];
+export function AtsCard({ checks }: { checks: Check[] | null }) {
+  const ok = checks?.filter((c) => c.ok) ?? [];
+  const failures = checks?.filter((c) => !c.ok) ?? [];
 
   return (
-    <section className={`${CARTAO} p-5`} aria-labelledby="ats-titulo">
+    <section className={`${CARD} p-5`} aria-labelledby="ats-titulo">
       <div className="flex items-baseline justify-between gap-3">
         <h2
           id="ats-titulo"
@@ -17,26 +17,26 @@ export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
           <Icon name="shield" size={20} className="text-accent" />
           Verificação ATS
         </h2>
-        {checagens && (
+        {checks && (
           <span
             className={`rounded-full px-2.5 py-0.5 text-sm font-semibold ${
-              falhas.length === 0
+              failures.length === 0
                 ? "bg-accent-soft text-accent-deep"
                 : "bg-warn-bg text-warn-ink"
             }`}
           >
-            {ok.length} de {checagens.length} ok
+            {ok.length} de {checks.length} ok
           </span>
         )}
       </div>
 
-      {!checagens && (
+      {!checks && (
         <p className="text-muted mt-3 text-sm" role="status">
           Verificando…
         </p>
       )}
 
-      {checagens && (
+      {checks && (
         <>
           <ul className="mt-3 space-y-2.5">
             {ok.map((c) => (
@@ -49,14 +49,14 @@ export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
                 </span>
                 <span>
                   <span className="sr-only">Ok: </span>
-                  {c.titulo}
+                  {c.title}
                 </span>
               </li>
             ))}
           </ul>
-          {falhas.length > 0 && (
+          {failures.length > 0 && (
             <ul className="mt-3 space-y-2.5" aria-label="Ajustes recomendados">
-              {falhas.map((c) => (
+              {failures.map((c) => (
                 <li
                   key={c.id}
                   className="bg-warn-bg text-warn-ink flex items-start gap-2.5 rounded-xl p-3.5 text-sm"
@@ -68,10 +68,10 @@ export function AtsCard({ checagens }: { checagens: Checagem[] | null }) {
                   />
                   <span>
                     <span className="sr-only">
-                      {c.severidade === "aviso" ? "Aviso: " : "Corrigir: "}
+                      {c.severity === "warning" ? "Aviso: " : "Corrigir: "}
                     </span>
-                    <strong className="font-semibold">{c.problema}</strong>{" "}
-                    {c.correcao}
+                    <strong className="font-semibold">{c.problem}</strong>{" "}
+                    {c.fix}
                   </span>
                 </li>
               ))}

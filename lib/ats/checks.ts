@@ -1,36 +1,36 @@
-import { FONTES_COMPATIVEIS, FONTES_USADAS } from "@/lib/pdf/fontes";
-import { TITULOS_SECAO, type CvModel } from "@/lib/pdf/cv-model";
-import type { Medicao } from "@/lib/pdf/medicao";
-import type { Perfil } from "@/lib/schema";
-import { sugerirEnxugar } from "@/lib/ats/enxugar";
+import { COMPATIBLE_FONTS, USED_FONTS } from "@/lib/pdf/fonts";
+import { SECTION_TITLES, type CvModel } from "@/lib/pdf/cv-model";
+import type { Measurement } from "@/lib/pdf/measurement";
+import type { Profile } from "@/lib/schema";
+import { suggestTrim } from "@/lib/ats/trim";
 
-export type Checagem = {
+export type Check = {
   id: string;
   ok: boolean;
   /** Descrição do que é verificado (mostrada quando está ok). */
-  titulo: string;
+  title: string;
   /** Quando falha: o problema em poucas palavras. */
-  problema?: string;
+  problem?: string;
   /** Quando falha: como corrigir. */
-  correcao?: string;
-  /** "aviso" = recomendação que não impede nada; "erro" = precisa corrigir. */
-  severidade?: "erro" | "aviso";
+  fix?: string;
+  /** "warning" = recomendação que não impede nada; "error" = precisa corrigir. */
+  severity?: "error" | "warning";
 };
 
-export type ContextoAts = {
-  perfil: Perfil;
+export type AtsContext = {
+  profile: Profile;
   /** O que foi escrito no PDF. */
   cv: CvModel;
   /** O que a medição do PDF gerado encontrou. */
-  pdf: Medicao;
+  pdf: Measurement;
   /** Fontes do documento (padrão: as que o CvDocument usa). */
-  fontes?: readonly string[];
+  fonts?: readonly string[];
 };
 
-const DATA_MM_AAAA = /^(0[1-9]|1[0-2])\/\d{4}$/;
+const DATE_MM_YYYY = /^(0[1-9]|1[0-2])\/\d{4}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const normalizar = (s: string) =>
+const normalize = (s: string) =>
   s
     .normalize("NFD")
     .replace(/\p{M}/gu, "")
@@ -39,191 +39,191 @@ const normalizar = (s: string) =>
     .trim();
 
 /** Seções que realmente aparecem no PDF, na ordem do layout. */
-function secoesPresentes(cv: CvModel): string[] {
-  const secoes: [string, boolean][] = [
-    [TITULOS_SECAO.resumo, Boolean(cv.resumo)],
-    [TITULOS_SECAO.experiencia, cv.experiencias.length > 0],
-    [TITULOS_SECAO.formacao, cv.formacoes.length > 0],
-    [TITULOS_SECAO.certificacoes, cv.certificacoes.length > 0],
-    [TITULOS_SECAO.habilidades, cv.habilidades.length > 0],
-    [TITULOS_SECAO.idiomas, cv.idiomas.length > 0],
+function presentSections(cv: CvModel): string[] {
+  const sections: [string, boolean][] = [
+    [SECTION_TITLES.summary, Boolean(cv.summary)],
+    [SECTION_TITLES.experience, cv.experiences.length > 0],
+    [SECTION_TITLES.education, cv.educations.length > 0],
+    [SECTION_TITLES.certifications, cv.certifications.length > 0],
+    [SECTION_TITLES.skills, cv.skills.length > 0],
+    [SECTION_TITLES.languages, cv.languages.length > 0],
   ];
-  return secoes.filter(([, presente]) => presente).map(([titulo]) => titulo);
+  return sections.filter(([, present]) => present).map(([title]) => title);
 }
 
-export function checarTextoSelecionavel({ cv, pdf }: ContextoAts): Checagem {
-  const titulo = "Texto real e selecionável no PDF";
-  const texto = normalizar(pdf.texto);
-  const ok = texto.length > 0 && texto.includes(normalizar(cv.nome));
+export function checkSelectableText({ cv, pdf }: AtsContext): Check {
+  const title = "Texto real e selecionável no PDF";
+  const text = normalize(pdf.text);
+  const ok = text.length > 0 && text.includes(normalize(cv.name));
   return ok
-    ? { id: "texto-selecionavel", ok, titulo }
+    ? { id: "selectable-text", ok, title }
     : {
-        id: "texto-selecionavel",
+        id: "selectable-text",
         ok,
-        titulo,
-        severidade: "erro",
-        problema: "O PDF não tem texto legível.",
-        correcao: "Gere o PDF de novo; se persistir, recarregue a página.",
+        title,
+        severity: "error",
+        problem: "O PDF não tem texto legível.",
+        fix: "Gere o PDF de novo; se persistir, recarregue a página.",
       };
 }
 
-export function checarColunaUnica({ cv, pdf }: ContextoAts): Checagem {
-  const titulo = "Coluna única, ordem de leitura correta";
-  const texto = normalizar(pdf.texto);
-  const posicoes = secoesPresentes(cv)
-    .map((t) => texto.indexOf(normalizar(t)))
+export function checkSingleColumn({ cv, pdf }: AtsContext): Check {
+  const title = "Coluna única, ordem de leitura correta";
+  const text = normalize(pdf.text);
+  const positions = presentSections(cv)
+    .map((t) => text.indexOf(normalize(t)))
     .filter((p) => p >= 0);
-  const ordenado = posicoes.every((p, i) => i === 0 || p > posicoes[i - 1]);
-  const nomePrimeiro =
-    texto.indexOf(normalizar(cv.nome)) <= (posicoes[0] ?? Infinity);
-  const ok = ordenado && nomePrimeiro;
+  const sorted = positions.every((p, i) => i === 0 || p > positions[i - 1]);
+  const firstName =
+    text.indexOf(normalize(cv.name)) <= (positions[0] ?? Infinity);
+  const ok = sorted && firstName;
   return ok
-    ? { id: "coluna-unica", ok, titulo }
+    ? { id: "single-column", ok, title }
     : {
-        id: "coluna-unica",
+        id: "single-column",
         ok,
-        titulo,
-        severidade: "erro",
-        problema: "A ordem de leitura do PDF está fora do layout.",
-        correcao: "Gere o PDF de novo com o layout padrão da Vexora.",
+        title,
+        severity: "error",
+        problem: "A ordem de leitura do PDF está fora do layout.",
+        fix: "Gere o PDF de novo com o layout padrão da Vexora.",
       };
 }
 
-export function checarTitulosPadrao({ cv, pdf }: ContextoAts): Checagem {
-  const titulo = "Títulos de seção padrão";
-  const texto = normalizar(pdf.texto);
-  const faltando = secoesPresentes(cv).filter(
-    (t) => !texto.includes(normalizar(t)),
+export function checkStandardTitles({ cv, pdf }: AtsContext): Check {
+  const title = "Títulos de seção padrão";
+  const text = normalize(pdf.text);
+  const missingCount = presentSections(cv).filter(
+    (t) => !text.includes(normalize(t)),
   );
-  return faltando.length === 0
-    ? { id: "titulos-padrao", ok: true, titulo }
+  return missingCount.length === 0
+    ? { id: "standard-titles", ok: true, title }
     : {
-        id: "titulos-padrao",
+        id: "standard-titles",
         ok: false,
-        titulo,
-        severidade: "erro",
-        problema: `Título não encontrado: ${faltando.join(", ")}.`,
-        correcao: "Use apenas os títulos padrão da Vexora.",
+        title,
+        severity: "error",
+        problem: `Título não encontrado: ${missingCount.join(", ")}.`,
+        fix: "Use apenas os títulos padrão da Vexora.",
       };
 }
 
-export function checarFonte({ fontes = FONTES_USADAS }: ContextoAts): Checagem {
-  const titulo = "Fonte compatível (Arial)";
-  const incompativeis = fontes.filter((f) => !FONTES_COMPATIVEIS.includes(f));
-  return incompativeis.length === 0
-    ? { id: "fonte", ok: true, titulo }
+export function checkFont({ fonts = USED_FONTS }: AtsContext): Check {
+  const title = "Fonte compatível (Arial)";
+  const incompatible = fonts.filter((f) => !COMPATIBLE_FONTS.includes(f));
+  return incompatible.length === 0
+    ? { id: "font", ok: true, title }
     : {
-        id: "fonte",
+        id: "font",
         ok: false,
-        titulo,
-        severidade: "erro",
-        problema: `Fonte incomum: ${incompativeis.join(", ")}.`,
-        correcao: "Use Helvetica ou Arial.",
+        title,
+        severity: "error",
+        problem: `Fonte incomum: ${incompatible.join(", ")}.`,
+        fix: "Use Helvetica ou Arial.",
       };
 }
 
-export function checarSemImagens({ pdf }: ContextoAts): Checagem {
-  const titulo = "Sem tabelas, ícones nem imagens";
-  return pdf.imagens === 0
-    ? { id: "sem-imagens", ok: true, titulo }
+export function checkNoImages({ pdf }: AtsContext): Check {
+  const title = "Sem tabelas, ícones nem imagens";
+  return pdf.images === 0
+    ? { id: "no-images", ok: true, title }
     : {
-        id: "sem-imagens",
+        id: "no-images",
         ok: false,
-        titulo,
-        severidade: "erro",
-        problema: `O PDF tem ${pdf.imagens} imagem(ns).`,
-        correcao: "Remova imagens e ícones: o ATS não lê o que está nelas.",
+        title,
+        severity: "error",
+        problem: `O PDF tem ${pdf.images} imagem(ns).`,
+        fix: "Remova imagens e ícones: o ATS não lê o que está nelas.",
       };
 }
 
-export function checarCabeEmUmaPagina({ perfil, pdf }: ContextoAts): Checagem {
-  const titulo = "Cabe em 1 página";
-  if (pdf.paginas <= 1) return { id: "uma-pagina", ok: true, titulo };
-  const [primeira] = sugerirEnxugar(perfil);
+export function checkFitsOnOnePage({ profile, pdf }: AtsContext): Check {
+  const title = "Cabe em 1 página";
+  if (pdf.pages <= 1) return { id: "one-page", ok: true, title };
+  const [first] = suggestTrim(profile);
   return {
-    id: "uma-pagina",
+    id: "one-page",
     ok: false,
-    titulo,
-    severidade: "erro",
-    problema: `O CV passa de 1 página (${pdf.paginas}).`,
-    correcao: primeira ?? "Enxugue o conteúdo para caber em 1 página.",
+    title,
+    severity: "error",
+    problem: `O CV passa de 1 página (${pdf.pages}).`,
+    fix: first ?? "Enxugue o conteúdo para caber em 1 página.",
   };
 }
 
-export function checarDatasPadrao({ perfil }: ContextoAts): Checagem {
-  const titulo = "Datas no padrão MM/AAAA";
-  const invalida = (d: string) => !DATA_MM_AAAA.test(d);
+export function checkStandardDates({ profile }: AtsContext): Check {
+  const title = "Datas no padrão MM/AAAA";
+  const invalid = (d: string) => !DATE_MM_YYYY.test(d);
 
   // Itens em branco (recém-adicionados) não entram no PDF, então não contam.
-  const experienciasRuins = perfil.experiencias.filter(
+  const invalidExperiences = profile.experiences.filter(
     (e) =>
-      (e.cargo.trim() || e.empresa.trim() || e.topicos.some((t) => t.trim())) &&
-      (invalida(e.inicio) || (!e.atual && invalida(e.fim))),
+      (e.jobTitle.trim() || e.company.trim() || e.bullets.some((t) => t.trim())) &&
+      (invalid(e.start) || (!e.current && invalid(e.end))),
   );
-  const formacoesRuins = perfil.formacoes.filter(
+  const invalidEducations = profile.educations.filter(
     (f) =>
-      (f.curso.trim() || f.instituicao.trim()) &&
-      (invalida(f.inicio) || (!f.atual && invalida(f.fim))),
+      (f.course.trim() || f.institution.trim()) &&
+      (invalid(f.start) || (!f.current && invalid(f.end))),
   );
-  if (experienciasRuins.length + formacoesRuins.length === 0) {
-    return { id: "datas", ok: true, titulo };
+  if (invalidExperiences.length + invalidEducations.length === 0) {
+    return { id: "dates", ok: true, title };
   }
-  const onde =
-    experienciasRuins.length > 0 && formacoesRuins.length > 0
+  const where =
+    invalidExperiences.length > 0 && invalidEducations.length > 0
       ? "nas experiências e na formação"
-      : experienciasRuins.length > 0
+      : invalidExperiences.length > 0
         ? "em todas as experiências"
         : "em todas as formações";
   return {
-    id: "datas",
+    id: "dates",
     ok: false,
-    titulo,
-    severidade: "erro",
-    problema: "Datas fora do padrão.",
-    correcao: `Use MM/AAAA ${onde}.`,
+    title,
+    severity: "error",
+    problem: "Datas fora do padrão.",
+    fix: `Use MM/AAAA ${where}.`,
   };
 }
 
-export function checarContato({ perfil }: ContextoAts): Checagem {
-  const titulo = "Contato completo";
-  const faltam = [
-    EMAIL.test(perfil.email.trim()) ? null : "e-mail",
-    perfil.telefone.trim() ? null : "telefone",
+export function checkContact({ profile }: AtsContext): Check {
+  const title = "Contato completo";
+  const missing = [
+    EMAIL.test(profile.email.trim()) ? null : "e-mail",
+    profile.phone.trim() ? null : "telefone",
   ].filter((x): x is string => x !== null);
 
-  if (faltam.length > 0) {
+  if (missing.length > 0) {
     return {
-      id: "contato",
+      id: "contact",
       ok: false,
-      titulo,
-      severidade: "erro",
-      problema: `Falta ${faltam.join(" e ")}.`,
-      correcao: "Preencha em Dados pessoais: o ATS e o recrutador precisam.",
+      title,
+      severity: "error",
+      problem: `Falta ${missing.join(" e ")}.`,
+      fix: "Preencha em Dados pessoais: o ATS e o recrutador precisam.",
     };
   }
-  if (!perfil.links.linkedin.trim()) {
+  if (!profile.links.linkedin.trim()) {
     return {
-      id: "contato",
+      id: "contact",
       ok: false,
-      titulo,
-      severidade: "aviso",
-      problema: "Sem link do LinkedIn.",
-      correcao: "Adicione em Links e portfólio.",
+      title,
+      severity: "warning",
+      problem: "Sem link do LinkedIn.",
+      fix: "Adicione em Links e portfólio.",
     };
   }
-  return { id: "contato", ok: true, titulo };
+  return { id: "contact", ok: true, title };
 }
 
 /** As 8 checagens, na ordem de exibição. */
-export function rodarChecagens(ctx: ContextoAts): Checagem[] {
+export function runChecks(ctx: AtsContext): Check[] {
   return [
-    checarTextoSelecionavel(ctx),
-    checarColunaUnica(ctx),
-    checarTitulosPadrao(ctx),
-    checarFonte(ctx),
-    checarSemImagens(ctx),
-    checarCabeEmUmaPagina(ctx),
-    checarDatasPadrao(ctx),
-    checarContato(ctx),
+    checkSelectableText(ctx),
+    checkSingleColumn(ctx),
+    checkStandardTitles(ctx),
+    checkFont(ctx),
+    checkNoImages(ctx),
+    checkFitsOnOnePage(ctx),
+    checkStandardDates(ctx),
+    checkContact(ctx),
   ];
 }

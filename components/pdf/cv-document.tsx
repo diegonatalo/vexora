@@ -8,95 +8,95 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import { NIVEIS, type Ajuste } from "@/lib/fit";
-import { TITULOS_SECAO, type CvModel } from "@/lib/pdf/cv-model";
-import { FONTE, FONTE_NEGRITO } from "@/lib/pdf/fontes";
+import { FIT_LEVELS, type LayoutFit } from "@/lib/fit";
+import { SECTION_TITLES, type CvModel } from "@/lib/pdf/cv-model";
+import { FONT, FONT_BOLD } from "@/lib/pdf/fonts";
 
 // O hifenizador padrão é inglês: partiria palavras em português ("pro-gramação").
-Font.registerHyphenationCallback((palavra) => [palavra]);
+Font.registerHyphenationCallback((word) => [word]);
 
-const COR_TEXTO = "#000000";
-const COR_SECUNDARIA = "#333333";
+const TEXT_COLOR = "#000000";
+const SECONDARY_COLOR = "#333333";
 
-function criarEstilos(a: Ajuste) {
+function createStyles(a: LayoutFit) {
   return StyleSheet.create({
-    pagina: {
-      fontFamily: FONTE,
-      fontSize: a.fonte,
+    page: {
+      fontFamily: FONT,
+      fontSize: a.font,
       lineHeight: a.lineHeight,
-      color: COR_TEXTO,
-      paddingTop: a.margemV,
-      paddingBottom: a.margemV,
-      paddingHorizontal: a.margemH,
+      color: TEXT_COLOR,
+      paddingTop: a.marginV,
+      paddingBottom: a.marginV,
+      paddingHorizontal: a.marginH,
     },
-    nome: { fontFamily: FONTE_NEGRITO, fontSize: 26, lineHeight: 1.15 },
-    cargo: {
-      fontFamily: FONTE_NEGRITO,
-      fontSize: a.fonte + 2,
-      color: COR_SECUNDARIA,
+    name: { fontFamily: FONT_BOLD, fontSize: 26, lineHeight: 1.15 },
+    jobTitle: {
+      fontFamily: FONT_BOLD,
+      fontSize: a.font + 2,
+      color: SECONDARY_COLOR,
       marginTop: 4,
     },
-    contato: {
-      fontSize: a.fonte - 1.5,
-      color: COR_SECUNDARIA,
+    contact: {
+      fontSize: a.font - 1.5,
+      color: SECONDARY_COLOR,
       marginTop: 5,
     },
     // Clicável, mas com a mesma aparência do texto (layout limpo para ATS).
-    link: { color: COR_SECUNDARIA, textDecoration: "none" },
-    secao: { marginTop: a.espacoSecao },
-    tituloSecao: {
-      fontFamily: FONTE_NEGRITO,
-      fontSize: Math.max(a.fonte - 1, 9),
+    link: { color: SECONDARY_COLOR, textDecoration: "none" },
+    section: { marginTop: a.sectionSpacing },
+    sectionTitle: {
+      fontFamily: FONT_BOLD,
+      fontSize: Math.max(a.font - 1, 9),
       // Espaçamento entre letras acima de ~0,05em faz o pdfjs (e leitores de
       // ATS) lerem "R E S U M O"; a checagem de títulos pega essa regressão.
       letterSpacing: 0.5,
       textTransform: "uppercase",
       borderBottomWidth: 0.75,
-      borderBottomColor: COR_TEXTO,
+      borderBottomColor: TEXT_COLOR,
       paddingBottom: 2,
       marginBottom: 5,
     },
-    linhaCabecalho: {
+    headerRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "flex-start",
       gap: 12,
     },
-    tituloItem: { flex: 1, fontFamily: FONTE_NEGRITO },
-    periodo: { flexShrink: 0 },
-    item: { marginBottom: a.espacoItem },
-    itemCompacto: { marginBottom: 2 },
-    topico: { flexDirection: "row", paddingLeft: 4, marginTop: 1 },
-    marcador: { width: 12 },
-    textoTopico: { flex: 1 },
-    negrito: { fontFamily: FONTE_NEGRITO },
+    itemTitle: { flex: 1, fontFamily: FONT_BOLD },
+    period: { flexShrink: 0 },
+    item: { marginBottom: a.itemSpacing },
+    compactItem: { marginBottom: 2 },
+    bullet: { flexDirection: "row", paddingLeft: 4, marginTop: 1 },
+    marker: { width: 12 },
+    bulletText: { flex: 1 },
+    bold: { fontFamily: FONT_BOLD },
   });
 }
 
-type Estilos = ReturnType<typeof criarEstilos>;
+type Styles = ReturnType<typeof createStyles>;
 
-function Secao({
+function Section({
   s,
-  titulo,
+  title,
   children,
 }: {
-  s: Estilos;
-  titulo: string;
+  s: Styles;
+  title: string;
   children: React.ReactNode;
 }) {
   return (
-    <View style={s.secao}>
-      <Text style={s.tituloSecao}>{titulo}</Text>
+    <View style={s.section}>
+      <Text style={s.sectionTitle}>{title}</Text>
       {children}
     </View>
   );
 }
 
-function Topico({ s, texto }: { s: Estilos; texto: string }) {
+function Bullet({ s, text }: { s: Styles; text: string }) {
   return (
-    <View style={s.topico} wrap={false}>
-      <Text style={s.marcador}>•</Text>
-      <Text style={s.textoTopico}>{texto}</Text>
+    <View style={s.bullet} wrap={false}>
+      <Text style={s.marker}>•</Text>
+      <Text style={s.bulletText}>{text}</Text>
     </View>
   );
 }
@@ -104,33 +104,33 @@ function Topico({ s, texto }: { s: Estilos; texto: string }) {
 /** Documento de 1 coluna, só texto: sem tabelas, imagens nem ícones. */
 export function CvDocument({
   cv,
-  ajuste = NIVEIS[0],
+  layoutFit = FIT_LEVELS[0],
 }: {
   cv: CvModel;
-  ajuste?: Ajuste;
+  layoutFit?: LayoutFit;
 }) {
-  const s = criarEstilos(ajuste);
+  const s = createStyles(layoutFit);
   return (
     <Document
-      title={cv.nome ? `CV — ${cv.nome}` : "CV"}
-      author={cv.nome}
+      title={cv.name ? `CV — ${cv.name}` : "CV"}
+      author={cv.name}
       language="pt-BR"
     >
-      <Page size="A4" style={s.pagina}>
+      <Page size="A4" style={s.page}>
         <View>
-          <Text style={s.nome}>{cv.nome}</Text>
-          {cv.cargo ? <Text style={s.cargo}>{cv.cargo}</Text> : null}
-          {cv.contato.length > 0 ? (
-            <Text style={s.contato}>
-              {cv.contato.map((c, i) => (
+          <Text style={s.name}>{cv.name}</Text>
+          {cv.jobTitle ? <Text style={s.jobTitle}>{cv.jobTitle}</Text> : null}
+          {cv.contact.length > 0 ? (
+            <Text style={s.contact}>
+              {cv.contact.map((c, i) => (
                 <Fragment key={i}>
                   {i > 0 ? " · " : ""}
                   {c.href ? (
                     <Link src={c.href} style={s.link}>
-                      {c.texto}
+                      {c.text}
                     </Link>
                   ) : (
-                    c.texto
+                    c.text
                   )}
                 </Fragment>
               ))}
@@ -138,66 +138,66 @@ export function CvDocument({
           ) : null}
         </View>
 
-        {cv.resumo ? (
-          <Secao s={s} titulo={TITULOS_SECAO.resumo}>
-            <Text>{cv.resumo}</Text>
-          </Secao>
+        {cv.summary ? (
+          <Section s={s} title={SECTION_TITLES.summary}>
+            <Text>{cv.summary}</Text>
+          </Section>
         ) : null}
 
-        {cv.experiencias.length > 0 ? (
-          <Secao s={s} titulo={TITULOS_SECAO.experiencia}>
-            {cv.experiencias.map((e, i) => (
+        {cv.experiences.length > 0 ? (
+          <Section s={s} title={SECTION_TITLES.experience}>
+            {cv.experiences.map((e, i) => (
               <View key={i} style={s.item}>
-                <View style={s.linhaCabecalho} wrap={false}>
-                  <Text style={s.tituloItem}>{e.titulo}</Text>
-                  <Text style={s.periodo}>{e.periodo}</Text>
+                <View style={s.headerRow} wrap={false}>
+                  <Text style={s.itemTitle}>{e.title}</Text>
+                  <Text style={s.period}>{e.period}</Text>
                 </View>
-                {e.topicos.map((t, j) => (
-                  <Topico key={j} s={s} texto={t} />
+                {e.bullets.map((t, j) => (
+                  <Bullet key={j} s={s} text={t} />
                 ))}
               </View>
             ))}
-          </Secao>
+          </Section>
         ) : null}
 
-        {cv.formacoes.length > 0 ? (
-          <Secao s={s} titulo={TITULOS_SECAO.formacao}>
-            {cv.formacoes.map((f, i) => (
-              <View key={i} style={s.linhaCabecalho} wrap={false}>
+        {cv.educations.length > 0 ? (
+          <Section s={s} title={SECTION_TITLES.education}>
+            {cv.educations.map((f, i) => (
+              <View key={i} style={s.headerRow} wrap={false}>
                 <Text style={{ flex: 1 }}>
-                  <Text style={s.negrito}>{f.curso}</Text>
-                  {f.curso && f.instituicao ? " — " : ""}
-                  {f.instituicao}
+                  <Text style={s.bold}>{f.course}</Text>
+                  {f.course && f.institution ? " — " : ""}
+                  {f.institution}
                 </Text>
-                <Text style={s.periodo}>{f.periodo}</Text>
+                <Text style={s.period}>{f.period}</Text>
               </View>
             ))}
-          </Secao>
+          </Section>
         ) : null}
 
-        {cv.certificacoes.length > 0 ? (
-          <Secao s={s} titulo={TITULOS_SECAO.certificacoes}>
-            {cv.certificacoes.map((c, i) => (
-              <Topico key={i} s={s} texto={c} />
+        {cv.certifications.length > 0 ? (
+          <Section s={s} title={SECTION_TITLES.certifications}>
+            {cv.certifications.map((c, i) => (
+              <Bullet key={i} s={s} text={c} />
             ))}
-          </Secao>
+          </Section>
         ) : null}
 
-        {cv.habilidades.length > 0 ? (
-          <Secao s={s} titulo={TITULOS_SECAO.habilidades}>
-            {cv.habilidades.map((h, i) => (
-              <Text key={i} style={s.itemCompacto}>
-                {h.rotulo ? <Text style={s.negrito}>{h.rotulo} </Text> : null}
-                {h.itens}
+        {cv.skills.length > 0 ? (
+          <Section s={s} title={SECTION_TITLES.skills}>
+            {cv.skills.map((h, i) => (
+              <Text key={i} style={s.compactItem}>
+                {h.label ? <Text style={s.bold}>{h.label} </Text> : null}
+                {h.items}
               </Text>
             ))}
-          </Secao>
+          </Section>
         ) : null}
 
-        {cv.idiomas.length > 0 ? (
-          <Secao s={s} titulo={TITULOS_SECAO.idiomas}>
-            <Text>{cv.idiomas.join(" · ")}</Text>
-          </Secao>
+        {cv.languages.length > 0 ? (
+          <Section s={s} title={SECTION_TITLES.languages}>
+            <Text>{cv.languages.join(" · ")}</Text>
+          </Section>
         ) : null}
       </Page>
     </Document>

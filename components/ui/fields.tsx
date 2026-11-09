@@ -3,7 +3,7 @@
 import { useId, type ComponentProps, type ReactNode } from "react";
 import { Icon } from "@/components/ui/icons";
 
-const BASE_CAMPO =
+const FIELD_BASE =
   "w-full rounded-field border bg-sunken px-4 text-ink shadow-[inset_0_1px_0_rgb(0_0_0/0.02)] transition duration-150 placeholder:text-muted/70 hover:bg-surface focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-stage disabled:text-muted";
 
 type FieldBaseProps = {
@@ -15,7 +15,7 @@ type FieldBaseProps = {
   aside?: ReactNode;
 };
 
-type CampoProps = FieldBaseProps & {
+type FormFieldProps = FieldBaseProps & {
   render: (aria: {
     id: string;
     "aria-invalid": true | undefined;
@@ -25,13 +25,13 @@ type CampoProps = FieldBaseProps & {
 };
 
 /** Casca com label, dica e erro ligados ao controle por id/aria-describedby. */
-function Campo({ label, error, hint, aside, render }: CampoProps) {
+function FormField({ label, error, hint, aside, render }: FormFieldProps) {
   const uid = useId();
   const id = `${uid}-campo`;
-  const erroId = `${uid}-erro`;
-  const dicaId = `${uid}-dica`;
+  const errorId = `${uid}-erro`;
+  const hintId = `${uid}-dica`;
   const describedBy =
-    [error ? erroId : null, hint ? dicaId : null].filter(Boolean).join(" ") ||
+    [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") ||
     undefined;
 
   return (
@@ -46,16 +46,16 @@ function Campo({ label, error, hint, aside, render }: CampoProps) {
         id,
         "aria-invalid": error ? true : undefined,
         "aria-describedby": describedBy,
-        className: `${BASE_CAMPO} ${error ? "border-warn-icon ring-4 ring-warn-icon/10" : "border-field"}`,
+        className: `${FIELD_BASE} ${error ? "border-warn-icon ring-4 ring-warn-icon/10" : "border-field"}`,
       })}
       {hint && (
-        <p id={dicaId} className="text-muted mt-1.5 text-sm">
+        <p id={hintId} className="text-muted mt-1.5 text-sm">
           {hint}
         </p>
       )}
       {error && (
         <p
-          id={erroId}
+          id={errorId}
           className="text-warn-ink mt-1 flex items-start gap-1.5 text-sm"
         >
           <Icon
@@ -78,7 +78,7 @@ export function TextField({
   ...input
 }: FieldBaseProps & Omit<ComponentProps<"input">, "id" | "className">) {
   return (
-    <Campo
+    <FormField
       label={label}
       error={error}
       hint={hint}
@@ -99,7 +99,7 @@ export function TextAreaField({
   ...area
 }: FieldBaseProps & Omit<ComponentProps<"textarea">, "id" | "className">) {
   return (
-    <Campo
+    <FormField
       label={label}
       error={error}
       hint={hint}

@@ -1,18 +1,18 @@
 import type { CvModel } from "@/lib/pdf/cv-model";
-import type { Medicao } from "@/lib/pdf/medicao";
+import type { Measurement } from "@/lib/pdf/measurement";
 
 /** Parâmetros de layout do PDF, em pontos (pt). */
-export type Ajuste = {
-  nivel: number;
-  fonte: number;
+export type LayoutFit = {
+  level: number;
+  font: number;
   lineHeight: number;
   /** Espaço acima de cada seção. */
-  espacoSecao: number;
+  sectionSpacing: number;
   /** Espaço abaixo de cada experiência. */
-  espacoItem: number;
-  margemV: number;
-  margemH: number;
-  descricao: string;
+  itemSpacing: number;
+  marginV: number;
+  marginH: number;
+  description: string;
 };
 
 /**
@@ -20,80 +20,80 @@ export type Ajuste = {
  * depois a fonte do corpo (de 11pt até 10pt) e por fim as margens (mínimo 36).
  * Cada nível cabe tanto quanto o anterior ou mais.
  */
-export const NIVEIS: readonly Ajuste[] = [
+export const FIT_LEVELS: readonly LayoutFit[] = [
   {
-    nivel: 0,
-    fonte: 11,
+    level: 0,
+    font: 11,
     lineHeight: 1.35,
-    espacoSecao: 14,
-    espacoItem: 6,
-    margemV: 48,
-    margemH: 56,
-    descricao: "Layout padrão",
+    sectionSpacing: 14,
+    itemSpacing: 6,
+    marginV: 48,
+    marginH: 56,
+    description: "Layout padrão",
   },
   {
-    nivel: 1,
-    fonte: 11,
+    level: 1,
+    font: 11,
     lineHeight: 1.3,
-    espacoSecao: 10,
-    espacoItem: 4,
-    margemV: 48,
-    margemH: 56,
-    descricao: "espaçamentos reduzidos",
+    sectionSpacing: 10,
+    itemSpacing: 4,
+    marginV: 48,
+    marginH: 56,
+    description: "espaçamentos reduzidos",
   },
   {
-    nivel: 2,
-    fonte: 10.5,
+    level: 2,
+    font: 10.5,
     lineHeight: 1.3,
-    espacoSecao: 10,
-    espacoItem: 4,
-    margemV: 48,
-    margemH: 56,
-    descricao: "fonte do corpo em 10,5pt",
+    sectionSpacing: 10,
+    itemSpacing: 4,
+    marginV: 48,
+    marginH: 56,
+    description: "fonte do corpo em 10,5pt",
   },
   {
-    nivel: 3,
-    fonte: 10,
+    level: 3,
+    font: 10,
     lineHeight: 1.3,
-    espacoSecao: 10,
-    espacoItem: 4,
-    margemV: 48,
-    margemH: 56,
-    descricao: "fonte do corpo em 10pt",
+    sectionSpacing: 10,
+    itemSpacing: 4,
+    marginV: 48,
+    marginH: 56,
+    description: "fonte do corpo em 10pt",
   },
   {
-    nivel: 4,
-    fonte: 10,
+    level: 4,
+    font: 10,
     lineHeight: 1.3,
-    espacoSecao: 10,
-    espacoItem: 4,
-    margemV: 42,
-    margemH: 46,
-    descricao: "fonte em 10pt e margens reduzidas",
+    sectionSpacing: 10,
+    itemSpacing: 4,
+    marginV: 42,
+    marginH: 46,
+    description: "fonte em 10pt e margens reduzidas",
   },
   {
-    nivel: 5,
-    fonte: 10,
+    level: 5,
+    font: 10,
     lineHeight: 1.3,
-    espacoSecao: 10,
-    espacoItem: 4,
-    margemV: 36,
-    margemH: 36,
-    descricao: "fonte em 10pt e margens mínimas (36pt)",
+    sectionSpacing: 10,
+    itemSpacing: 4,
+    marginV: 36,
+    marginH: 36,
+    description: "fonte em 10pt e margens mínimas (36pt)",
   },
 ];
 
-export type Renderizador = {
-  renderizar: (cv: CvModel, ajuste: Ajuste) => Promise<Uint8Array>;
-  medir: (bytes: Uint8Array, ajuste: Ajuste) => Promise<Medicao>;
+export type Renderer = {
+  render: (cv: CvModel, layoutFit: LayoutFit) => Promise<Uint8Array>;
+  measure: (bytes: Uint8Array, layoutFit: LayoutFit) => Promise<Measurement>;
 };
 
-export type ResultadoFit = {
-  ajuste: Ajuste;
+export type FitResult = {
+  layoutFit: LayoutFit;
   bytes: Uint8Array;
-  medicao: Medicao;
+  measurement: Measurement;
   /** false = nem o nível mais compacto coube: o PDF tem mais de 1 página. */
-  coube: boolean;
+  fitted: boolean;
 };
 
 /**
@@ -104,36 +104,36 @@ export type ResultadoFit = {
  * binária: no máximo 5 renderizações. Nunca corta conteúdo: se nada couber,
  * devolve `coube: false` com o nível mais compacto, para a interface avisar.
  */
-export async function ajustarParaUmaPagina(
+export async function fitToOnePage(
   cv: CvModel,
-  { renderizar, medir }: Renderizador,
-): Promise<ResultadoFit> {
-  const cache = new Map<number, Omit<ResultadoFit, "coube">>();
+  { render, measure }: Renderer,
+): Promise<FitResult> {
+  const cache = new Map<number, Omit<FitResult, "fitted">>();
 
-  const tentar = async (nivel: number) => {
-    const guardado = cache.get(nivel);
-    if (guardado) return guardado;
-    const ajuste = NIVEIS[nivel];
-    const bytes = await renderizar(cv, ajuste);
-    const resultado = { ajuste, bytes, medicao: await medir(bytes, ajuste) };
-    cache.set(nivel, resultado);
-    return resultado;
+  const attempt = async (level: number) => {
+    const cached = cache.get(level);
+    if (cached) return cached;
+    const layoutFit = FIT_LEVELS[level];
+    const bytes = await render(cv, layoutFit);
+    const result = { layoutFit, bytes, measurement: await measure(bytes, layoutFit) };
+    cache.set(level, result);
+    return result;
   };
-  const cabe = (r: { medicao: Medicao }) => r.medicao.paginas <= 1;
+  const fits = (r: { measurement: Measurement }) => r.measurement.pages <= 1;
 
-  const primeiro = await tentar(0);
-  if (cabe(primeiro)) return { ...primeiro, coube: true };
+  const firstResult = await attempt(0);
+  if (fits(firstResult)) return { ...firstResult, fitted: true };
 
-  const ultimoNivel = NIVEIS.length - 1;
-  const maisCompacto = await tentar(ultimoNivel);
-  if (!cabe(maisCompacto)) return { ...maisCompacto, coube: false };
+  const lastLevel = FIT_LEVELS.length - 1;
+  const mostCompact = await attempt(lastLevel);
+  if (!fits(mostCompact)) return { ...mostCompact, fitted: false };
 
-  let baixo = 1;
-  let alto = ultimoNivel; // já sabemos que este cabe
-  while (baixo < alto) {
-    const meio = (baixo + alto) >> 1;
-    if (cabe(await tentar(meio))) alto = meio;
-    else baixo = meio + 1;
+  let low = 1;
+  let high = lastLevel; // já sabemos que este cabe
+  while (low < high) {
+    const middle = (low + high) >> 1;
+    if (fits(await attempt(middle))) high = middle;
+    else low = middle + 1;
   }
-  return { ...(await tentar(alto)), coube: true };
+  return { ...(await attempt(high)), fitted: true };
 }
