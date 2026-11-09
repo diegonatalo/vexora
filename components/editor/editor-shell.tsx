@@ -11,13 +11,13 @@ import {
   PersonalDataSection,
   LinksSection,
   SummarySection,
-} from "@/components/editor/sections/secoes-simples";
-import { ExperienceSection } from "@/components/editor/sections/experiencia-secao";
+} from "@/components/editor/sections/simple-sections";
+import { ExperienceSection } from "@/components/editor/sections/experience-section";
 import {
   CertificationsSection,
   EducationSection,
   SkillsSection,
-} from "@/components/editor/sections/listas-secoes";
+} from "@/components/editor/sections/list-sections";
 import { useAnalysis } from "@/components/preview/use-analysis";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { BUTTON, CARD } from "@/components/ui/styles";
