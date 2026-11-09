@@ -4,7 +4,7 @@ import { ajustarParaUmaPagina, NIVEIS, type Ajuste } from "@/lib/fit";
 import type { CvModel } from "@/lib/pdf/cv-model";
 import { lerDocumento } from "@/lib/pdf/ler-documento";
 import { medirPaginas, type Medicao } from "@/lib/pdf/medicao";
-import { CvDocument } from "@/pdf/CvDocument";
+import { CvDocument } from "@/components/pdf/cv-document";
 
 // Fontes padrão do PDF (Helvetica não é embutida): só o pdfjs precisa delas.
 const PASTA_FONTES = "node_modules/pdfjs-dist/standard_fonts/";

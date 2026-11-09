@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { BackupPerfil } from "@/components/editor/BackupPerfil";
-import { EditorShell } from "@/components/editor/EditorShell";
+import { BackupPerfil } from "@/components/editor/backup-perfil";
+import { EditorShell } from "@/components/editor/editor-shell";
 import { useDados } from "@/lib/use-dados";
 
 export default function EditorPage() {

@@ -11,7 +11,7 @@ export async function gerarPdfBytes(
 ): Promise<Uint8Array> {
   const [{ pdf }, { CvDocument }] = await Promise.all([
     import("@react-pdf/renderer"),
-    import("@/pdf/CvDocument"),
+    import("@/components/pdf/cv-document"),
   ]);
   const blob = await pdf(CvDocument({ cv, ajuste })).toBlob();
   return new Uint8Array(await blob.arrayBuffer());

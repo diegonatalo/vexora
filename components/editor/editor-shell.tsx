@@ -4,22 +4,22 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AtsCard } from "@/components/editor/AtsCard";
-import { EspacoPagina } from "@/components/editor/EspacoPagina";
-import { SectionNav } from "@/components/editor/SectionNav";
+import { AtsCard } from "@/components/editor/ats-card";
+import { EspacoPagina } from "@/components/editor/espaco-pagina";
+import { SectionNav } from "@/components/editor/section-nav";
 import {
   DadosPessoaisSecao,
   LinksSecao,
   ResumoSecao,
-} from "@/components/editor/secoes/SecoesSimples";
-import { ExperienciaSecao } from "@/components/editor/secoes/ExperienciaSecao";
+} from "@/components/editor/secoes/secoes-simples";
+import { ExperienciaSecao } from "@/components/editor/secoes/experiencia-secao";
 import {
   CertificacoesSecao,
   FormacaoSecao,
   HabilidadesSecao,
-} from "@/components/editor/secoes/ListasSecoes";
+} from "@/components/editor/secoes/listas-secoes";
 import { useAnalise } from "@/components/preview/use-analise";
-import { AlternarTema } from "@/components/ui/AlternarTema";
+import { AlternarTema } from "@/components/ui/alternar-tema";
 import { BOTAO, CARTAO } from "@/components/ui/estilos";
 import { Icon } from "@/components/ui/icons";
 import { rodarChecagens } from "@/lib/ats/checks";
@@ -33,7 +33,7 @@ import type { Dados } from "@/lib/storage";
 import type { EstadoSalvamento } from "@/lib/use-dados";
 
 // pdfjs e react-pdf só no navegador, e fora do bundle inicial.
-const PdfPreview = dynamic(() => import("@/components/preview/PdfPreview"), {
+const PdfPreview = dynamic(() => import("@/components/preview/pdf-preview"), {
   ssr: false,
   loading: () => (
     <p className="text-muted py-10 text-center text-sm" role="status">

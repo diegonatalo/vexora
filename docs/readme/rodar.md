@@ -16,7 +16,6 @@ pnpm dev        # http://localhost:3000
 | `pnpm typecheck` | Confere os tipos do TypeScript |
 | `pnpm test` | Roda os testes uma vez |
 | `pnpm test:watch` | Roda os testes e reexecuta ao salvar |
-| `pnpm format` | Formata o código com o Prettier |
 | `pnpm check` | Roda typecheck, lint e testes em sequência |
 
 ### 🔑 Variáveis de ambiente

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
-import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
+import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/ordenavel";
 import {
   AdicionarItem,
   CampoMesAno,

@@ -1,7 +1,7 @@
 <!-- Arquivo gerado pelo readme-kit. Não edite aqui: altere docs/readme/ e rode "readme-kit build". -->
 <div align="center">
 
-<img src="docs/assets/banner.svg" alt="Vexora: Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS. github.com/diegonatalo/vexora. Stack: Next.js 16, React 19, TypeScript 6, Tailwind CSS 4" width="100%" />
+<img src="docs/assets/banner.svg" alt="Vexora: Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS. github.com/diegonatalo/vexora. Stack: Next.js 16, React 19, TypeScript 5, Tailwind CSS 4" width="100%" />
 
 <br />
 
@@ -12,7 +12,7 @@
 
 ![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-20232a?style=flat-square&logo=react&logoColor=61dafb)
-![TypeScript](https://img.shields.io/badge/TypeScript_6-3178c6?style=flat-square&logo=typescript&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript_5-3178c6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white)
 ![dados](https://img.shields.io/badge/dados-s%C3%B3_no_navegador-0b6b4d?style=flat-square)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-16a34a?style=flat-square)
@@ -94,7 +94,7 @@ Tudo roda no navegador: não há backend, login nem IA generativa. Seus dados fi
 
 <div align="center">
 
-<img src="docs/assets/stack.svg" alt="Stack: Next.js 16, React 19, TypeScript 6, Tailwind CSS 4, Zod · React Hook Form, @react-pdf/renderer · pdfjs-dist, Vitest 5" width="100%" />
+<img src="docs/assets/stack.svg" alt="Stack: Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Zod · React Hook Form, @react-pdf/renderer · pdfjs-dist, Vitest 5" width="100%" />
 
 </div>
 
@@ -124,7 +124,6 @@ pnpm dev        # http://localhost:3000
 | `pnpm typecheck` | Confere os tipos do TypeScript |
 | `pnpm test` | Roda os testes uma vez |
 | `pnpm test:watch` | Roda os testes e reexecuta ao salvar |
-| `pnpm format` | Formata o código com o Prettier |
 | `pnpm check` | Roda typecheck, lint e testes em sequência |
 
 ### 🔑 Variáveis de ambiente
@@ -143,9 +142,8 @@ Nenhuma é obrigatória. `NEXT_PUBLIC_SITE_URL` é opcional: define o endereço 
 docs/             decisões de projeto (decisions.md) e fontes deste README
 public/           arquivos estáticos
 ├── app/          rota /editor, layout, metadados, sitemap e robots
-├── components/   editor (seções, ATS, backup), preview e ui
+├── components/   editor (seções, ATS, backup), preview, ui e pdf (documento do CV, react-pdf)
 ├── lib/          schema, storage, ajuste de página, checagens ATS e geração do PDF
-├── pdf/          documento do CV (react-pdf)
 └── tests/        utilitários de teste de PDF
 ```
 

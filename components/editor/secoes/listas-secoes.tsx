@@ -9,7 +9,7 @@ import {
   InterruptorExibir,
   SecaoCabecalho,
 } from "@/components/editor/campos";
-import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
+import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/ordenavel";
 import { BOTAO } from "@/components/ui/estilos";
 import { CheckboxField, TextField } from "@/components/ui/fields";
 import { novoId, type Perfil } from "@/lib/schema";

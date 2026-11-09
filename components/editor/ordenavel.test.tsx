@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/Ordenavel";
+import { ItemOrdenavel, ListaOrdenavel } from "@/components/editor/ordenavel";
 
 const ALTURA = 100;
 
