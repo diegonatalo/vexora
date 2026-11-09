@@ -6,7 +6,6 @@ import {
   type Backup,
   type Profile,
 } from "@/lib/schema";
-import { migrateBackup, migrateProfile } from "@/lib/migrate";
 import { sanitize } from "@/lib/sanitize";
 
 const PROFILE_KEY = "folha:perfil";
@@ -22,7 +21,7 @@ export type AppData = { profile: Profile };
  */
 export async function loadData(): Promise<AppData> {
   const profile =
-    sanitize(profileSchema, migrateProfile(await get(PROFILE_KEY))) ??
+    sanitize(profileSchema, await get(PROFILE_KEY)) ??
     createEmptyProfile();
 
   return { profile };
@@ -56,7 +55,6 @@ export function importJson(text: string): ImportResult {
   } catch {
     return { ok: false, error: "O arquivo não é um JSON válido." };
   }
-  raw = migrateBackup(raw);
   const result = backupSchema.safeParse(raw);
   if (!result.success) {
     return {
