@@ -72,7 +72,7 @@ describe("storage", () => {
 
   it("volta ao perfil vazio se o dado salvo estiver corrompido", async () => {
     const { set } = await import("idb-keyval");
-    await set("folha:perfil", { garbage: true });
+    await set("vexora:profile:v1", { garbage: true });
     const { profile } = await loadData();
     expect(profile.fullName).toBe("");
   });

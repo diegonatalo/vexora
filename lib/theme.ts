@@ -1,7 +1,7 @@
 export type Theme = "claro" | "escuro";
 
-const KEY = "folha:tema";
-const EVENT = "folha:tema";
+const KEY = "vexora:theme:v1";
+const EVENT = "vexora:theme:v1";
 const MEDIA_DARK = "(prefers-color-scheme: dark)";
 
 /** Tema em uso: a escolha da pessoa ou, sem escolha, a do sistema. */

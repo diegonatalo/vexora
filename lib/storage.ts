@@ -8,9 +8,7 @@ import {
 } from "@/lib/schema";
 import { sanitize } from "@/lib/sanitize";
 
-const PROFILE_KEY = "folha:perfil";
-// Chave de uma versão antiga do app (que guardava "versões" do CV): só é apagada.
-const LEGACY_VERSIONS_KEY = "folha:versoes";
+const PROFILE_KEY = "vexora:profile:v1";
 
 export type AppData = { profile: Profile };
 
@@ -33,7 +31,6 @@ export async function saveData(data: AppData): Promise<void> {
 
 export async function deleteData(): Promise<void> {
   await del(PROFILE_KEY);
-  await del(LEGACY_VERSIONS_KEY);
 }
 
 export function exportJson(data: AppData, now = new Date()): string {
