@@ -5,7 +5,7 @@ Registro curto das decisões que não estavam no prompt original.
 ## Fase 1
 
 - **Versões:** Next.js 16 (App Router), React 19, Tailwind v4, Zod 4, Vitest 5. O Next 16 tem breaking changes; a doc local fica em `node_modules/next/dist/docs/` e vale ler antes de mexer em rotas.
-- **Tokens de design em `@theme` (CSS):** o Tailwind v4 não usa mais `tailwind.config`. Os tokens estão em `src/app/globals.css` e geram classes como `bg-paper`, `text-muted`, `rounded-card`.
+- **Tokens de design em `@theme` (CSS):** o Tailwind v4 não usa mais `tailwind.config`. Os tokens estão em `app/globals.css` e geram classes como `bg-paper`, `text-muted`, `rounded-card`.
 - **Armazenamento:** IndexedDB via `idb-keyval`, com duas chaves (`folha:perfil`, `folha:versoes`). Ao carregar, o dado é validado com Zod; se estiver inválido, cai para um perfil vazio em vez de quebrar.
 - **Schema aceita rascunho:** campos de texto e datas aceitam `""` porque o perfil é salvo enquanto a pessoa preenche. O que estiver preenchido precisa ser válido (regex `MM/AAAA`, e-mail, URL, `inicio <= fim`). A obrigatoriedade (e-mail, telefone, datas) é cobrada pelas checagens de ATS (Fase 4), não pelo schema.
 - **Ids nos itens:** experiências, formações e certificações têm `id` (UUID) para que `VersaoCv.ajustes` (destaques, certificações ocultas) referencie itens sem depender da posição.
@@ -37,7 +37,7 @@ Registro curto das decisões que não estavam no prompt original.
 - **Sem hifenização automática:** o hifenizador padrão do react-pdf é em inglês e partiria palavras ("pro-gramação"). Registrei um callback que nunca hifeniza; há teste.
 - **Marcador de lista:** o react-pdf não tem listas nativas; cada tópico é uma linha com `•` e o texto em coluna separada (o texto sai selecionável e na ordem certa).
 - **`CvDocument` é chamado como função** (`CvDocument({ cv })`), não como componente JSX, porque `pdf()` e `renderToBuffer()` exigem o elemento `<Document>` na raiz.
-- **Testes de PDF em Node:** `renderToBuffer` + `pdfjs-dist/legacy` extraem texto e contam páginas (`src/tests/pdf-utils.ts`). Passa a pasta `standard_fonts` ao pdfjs, porque a Helvetica não é embutida.
+- **Testes de PDF em Node:** `renderToBuffer` + `pdfjs-dist/legacy` extraem texto e contam páginas (`tests/pdf-utils.ts`). Passa a pasta `standard_fonts` ao pdfjs, porque a Helvetica não é embutida.
 - **"Baixar PDF" desabilitado sem nome** (dica via `title`). A obrigatoriedade de e-mail e telefone continua na Fase 4.
 - **Estouro de página:** na Fase 3 o conteúdo que passa de 1 página vira 2 páginas (a legenda da pré-visualização mostra "2 páginas"). O ajuste automático e o aviso são a Fase 4.
 
@@ -55,7 +55,7 @@ Registro curto das decisões que não estavam no prompt original.
 
 ## Fase 5
 
-- **Análise 100% determinística, no navegador (`src/lib/vaga/`):** `normalizar` (minúsculas, sem acentos, sem pontuação; `Next.js` vira `nextjs`), `stopwords` (PT/EN, mais palavras típicas de anúncio), `glossario.json` (termos com sinônimos, editável sem mexer em código) e `analisarVaga`. Sem IA generativa e sem rede: a descrição da vaga nunca sai do navegador.
+- **Análise 100% determinística, no navegador (`lib/vaga/`):** `normalizar` (minúsculas, sem acentos, sem pontuação; `Next.js` vira `nextjs`), `stopwords` (PT/EN, mais palavras típicas de anúncio), `glossario.json` (termos com sinônimos, editável sem mexer em código) e `analisarVaga`. Sem IA generativa e sem rede: a descrição da vaga nunca sai do navegador.
 - **Casamento por palavra inteira, formas mais longas primeiro:** `Tailwind CSS` consome as duas palavras e não conta `CSS` de novo; `rest` solto não casa `APIs REST`. Termos ambíguos (`Go`, `.NET`) usam `apenasSinonimos`, para o termo em si não casar palavras comuns.
 - **Termos recorrentes:** palavras fora do glossário que aparecem 2 ou mais vezes na descrição (e não são stopwords) entram como palavras-chave, para cobrir tecnologias que o glossário ainda não conhece.
 - **Comparação com o perfil inteiro:** o texto do perfil (menos ids) vira tokens e cada palavra-chave é procurada por sequência de palavras. Isso gera `encontradas` e `naoEncontradas`, e o contador "6 de 9" do design.
@@ -84,7 +84,7 @@ Registro curto das decisões que não estavam no prompt original.
 
 ## Nome: Vexora
 
-- A aplicação passou a se chamar **Vexora** (textos, título da página, nome do pacote, nome dos arquivos baixados `vexora-perfil.json` e fallback `cv-vexora.pdf`). Marca: um "V" branco sobre quadrado verde, em `src/app/icon.svg`, `favicon.ico` (16/32/48) e `apple-icon.png` (180), todos gerados da mesma arte.
+- A aplicação passou a se chamar **Vexora** (textos, título da página, nome do pacote, nome dos arquivos baixados `vexora-perfil.json` e fallback `cv-vexora.pdf`). Marca: um "V" branco sobre quadrado verde, em `app/icon.svg`, `favicon.ico` (16/32/48) e `apple-icon.png` (180), todos gerados da mesma arte.
 - **Chaves de armazenamento mantidas** (`folha:perfil`, `folha:versoes`, `folha:tema`): trocá-las faria quem já usou a app perder o perfil salvo, e a pessoa nunca vê esses nomes. Só trocar com migração.
 
 ## SEO
@@ -111,7 +111,7 @@ Registro curto das decisões que não estavam no prompt original.
 
 ## Fim da adaptação à vaga
 
-- **Escopo novo:** a Vexora é só um gerador de CV em PDF. Removi a tela `/vaga`, o motor `src/lib/vaga/` (análise de palavras-chave, glossário, sugestões), as "versões" do CV (`VersaoCv`, `ajustes`, seletor de versão) e o link "Adaptar à vaga". As seções "Fase 5" acima ficam só como histórico.
+- **Escopo novo:** a Vexora é só um gerador de CV em PDF. Removi a tela `/vaga`, o motor `lib/vaga/` (análise de palavras-chave, glossário, sugestões), as "versões" do CV (`VersaoCv`, `ajustes`, seletor de versão) e o link "Adaptar à vaga". As seções "Fase 5" acima ficam só como histórico.
 - **Dados:** o armazenamento guarda apenas o perfil. A chave antiga `folha:versoes` não é mais lida e é apagada em `apagarDados`. Backups antigos (que tinham `versoes`) ainda importam: o campo extra é ignorado.
 - **"Exibir no CV" permanece** e é o que controla o que entra no PDF; o filtro é `somenteVisiveis`.
 
@@ -132,4 +132,4 @@ Registro curto das decisões que não estavam no prompt original.
 - **Problema:** as três listas fixas (Linguagens, Frameworks, Ferramentas) só serviam para quem trabalha com tecnologia.
 - **Decisão:** `habilidades` virou uma lista de grupos `{ titulo, itens[], exibir? }`. A pessoa nomeia cada grupo ("Atendimento", "Técnicas", "Ferramentas"…), pode reordenar, ocultar com "Exibir no CV" e adicionar quantos quiser. Sem grupos, aparecem sugestões de nomes como atalho.
 - **PDF:** a seção chama-se "Habilidades" (antes "Habilidades técnicas") e cada linha sai como `Grupo: item, item`. Grupo sem nome mostra só os itens.
-- **Migração:** `src/lib/migrar.ts` converte o formato antigo (três listas) em grupos ao carregar do navegador e ao importar backups, sem perder dados. O formato do backup continua `formato: 1`.
+- **Migração:** `lib/migrar.ts` converte o formato antigo (três listas) em grupos ao carregar do navegador e ao importar backups, sem perder dados. O formato do backup continua `formato: 1`.

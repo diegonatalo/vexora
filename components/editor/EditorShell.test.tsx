@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// jsdom não desenha canvas nem roda react-pdf/pdfjs: a geração real é testada em src/pdf/*.test.
+// jsdom não desenha canvas nem roda react-pdf/pdfjs: a geração real é testada em pdf/*.test.
 const { prepararMock } = vi.hoisted(() => ({ prepararMock: vi.fn() }));
 vi.mock("@/components/preview/PdfPreview", () => ({
   default: () => <div data-testid="previa" />,
