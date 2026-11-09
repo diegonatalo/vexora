@@ -159,7 +159,7 @@ type Props = Omit<SVGProps<SVGSVGElement>, "name"> & {
 };
 
 /** Ícones de traço. Decorativos: o significado sempre vai também em texto. */
-export function Icon({ name, size = 20, ...rest }: Props) {
+export const Icon = ({ name, size = 20, ...rest }: Props) => {
   return (
     <svg
       width={size}
@@ -177,4 +177,4 @@ export function Icon({ name, size = 20, ...rest }: Props) {
       {PATHS[name]}
     </svg>
   );
-}
+};

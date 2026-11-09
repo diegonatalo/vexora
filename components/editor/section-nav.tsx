@@ -4,7 +4,7 @@ import { Icon } from "@/components/ui/icons";
 import { CARD, KICKER } from "@/components/ui/styles";
 import { SECTIONS, type SectionId, type SectionStatus } from "@/lib/sections";
 
-export function SectionNav({
+export const SectionNav = ({
   active,
   status,
   completedCount,
@@ -15,7 +15,7 @@ export function SectionNav({
   /** Quantas seções já estão completas (barra de progresso). */
   completedCount: number;
   onSelect: (id: SectionId) => void;
-}) {
+}) => {
   const total = SECTIONS.length;
   const pct = Math.round((completedCount / total) * 100);
   return (
@@ -85,4 +85,4 @@ export function SectionNav({
       </ul>
     </nav>
   );
-}
+};

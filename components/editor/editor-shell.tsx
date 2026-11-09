@@ -33,7 +33,7 @@ import type { AppData } from "@/lib/storage";
 import type { SaveState } from "@/hooks/use-data";
 
 // pdfjs e react-pdf só no navegador, e fora do bundle inicial.
-const PdfPreview = dynamic(() => import("@/components/preview/pdf-preview"), {
+const PdfPreview = dynamic(() => import("@/components/preview/pdf-preview").then((m) => m.PdfPreview), {
   ssr: false,
   loading: () => (
     <p className="text-muted py-10 text-center text-sm" role="status">
@@ -67,12 +67,12 @@ type Props = {
   backup?: React.ReactNode;
 };
 
-export function EditorShell({
+export const EditorShell = ({
   initialData,
   state,
   onChange,
   backup,
-}: Props) {
+}: Props) => {
   const form = useForm<Profile>({
     resolver: zodResolver(profileSchema),
     defaultValues: initialData.profile,
@@ -327,4 +327,4 @@ export function EditorShell({
       </div>
     </FormProvider>
   );
-}
+};

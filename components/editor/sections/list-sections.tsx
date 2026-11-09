@@ -14,7 +14,7 @@ import { BUTTON } from "@/components/ui/styles";
 import { CheckboxField, TextField } from "@/components/ui/fields";
 import { newId, type Profile } from "@/lib/schema";
 
-export function EducationSection() {
+export const EducationSection = () => {
   const { control } = useFormContext<Profile>();
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -78,9 +78,9 @@ export function EducationSection() {
       </div>
     </>
   );
-}
+};
 
-function EducationFields({ index }: { index: number }) {
+const EducationFields = ({ index }: { index: number }) => {
   const {
     register,
     control,
@@ -112,9 +112,9 @@ function EducationFields({ index }: { index: number }) {
       <CheckboxField label="Ainda cursando" {...register(`${base}.current`)} />
     </>
   );
-}
+};
 
-export function CertificationsSection() {
+export const CertificationsSection = () => {
   const { control } = useFormContext<Profile>();
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -176,9 +176,9 @@ export function CertificationsSection() {
       </div>
     </>
   );
-}
+};
 
-function CertificationFields({ index }: { index: number }) {
+const CertificationFields = ({ index }: { index: number }) => {
   const {
     register,
     formState: { errors },
@@ -211,7 +211,7 @@ function CertificationFields({ index }: { index: number }) {
       </div>
     </>
   );
-}
+};
 
 const GROUP_SUGGESTIONS = [
   "Competências",
@@ -221,7 +221,7 @@ const GROUP_SUGGESTIONS = [
   "Sistemas",
 ] as const;
 
-export function SkillsSection() {
+export const SkillsSection = () => {
   const { control, register } = useFormContext<Profile>();
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -347,4 +347,4 @@ export function SkillsSection() {
       </div>
     </>
   );
-}
+};

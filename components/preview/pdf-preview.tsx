@@ -19,7 +19,7 @@ type Props = {
  * Desenha a página 1 do PDF em um canvas com pdfjs (funciona também em
  * celulares, onde <iframe> com PDF não funciona).
  */
-export default function PdfPreview({ bytes, pages, generating, error }: Props) {
+export const PdfPreview = ({ bytes, pages, generating, error }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [renderFailed, setRenderFailed] = useState(false);
 
@@ -99,4 +99,4 @@ export default function PdfPreview({ bytes, pages, generating, error }: Props) {
       </p>
     </div>
   );
-}
+};

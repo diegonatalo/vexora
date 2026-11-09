@@ -13,7 +13,7 @@ type Props = {
 };
 
 /** Cartão "Espaço da página": barra de uso e aviso de estouro. */
-export function PageSpace({ measurement, layoutFit, fitted, suggestions }: Props) {
+export const PageSpace = ({ measurement, layoutFit, fitted, suggestions }: Props) => {
   const pct = measurement?.usedPct ?? 0;
   const overflowed = measurement !== null && !fitted;
 
@@ -101,4 +101,4 @@ export function PageSpace({ measurement, layoutFit, fitted, suggestions }: Props
       )}
     </section>
   );
-}
+};

@@ -12,7 +12,7 @@ import {
 } from "@/lib/mask";
 import type { Profile } from "@/lib/schema";
 
-export function PersonalDataSection() {
+export const PersonalDataSection = () => {
   const {
     register,
     control,
@@ -80,9 +80,9 @@ export function PersonalDataSection() {
       </div>
     </>
   );
-}
+};
 
-export function SummarySection() {
+export const SummarySection = () => {
   const {
     register,
     control,
@@ -106,7 +106,7 @@ export function SummarySection() {
       />
     </>
   );
-}
+};
 
 type LinkFieldProps = {
   name: "links.linkedin" | "links.github" | "links.portfolio";
@@ -117,13 +117,13 @@ type LinkFieldProps = {
 };
 
 /** Normaliza ao sair do campo, para não mexer no texto enquanto a pessoa digita. */
-function LinkField({
+const LinkField = ({
   name,
   label,
   placeholder,
   hint,
   normalize,
-}: LinkFieldProps) {
+}: LinkFieldProps) => {
   const {
     control,
     formState: { errors },
@@ -155,9 +155,9 @@ function LinkField({
       )}
     />
   );
-}
+};
 
-export function LinksSection() {
+export const LinksSection = () => {
   return (
     <>
       <SectionHeader
@@ -190,4 +190,4 @@ export function LinksSection() {
       </div>
     </>
   );
-}
+};

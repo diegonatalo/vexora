@@ -20,7 +20,7 @@ import { createEmptyExperience, LIMITS, type Profile } from "@/lib/schema";
 
 const LIMIT = LIMITS.charactersPerBullet;
 
-export function ExperienceSection() {
+export const ExperienceSection = () => {
   const {
     control,
     formState: { errors },
@@ -124,9 +124,9 @@ export function ExperienceSection() {
       </div>
     </>
   );
-}
+};
 
-function CollapsedExperience({
+const CollapsedExperience = ({
   index,
   warning,
   onOpen,
@@ -134,7 +134,7 @@ function CollapsedExperience({
   index: number;
   warning?: string;
   onOpen: () => void;
-}) {
+}) => {
   const { control } = useFormContext<Profile>();
   const [jobTitle, company] = useWatch({
     control,
@@ -171,9 +171,9 @@ function CollapsedExperience({
       </span>
     </button>
   );
-}
+};
 
-function ExperienceFields({ index }: { index: number }) {
+const ExperienceFields = ({ index }: { index: number }) => {
   const {
     register,
     control,
@@ -238,4 +238,4 @@ function ExperienceFields({ index }: { index: number }) {
       </div>
     </>
   );
-}
+};

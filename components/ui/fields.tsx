@@ -25,7 +25,7 @@ type FormFieldProps = FieldBaseProps & {
 };
 
 /** Casca com label, dica e erro ligados ao controle por id/aria-describedby. */
-function FormField({ label, error, hint, aside, render }: FormFieldProps) {
+const FormField = ({ label, error, hint, aside, render }: FormFieldProps) => {
   const uid = useId();
   const id = `${uid}-campo`;
   const errorId = `${uid}-erro`;
@@ -68,15 +68,15 @@ function FormField({ label, error, hint, aside, render }: FormFieldProps) {
       )}
     </div>
   );
-}
+};
 
-export function TextField({
+export const TextField = ({
   label,
   error,
   hint,
   aside,
   ...input
-}: FieldBaseProps & Omit<ComponentProps<"input">, "id" | "className">) {
+}: FieldBaseProps & Omit<ComponentProps<"input">, "id" | "className">) => {
   return (
     <FormField
       label={label}
@@ -88,16 +88,16 @@ export function TextField({
       )}
     />
   );
-}
+};
 
-export function TextAreaField({
+export const TextAreaField = ({
   label,
   error,
   hint,
   aside,
   rows = 3,
   ...area
-}: FieldBaseProps & Omit<ComponentProps<"textarea">, "id" | "className">) {
+}: FieldBaseProps & Omit<ComponentProps<"textarea">, "id" | "className">) => {
   return (
     <FormField
       label={label}
@@ -114,12 +114,12 @@ export function TextAreaField({
       )}
     />
   );
-}
+};
 
-export function CheckboxField({
+export const CheckboxField = ({
   label,
   ...input
-}: { label: string } & Omit<ComponentProps<"input">, "id" | "type">) {
+}: { label: string } & Omit<ComponentProps<"input">, "id" | "type">) => {
   const id = useId();
   return (
     <div className="flex min-h-11 items-center gap-3">
@@ -134,4 +134,4 @@ export function CheckboxField({
       </label>
     </div>
   );
-}
+};

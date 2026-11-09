@@ -9,7 +9,7 @@ import { maskMonthYear } from "@/lib/mask";
 import type { Profile } from "@/lib/schema";
 
 /** Campo de data MM/AAAA com máscara, ligado ao formulário do perfil. */
-export function MonthYearField({
+export const MonthYearField = ({
   name,
   label,
   disabled,
@@ -17,7 +17,7 @@ export function MonthYearField({
   name: FieldPath<Profile>;
   label: string;
   disabled?: boolean;
-}) {
+}) => {
   const { control } = useFormContext<Profile>();
   return (
     <Controller
@@ -41,10 +41,10 @@ export function MonthYearField({
       )}
     />
   );
-}
+};
 
 /** Lista separada por vírgulas (itens de um grupo de habilidades) <-> array. */
-export function ListField({
+export const ListField = ({
   name,
   label,
   hint,
@@ -52,7 +52,7 @@ export function ListField({
   name: `skills.${number}.items`;
   label: string;
   hint?: string;
-}) {
+}) => {
   const { control } = useFormContext<Profile>();
   return (
     <Controller
@@ -68,11 +68,11 @@ export function ListField({
       )}
     />
   );
-}
+};
 
 // Mantém o texto digitado localmente: dividir por vírgula a cada tecla
 // engoliria a vírgula e o espaço que a pessoa acabou de digitar.
-function ListFieldInner({
+const ListFieldInner = ({
   label,
   hint,
   initial,
@@ -82,7 +82,7 @@ function ListFieldInner({
   hint?: string;
   initial: string[];
   onChange: (v: string[]) => void;
-}) {
+}) => {
   const [text, setText] = useState(initial.join(", "));
   return (
     <TextField
@@ -101,9 +101,9 @@ function ListFieldInner({
       }}
     />
   );
-}
+};
 
-export function SectionHeader({
+export const SectionHeader = ({
   title,
   description,
   icon,
@@ -111,7 +111,7 @@ export function SectionHeader({
   title: string;
   description?: ReactNode;
   icon?: IconName;
-}) {
+}) => {
   return (
     <header className="animar-entrada mb-8 flex items-start gap-4">
       {icon && (
@@ -133,9 +133,9 @@ export function SectionHeader({
       </div>
     </header>
   );
-}
+};
 
-export function CardItem({
+export const CardItem = ({
   title,
   aside,
   onRemove,
@@ -158,7 +158,7 @@ export function CardItem({
   onCollapse?: () => void;
   rotuloRecolher?: string;
   children: ReactNode;
-}) {
+}) => {
   const number = title.match(/\d+$/)?.[0];
   return (
     <fieldset className="border-line bg-sunken/60 rounded-2xl border p-4 sm:p-5">
@@ -213,15 +213,15 @@ export function CardItem({
       <div className="space-y-4">{children}</div>
     </fieldset>
   );
-}
+};
 
-export function AddItem({
+export const AddItem = ({
   addText,
   onAdd,
 }: {
   addText: string;
   onAdd: () => void;
-}) {
+}) => {
   return (
     <button
       type="button"
@@ -232,20 +232,20 @@ export function AddItem({
       {addText}
     </button>
   );
-}
+};
 
 /**
  * "Exibir no CV": liga e desliga um item sem apagá-lo. Item sem a marca
  * (dados antigos) conta como exibido. Visualmente é um interruptor.
  */
-export function VisibilityToggle({
+export const VisibilityToggle = ({
   name,
   label,
 }: {
   name: FieldPath<Profile>;
   /** Nome acessível único, ex.: "Exibir certificação 2 no CV". */
   label: string;
-}) {
+}) => {
   const { control } = useFormContext<Profile>();
   return (
     <Controller
@@ -273,4 +273,4 @@ export function VisibilityToggle({
       )}
     />
   );
-}
+};

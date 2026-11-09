@@ -75,7 +75,7 @@ function createStyles(a: LayoutFit) {
 
 type Styles = ReturnType<typeof createStyles>;
 
-function Section({
+const Section = ({
   s,
   title,
   children,
@@ -83,32 +83,32 @@ function Section({
   s: Styles;
   title: string;
   children: React.ReactNode;
-}) {
+}) => {
   return (
     <View style={s.section}>
       <Text style={s.sectionTitle}>{title}</Text>
       {children}
     </View>
   );
-}
+};
 
-function Bullet({ s, text }: { s: Styles; text: string }) {
+const Bullet = ({ s, text }: { s: Styles; text: string }) => {
   return (
     <View style={s.bullet} wrap={false}>
       <Text style={s.marker}>•</Text>
       <Text style={s.bulletText}>{text}</Text>
     </View>
   );
-}
+};
 
 /** Documento de 1 coluna, só texto: sem tabelas, imagens nem ícones. */
-export function CvDocument({
+export const CvDocument = ({
   cv,
   layoutFit = FIT_LEVELS[0],
 }: {
   cv: CvModel;
   layoutFit?: LayoutFit;
-}) {
+}) => {
   const s = createStyles(layoutFit);
   return (
     <Document
@@ -202,4 +202,4 @@ export function CvDocument({
       </Page>
     </Document>
   );
-}
+};

@@ -5,13 +5,13 @@ import { BUTTON } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
 import { exportJson, importJson, type AppData } from "@/lib/storage";
 
-export function ProfileBackup({
+export const ProfileBackup = ({
   data,
   onImport,
 }: {
   data: AppData;
   onImport: (data: AppData) => void;
-}) {
+}) => {
   const [message, setMessage] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -84,4 +84,4 @@ export function ProfileBackup({
       )}
     </section>
   );
-}
+};

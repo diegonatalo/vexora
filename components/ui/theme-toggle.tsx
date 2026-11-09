@@ -5,7 +5,7 @@ import { BUTTON } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
 import { subscribeTheme, setTheme, currentTheme, type Theme } from "@/lib/theme";
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const theme = useSyncExternalStore<Theme>(
     subscribeTheme,
     currentTheme,
@@ -24,4 +24,4 @@ export function ThemeToggle() {
       <Icon name={escuro ? "sun" : "moon"} size={18} />
     </button>
   );
-}
+};

@@ -3,7 +3,7 @@ import { CARD } from "@/components/ui/styles";
 import type { Check } from "@/lib/ats/checks";
 
 /** Cartão "Verificação ATS". `checagens` é null enquanto o PDF é gerado. */
-export function AtsCard({ checks }: { checks: Check[] | null }) {
+export const AtsCard = ({ checks }: { checks: Check[] | null }) => {
   const ok = checks?.filter((c) => c.ok) ?? [];
   const failures = checks?.filter((c) => !c.ok) ?? [];
 
@@ -81,4 +81,4 @@ export function AtsCard({ checks }: { checks: Check[] | null }) {
       )}
     </section>
   );
-}
+};

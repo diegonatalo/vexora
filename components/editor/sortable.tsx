@@ -27,7 +27,7 @@ const INSTRUCTIONS: ScreenReaderInstructions = {
 };
 
 /** `ids` na ordem atual; `onMover(de, para)` recebe os índices. */
-export function SortableList({
+export const SortableList = ({
   ids,
   label,
   onMove,
@@ -38,7 +38,7 @@ export function SortableList({
   label: string;
   onMove: (from: number, to: number) => void;
   children: ReactNode;
-}) {
+}) => {
   const sensors = useSensors(
     // Distância mínima: um clique no botão não vira arrasto.
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -81,12 +81,12 @@ export function SortableList({
       </SortableContext>
     </DndContext>
   );
-}
+};
 
 /** Alça de arrastar (também por teclado). */
 export type Handle = ReactNode;
 
-export function SortableItem({
+export const SortableItem = ({
   id,
   handleLabel,
   disabled,
@@ -97,7 +97,7 @@ export function SortableItem({
   /** Com um único item não há o que reordenar. */
   disabled?: boolean;
   children: (handle: Handle) => ReactNode;
-}) {
+}) => {
   const {
     attributes,
     listeners,
@@ -130,4 +130,4 @@ export function SortableItem({
       {children(handle)}
     </div>
   );
-}
+};
