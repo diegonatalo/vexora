@@ -18,7 +18,7 @@ import {
   EducationSection,
   SkillsSection,
 } from "@/components/editor/sections/list-sections";
-import { useAnalysis } from "@/components/preview/use-analysis";
+import { useAnalysis } from "@/hooks/use-analysis";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { BUTTON, CARD } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
@@ -30,7 +30,7 @@ import { profileSchema, type Profile } from "@/lib/schema";
 import { onlyVisible } from "@/lib/visibility";
 import { SECTIONS, sectionStatuses, type SectionId } from "@/lib/sections";
 import type { AppData } from "@/lib/storage";
-import type { SaveState } from "@/lib/use-data";
+import type { SaveState } from "@/hooks/use-data";
 
 // pdfjs e react-pdf só no navegador, e fora do bundle inicial.
 const PdfPreview = dynamic(() => import("@/components/preview/pdf-preview"), {

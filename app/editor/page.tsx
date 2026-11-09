@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ProfileBackup } from "@/components/editor/profile-backup";
 import { EditorShell } from "@/components/editor/editor-shell";
-import { useData } from "@/lib/use-data";
+import { useData } from "@/hooks/use-data";
 
 export default function EditorPage() {
   const { data, state, update } = useData();
