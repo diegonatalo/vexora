@@ -1,6 +1,6 @@
 import { COMPATIBLE_FONTS, USED_FONTS } from "@/lib/pdf/fonts";
 import { SECTION_TITLES, type CvModel } from "@/lib/pdf/cv-model";
-import type { Measurement } from "@/lib/pdf/measurement";
+import type { Measurement } from "@/types/pdf";
 import type { Profile } from "@/lib/schema";
 import { suggestTrim } from "@/lib/ats/trim";
 

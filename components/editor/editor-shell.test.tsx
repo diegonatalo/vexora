@@ -15,7 +15,7 @@ vi.mock("@/lib/pdf/generate", () => ({
 import { EditorShell } from "@/components/editor/editor-shell";
 import { FIT_LEVELS } from "@/lib/fit";
 import { buildCv, SECTION_TITLES } from "@/lib/pdf/cv-model";
-import type { Measurement } from "@/lib/pdf/measurement";
+import type { Measurement } from "@/types/pdf";
 import {
   createEmptyExperience,
   createEmptyProfile,

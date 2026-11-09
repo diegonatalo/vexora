@@ -1,18 +1,4 @@
-/** Um trecho de texto do PDF, em coordenadas do PDF (origem no canto inferior esquerdo). */
-export type ReadItem = { str: string; y: number; size: number };
-export type ReadPage = { height: number; items: ReadItem[]; text: string };
-
-export type Measurement = {
-  pages: number;
-  /** Texto de todas as páginas, na ordem em que um ATS o leria. */
-  text: string;
-  /** Quantidade de imagens desenhadas no PDF (deve ser 0). */
-  images: number;
-  /** Uso da página em %, acima de 100 quando passa de 1 página. */
-  usedPct: number;
-  /** Linhas de corpo que ainda cabem na página (0 se já passou de 1). */
-  freeLines: number;
-};
+import type { ReadPage, Measurement } from "@/types/pdf";
 
 /** Parâmetros de layout que a medição precisa conhecer. */
 export type MeasuredLayout = {

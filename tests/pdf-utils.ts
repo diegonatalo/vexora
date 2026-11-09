@@ -1,9 +1,11 @@
 import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { fitToOnePage, FIT_LEVELS, type LayoutFit } from "@/lib/fit";
+import { fitToOnePage, FIT_LEVELS } from "@/lib/fit";
+import type { LayoutFit } from "@/types/pdf";
 import type { CvModel } from "@/lib/pdf/cv-model";
 import { readDocument } from "@/lib/pdf/read-document";
-import { measurePages, type Measurement } from "@/lib/pdf/measurement";
+import { measurePages } from "@/lib/pdf/measurement";
+import type { Measurement } from "@/types/pdf";
 import { CvDocument } from "@/components/pdf/cv-document";
 
 // Fontes padrão do PDF (Helvetica não é embutida): só o pdfjs precisa delas.

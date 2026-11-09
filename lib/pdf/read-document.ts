@@ -1,4 +1,4 @@
-import type { ReadPage } from "@/lib/pdf/measurement";
+import type { ReadPage } from "@/types/pdf";
 
 type ImageOps = {
   paintImageXObject: number;

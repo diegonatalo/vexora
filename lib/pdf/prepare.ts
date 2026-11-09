@@ -1,10 +1,12 @@
-import { fitToOnePage, type FitResult } from "@/lib/fit";
+import { fitToOnePage } from "@/lib/fit";
+import type { FitResult } from "@/types/pdf";
 import { buildCv, profileHasNoContent, type CvModel } from "@/lib/pdf/cv-model";
 import { generatePdfBytes } from "@/lib/pdf/generate";
 import { loadPdfjs } from "@/lib/pdf/pdfjs";
 import { readDocument } from "@/lib/pdf/read-document";
-import { measurePages, type Measurement } from "@/lib/pdf/measurement";
-import type { LayoutFit } from "@/lib/fit";
+import { measurePages } from "@/lib/pdf/measurement";
+import type { Measurement } from "@/types/pdf";
+import type { LayoutFit } from "@/types/pdf";
 import type { Profile } from "@/lib/schema";
 
 export type Prepared = FitResult & { cv: CvModel };

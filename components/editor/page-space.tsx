@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/icons";
 import { CARD } from "@/components/ui/styles";
-import type { LayoutFit } from "@/lib/fit";
-import type { Measurement } from "@/lib/pdf/measurement";
+import type { LayoutFit } from "@/types/pdf";
+import type { Measurement } from "@/types/pdf";
 
 type Props = {
   /** null enquanto o primeiro PDF é gerado. */

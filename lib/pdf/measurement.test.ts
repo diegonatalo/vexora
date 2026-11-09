@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { measurePages, type ReadPage } from "@/lib/pdf/measurement";
+import { measurePages } from "@/lib/pdf/measurement";
+import type { ReadPage } from "@/types/pdf";
 
 const A4 = 842;
 const layout = { marginV: 48, font: 11, lineHeight: 1.35 };

@@ -1,4 +1,4 @@
-import type { LayoutFit } from "@/lib/fit";
+import type { LayoutFit } from "@/types/pdf";
 import type { CvModel } from "@/lib/pdf/cv-model";
 
 /**

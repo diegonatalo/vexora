@@ -8,7 +8,8 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import { FIT_LEVELS, type LayoutFit } from "@/lib/fit";
+import { FIT_LEVELS } from "@/lib/fit";
+import type { LayoutFit } from "@/types/pdf";
 import { SECTION_TITLES, type CvModel } from "@/lib/pdf/cv-model";
 import { FONT, FONT_BOLD } from "@/lib/pdf/fonts";
 

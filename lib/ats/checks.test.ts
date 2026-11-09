@@ -12,7 +12,7 @@ import {
   type AtsContext,
 } from "@/lib/ats/checks";
 import { buildCv } from "@/lib/pdf/cv-model";
-import type { Measurement } from "@/lib/pdf/measurement";
+import type { Measurement } from "@/types/pdf";
 import {
   createEmptyExperience,
   createEmptyProfile,

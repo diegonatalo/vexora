@@ -1,19 +1,6 @@
 import type { CvModel } from "@/lib/pdf/cv-model";
-import type { Measurement } from "@/lib/pdf/measurement";
-
-/** Parâmetros de layout do PDF, em pontos (pt). */
-export type LayoutFit = {
-  level: number;
-  font: number;
-  lineHeight: number;
-  /** Espaço acima de cada seção. */
-  sectionSpacing: number;
-  /** Espaço abaixo de cada experiência. */
-  itemSpacing: number;
-  marginV: number;
-  marginH: number;
-  description: string;
-};
+import type { Measurement } from "@/types/pdf";
+import type { LayoutFit, FitResult } from "@/types/pdf";
 
 /**
  * Do mais folgado ao mais compacto, na ordem do prompt: primeiro espaçamentos,
@@ -86,14 +73,6 @@ export const FIT_LEVELS: readonly LayoutFit[] = [
 export type Renderer = {
   render: (cv: CvModel, layoutFit: LayoutFit) => Promise<Uint8Array>;
   measure: (bytes: Uint8Array, layoutFit: LayoutFit) => Promise<Measurement>;
-};
-
-export type FitResult = {
-  layoutFit: LayoutFit;
-  bytes: Uint8Array;
-  measurement: Measurement;
-  /** false = nem o nível mais compacto coube: o PDF tem mais de 1 página. */
-  fitted: boolean;
 };
 
 /**

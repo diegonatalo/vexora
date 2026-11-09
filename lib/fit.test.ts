@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fitToOnePage, FIT_LEVELS } from "@/lib/fit";
 import { buildCv } from "@/lib/pdf/cv-model";
-import type { Measurement } from "@/lib/pdf/measurement";
+import type { Measurement } from "@/types/pdf";
 import { createEmptyProfile } from "@/lib/schema";
 
 const cv = buildCv(createEmptyProfile());
