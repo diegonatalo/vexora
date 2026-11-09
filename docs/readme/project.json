@@ -1,0 +1,105 @@
+{
+  "name": "Vexora",
+  "repo": "vexora",
+  "tagline": "Cadastre seu perfil uma vez e baixe um CV de 1 página otimizado para ATS.",
+  "urls": {
+    "demo": "https://vexoradn.vercel.app"
+  },
+  "stack": [
+    {
+      "pkg": "next"
+    },
+    {
+      "pkg": "react"
+    },
+    {
+      "pkg": "typescript"
+    },
+    {
+      "pkg": "tailwindcss"
+    },
+    "Zod · React Hook Form",
+    "@react-pdf/renderer · pdfjs-dist",
+    {
+      "pkg": "vitest"
+    }
+  ],
+  "badges_extra": [
+    {
+      "label": "dados",
+      "message": "só no navegador",
+      "color": "0b6b4d"
+    }
+  ],
+  "banner": {
+    "shot": {
+      "file": "docs/screenshots/editor.png",
+      "title": "vexoradn.vercel.app"
+    },
+    "chips": 4
+  },
+  "demo": {
+    "note": "",
+    "layout": "stack",
+    "shots": [
+      {
+        "file": "docs/screenshots/editor.png",
+        "file_light": "docs/screenshots/editor-claro.png",
+        "title": "Editor",
+        "alt": "Editor do Vexora com navegação de seções, formulário de dados pessoais, espaço da página e pré-visualização do CV em PDF",
+        "caption": "<b>Editor</b>: seções à esquerda, formulário no centro e pré-visualização do PDF à direita. Os dados do print são fictícios."
+      },
+      {
+        "file": "docs/screenshots/experiencia.png",
+        "title": "Experiência",
+        "alt": "Seção Experiência com cartão de item, interruptor Exibir no CV, datas e tópicos com contador de caracteres",
+        "caption": "<b>Experiência</b>: \"Exibir no CV\" oculta o item do PDF sem apagá-lo."
+      },
+      {
+        "files": [
+          "docs/screenshots/editor-celular.png",
+          "docs/screenshots/previa-celular.png"
+        ],
+        "title": "No celular",
+        "alt": "Editor no celular, com a navegação de seções em faixa rolável, e pré-visualização do CV com o espaço da página usado",
+        "caption": "<b>No celular</b>: o seletor Editar e Prévia alterna entre o formulário e o PDF."
+      }
+    ]
+  },
+  "features": [
+    {
+      "title": "Editor por seções",
+      "desc": "Um único formulário dividido em seções, com navegação lateral, progresso e validação ao sair do campo. O perfil é salvo a cada edição, mesmo incompleto."
+    },
+    {
+      "title": "CV de 1 página para ATS",
+      "desc": "PDF de uma coluna, só texto, em Helvetica, sem imagens, ícones nem tabelas, com títulos de seção padrão. O texto sai selecionável, na ordem certa."
+    },
+    {
+      "title": "Ajuste automático de página",
+      "desc": "Espaçamento, fonte (de 11 a 10pt) e margens (até 36pt) se ajustam até caber em 1 página. Se ainda não couber, o download é bloqueado e o app sugere o que enxugar."
+    },
+    {
+      "title": "Verificação ATS",
+      "desc": "Oito checagens feitas sobre o PDF real, lido de volta com pdfjs: contato, títulos, fonte, imagens e contagem de páginas, cada uma com o problema e como corrigir."
+    },
+    {
+      "title": "Pré-visualização fiel",
+      "desc": "A prévia desenha os mesmos bytes que serão baixados, em canvas, para funcionar também no iOS e em Androids que não exibem PDF em iframe."
+    },
+    {
+      "title": "Organização livre",
+      "desc": "Arraste e solte experiências, formações e certificações. \"Exibir no CV\" oculta qualquer item do PDF sem apagá-lo. Habilidades são grupos com os nomes que você escolher."
+    },
+    {
+      "title": "Privacidade (LGPD)",
+      "desc": "Sem backend, sem login e sem IA generativa. Seus dados ficam só no IndexedDB deste navegador e nada é enviado a servidor."
+    },
+    {
+      "title": "Backup e tema",
+      "desc": "Exporte e importe o perfil em JSON, inclusive backups antigos. Tema claro e escuro, interface em português do Brasil e Lighthouse de acessibilidade 100 no editor."
+    }
+  ],
+  "credits": [],
+  "footer": "Feito com 💚 para quem quer um currículo que o ATS consegue ler"
+}

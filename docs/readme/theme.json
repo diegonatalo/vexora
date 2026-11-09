@@ -1,0 +1,17 @@
+{
+  "bg": "#0c0f11",
+  "card": "#15191d",
+  "border": "#262c32",
+  "borderStrong": "#3a434b",
+  "fg": "#ecebe6",
+  "muted": "#a4a9b1",
+  "subtle": "#7f8791",
+  "accent": "#46c79b",
+  "accent2": "#9be3c8",
+  "onAccent": "#04261b",
+  "fontSans": "Inter,'Segoe UI',-apple-system,Helvetica,Arial,sans-serif",
+  "fontMono": "'JetBrains Mono',Menlo,Consolas,monospace",
+  "glow": true,
+  "grid": true,
+  "animations": true
+}
