@@ -77,26 +77,26 @@ describe("navegação", () => {
   it("troca de seção pelo menu e pelos botões, movendo o foco ao título", async () => {
     const { user } = build();
     expect(
-      screen.getByRole("heading", { level: 2, name: "Dados pessoais" }),
+      screen.getByRole("heading", { level: 1, name: "Dados pessoais" }),
     ).toBeInTheDocument();
 
     await jumpTo(user, "Resumo");
-    const title = screen.getByRole("heading", { level: 2, name: "Resumo" });
+    const title = screen.getByRole("heading", { level: 1, name: "Resumo" });
     expect(title).toHaveFocus();
 
     await jumpTo(user, "Experiência");
     expect(
-      screen.getByRole("heading", { level: 2, name: "Experiência" }),
+      screen.getByRole("heading", { level: 1, name: "Experiência" }),
     ).toBeInTheDocument();
 
     // Botões de rodapé: próxima e anterior.
     await user.click(screen.getByRole("button", { name: "Formação" }));
     expect(
-      screen.getByRole("heading", { level: 2, name: "Formação" }),
+      screen.getByRole("heading", { level: 1, name: "Formação" }),
     ).toHaveFocus();
     await user.click(screen.getByRole("button", { name: "Experiência" }));
     expect(
-      screen.getByRole("heading", { level: 2, name: "Experiência" }),
+      screen.getByRole("heading", { level: 1, name: "Experiência" }),
     ).toHaveFocus();
   });
 

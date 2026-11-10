@@ -120,13 +120,13 @@ export const SectionHeader = ({
         </span>
       )}
       <div className="min-w-0">
-        <h2
+        <h1
           id="secao-titulo"
           tabIndex={-1}
           className="font-display text-3xl font-bold tracking-tight outline-none"
         >
           {title}
-        </h2>
+        </h1>
         {description && (
           <p className="text-muted mt-1.5 max-w-prose">{description}</p>
         )}
