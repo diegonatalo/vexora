@@ -70,7 +70,7 @@ export const ExperienceSection = () => {
                       <CardItem
                         title={`Experiência ${i + 1}`}
                         aside="Mais recente primeiro"
-                        rotuloRemover={`Remover experiência ${i + 1}`}
+                        removeLabel={`Remover experiência ${i + 1}`}
                         handle={handle}
                         visible={
                           <VisibilityToggle

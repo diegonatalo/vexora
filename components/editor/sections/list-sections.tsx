@@ -44,7 +44,7 @@ export const EducationSection = () => {
                 {(handle) => (
                   <CardItem
                     title={`Formação ${i + 1}`}
-                    rotuloRemover={`Remover formação ${i + 1}`}
+                    removeLabel={`Remover formação ${i + 1}`}
                     onRemove={() => remove(i)}
                     handle={handle}
                     visible={
@@ -144,7 +144,7 @@ export const CertificationsSection = () => {
                 {(handle) => (
                   <CardItem
                     title={`Certificação ${i + 1}`}
-                    rotuloRemover={`Remover certificação ${i + 1}`}
+                    removeLabel={`Remover certificação ${i + 1}`}
                     onRemove={() => remove(i)}
                     handle={handle}
                     visible={
@@ -256,7 +256,7 @@ export const SkillsSection = () => {
                 {(handle) => (
                   <CardItem
                     title={`Grupo ${i + 1}`}
-                    rotuloRemover={`Remover grupo de habilidades ${i + 1}`}
+                    removeLabel={`Remover grupo de habilidades ${i + 1}`}
                     onRemove={() => remove(i)}
                     handle={handle}
                     visible={
@@ -315,7 +315,7 @@ export const SkillsSection = () => {
           <CardItem
             key={field.id}
             title={`Idioma ${i + 1}`}
-            rotuloRemover={`Remover idioma ${i + 1}`}
+            removeLabel={`Remover idioma ${i + 1}`}
             onRemove={() => removerIdioma(i)}
             visible={
               <VisibilityToggle

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // jsdom não desenha canvas nem roda react-pdf/pdfjs: a geração real é testada em pdf/*.test.
 const { prepareMock } = vi.hoisted(() => ({ prepareMock: vi.fn() }));
 vi.mock("@/components/preview/pdf-preview", () => ({
-  default: () => <div data-testid="previa" />,
+  default: () => <div data-testid="preview" />,
 }));
 vi.mock("@/lib/pdf/prepare", () => ({ preparePdf: prepareMock }));
 vi.mock("@/lib/pdf/generate", () => ({

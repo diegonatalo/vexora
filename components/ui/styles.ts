@@ -4,7 +4,7 @@ const BASE =
 export const BUTTON = {
   /** Ação principal (uma por tela). */
   primary: `${BASE} bg-accent text-on-accent shadow-sm hover:bg-accent-strong hover:shadow-md`,
-  escuro: `${BASE} bg-ink text-paper hover:opacity-90`,
+  inverse: `${BASE} bg-ink text-paper hover:opacity-90`,
   secondary: `${BASE} border border-line bg-surface text-ink shadow-sm hover:border-field hover:bg-sunken`,
   /** Sem borda: ações discretas dentro de cards. */
   ghost: `${BASE} text-muted hover:bg-accent-soft hover:text-accent-deep`,

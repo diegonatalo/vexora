@@ -9,19 +9,19 @@ export const ThemeToggle = () => {
   const theme = useSyncExternalStore<Theme>(
     subscribeTheme,
     currentTheme,
-    () => "claro",
+    () => "light",
   );
-  const escuro = theme === "escuro";
+  const dark = theme === "dark";
   return (
     <button
       type="button"
       className={BUTTON.icon}
-      aria-pressed={escuro}
+      aria-pressed={dark}
       aria-label="Tema escuro"
-      title={escuro ? "Voltar ao tema claro" : "Usar o tema escuro"}
-      onClick={() => setTheme(escuro ? "claro" : "escuro")}
+      title={dark ? "Voltar ao tema claro" : "Usar o tema escuro"}
+      onClick={() => setTheme(dark ? "light" : "dark")}
     >
-      <Icon name={escuro ? "sun" : "moon"} size={18} />
+      <Icon name={dark ? "sun" : "moon"} size={18} />
     </button>
   );
 };
