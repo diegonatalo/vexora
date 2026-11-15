@@ -79,7 +79,7 @@ export const ExperienceSection = () => {
                           />
                         }
                         onCollapse={() => toggle(field.id, false)}
-                        rotuloRecolher={`Recolher experiência ${i + 1}`}
+                        collapseLabel={`Recolher experiência ${i + 1}`}
                         onRemove={() => {
                           remove(i);
                           toggle(field.id, false);

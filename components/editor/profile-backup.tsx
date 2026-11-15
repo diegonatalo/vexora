@@ -41,10 +41,10 @@ export const ProfileBackup = ({
   return (
     <section
       className="border-line bg-sunken/60 rounded-2xl border p-5"
-      aria-labelledby="backup-titulo"
+      aria-labelledby="backup-title"
     >
       <h2
-        id="backup-titulo"
+        id="backup-title"
         className="font-display flex items-center gap-2 text-lg font-semibold"
       >
         <Icon name="shield" size={20} className="text-accent" />
