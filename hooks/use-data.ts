@@ -9,7 +9,7 @@ const SAVE_DELAY_MS = 400;
 
 /**
  * Mantém os dados do usuário em memória e persiste no navegador (IndexedDB)
- * com debounce. `dados` é null até a primeira carga terminar. Gravações
+ * com debounce. `data` é null até a primeira carga terminar. Gravações
  * pendentes são descarregadas ao sair da tela ou fechar a aba.
  */
 export function useData() {
@@ -18,7 +18,7 @@ export function useData() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pending = useRef<AppData | null>(null);
 
-  const discard = useCallback(() => {
+  const flush = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     const nextItem = pending.current;
@@ -46,12 +46,12 @@ export function useData() {
   }, []);
 
   useEffect(() => {
-    window.addEventListener("pagehide", discard);
+    window.addEventListener("pagehide", flush);
     return () => {
-      window.removeEventListener("pagehide", discard);
-      discard();
+      window.removeEventListener("pagehide", flush);
+      flush();
     };
-  }, [discard]);
+  }, [flush]);
 
   const update = useCallback(
     (nextItem: AppData) => {
@@ -59,9 +59,9 @@ export function useData() {
       setState("saving");
       pending.current = nextItem;
       if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(discard, SAVE_DELAY_MS);
+      timer.current = setTimeout(flush, SAVE_DELAY_MS);
     },
-    [discard],
+    [flush],
   );
 
   return { data, state, update };
