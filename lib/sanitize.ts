@@ -2,8 +2,8 @@ import type { ZodType } from "zod";
 
 type Parent = Record<PropertyKey, unknown> | unknown[];
 
-function goTo(raiz: unknown, path: PropertyKey[]): Parent | undefined {
-  let current = raiz;
+function goTo(root: unknown, path: PropertyKey[]): Parent | undefined {
+  let current = root;
   for (const key of path) {
     if (typeof current !== "object" || current === null) return undefined;
     current = (current as Record<PropertyKey, unknown>)[key];
@@ -31,11 +31,11 @@ export function sanitize<T>(schema: ZodType<T>, raw: unknown): T | null {
       const parent = goTo(copy, issue.path.slice(0, -1));
       const key = issue.path[issue.path.length - 1];
       if (!parent) return null;
-      const registro = parent as Record<PropertyKey, unknown>;
-      const value = registro[key];
+      const record = parent as Record<PropertyKey, unknown>;
+      const value = record[key];
 
       if (typeof value === "string") {
-        registro[key] =
+        record[key] =
           issue.code === "too_big" && "maximum" in issue
             ? value.slice(0, Number(issue.maximum))
             : "";

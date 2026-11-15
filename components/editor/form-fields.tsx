@@ -113,7 +113,7 @@ export const SectionHeader = ({
   icon?: IconName;
 }) => {
   return (
-    <header className="animar-entrada mb-8 flex items-start gap-4">
+    <header className="animate-enter mb-8 flex items-start gap-4">
       {icon && (
         <span className="bg-accent-soft text-accent-deep grid size-12 shrink-0 place-items-center rounded-2xl">
           <Icon name={icon} size={24} />
@@ -121,7 +121,7 @@ export const SectionHeader = ({
       )}
       <div className="min-w-0">
         <h1
-          id="secao-titulo"
+          id="section-title"
           tabIndex={-1}
           className="font-display text-3xl font-bold tracking-tight outline-none"
         >
@@ -143,20 +143,20 @@ export const CardItem = ({
   handle,
   visible,
   onCollapse,
-  rotuloRecolher,
+  collapseLabel,
   children,
 }: {
   title: string;
   aside?: ReactNode;
   onRemove?: () => void;
   removeLabel: string;
-  /** Alça de arrastar (ver Ordenavel.tsx). */
+  /** Alça de arrastar (ver sortable.tsx). */
   handle?: ReactNode;
-  /** Interruptor "Exibir no CV" (ver InterruptorExibir). */
+  /** Interruptor "Exibir no CV" (ver VisibilityToggle). */
   visible?: ReactNode;
   /** Mostra o botão "Recolher" (card que pode ser recolhido). */
   onCollapse?: () => void;
-  rotuloRecolher?: string;
+  collapseLabel?: string;
   children: ReactNode;
 }) => {
   const number = title.match(/\d+$/)?.[0];
@@ -190,7 +190,7 @@ export const CardItem = ({
               type="button"
               onClick={onCollapse}
               aria-expanded={true}
-              aria-label={rotuloRecolher}
+              aria-label={collapseLabel}
               title="Recolher"
               className={BUTTON.icon}
             >

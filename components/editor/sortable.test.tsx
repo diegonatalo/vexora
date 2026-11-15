@@ -46,7 +46,7 @@ function Example({ onMove }: { onMove: (from: number, to: number) => void }) {
   );
 }
 
-describe("ListaOrdenavel", () => {
+describe("SortableList", () => {
   beforeEach(simulateLayout);
   afterEach(() => vi.restoreAllMocks());
 

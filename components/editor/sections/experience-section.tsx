@@ -23,16 +23,19 @@ const LIMIT = LIMITS.charactersPerBullet;
 export const ExperienceSection = () => {
   const {
     control,
+    getValues,
     formState: { errors },
   } = useFormContext<Profile>();
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "experiences",
   });
-  // Guarda os ids (não as posições): as abertas acompanham a reordenação.
+  // Guarda o id de cada experiência (não a posição): as abertas acompanham a
+  // reordenação. Usa o id do próprio dado, e não o `field.id` do
+  // useFieldArray, que é gerado à parte e não bate com o da experiência nova.
   // Pode haver várias abertas; cada uma tem "Recolher".
   const [opened, setOpened] = useState<Set<string>>(
-    () => new Set(fields.slice(0, 1).map((f) => f.id)),
+    () => new Set((getValues("experiences") ?? []).slice(0, 1).map((e) => e.id)),
   );
   const toggle = (id: string, open: boolean) =>
     setOpened((current) => {
@@ -58,6 +61,7 @@ export const ExperienceSection = () => {
           <div className="space-y-4">
             {fields.map((field, i) => {
               const error = errors.experiences?.[i];
+              const experienceId = getValues(`experiences.${i}.id`);
               return (
                 <SortableItem
                   key={field.id}
@@ -66,7 +70,7 @@ export const ExperienceSection = () => {
                   disabled={fields.length < 2}
                 >
                   {(handle) =>
-                    opened.has(field.id) ? (
+                    opened.has(experienceId) ? (
                       <CardItem
                         title={`Experiência ${i + 1}`}
                         aside="Mais recente primeiro"
@@ -78,11 +82,11 @@ export const ExperienceSection = () => {
                             label={`Exibir experiência ${i + 1} no CV`}
                           />
                         }
-                        onCollapse={() => toggle(field.id, false)}
-                        rotuloRecolher={`Recolher experiência ${i + 1}`}
+                        onCollapse={() => toggle(experienceId, false)}
+                        collapseLabel={`Recolher experiência ${i + 1}`}
                         onRemove={() => {
                           remove(i);
-                          toggle(field.id, false);
+                          toggle(experienceId, false);
                         }}
                       >
                         <ExperienceFields index={i} />
@@ -99,7 +103,7 @@ export const ExperienceSection = () => {
                                 ? "Revise os campos"
                                 : undefined
                           }
-                          onOpen={() => toggle(field.id, true)}
+                          onOpen={() => toggle(experienceId, true)}
                         />
                         <VisibilityToggle
                           name={`experiences.${i}.visible`}

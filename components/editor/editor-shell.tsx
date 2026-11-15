@@ -97,7 +97,7 @@ export const EditorShell = ({
       firstRender.current = false;
       return;
     }
-    document.getElementById("secao-titulo")?.focus();
+    document.getElementById("section-title")?.focus();
   }, [active]);
 
   const originalProfile = useWatch({ control: form.control }) as Profile;
@@ -283,8 +283,8 @@ export const EditorShell = ({
             fitted={prepared?.fitted ?? true}
             suggestions={suggestions}
           />
-          <section aria-labelledby="previa-titulo">
-            <h2 id="previa-titulo" className="sr-only">
+          <section aria-labelledby="preview-title">
+            <h2 id="preview-title" className="sr-only">
               Pré-visualização do CV
             </h2>
             <PdfPreview

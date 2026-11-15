@@ -19,9 +19,9 @@ export const SectionNav = ({
   const total = SECTIONS.length;
   const pct = Math.round((completedCount / total) * 100);
   return (
-    <nav aria-labelledby="secoes-titulo" className={`${CARD} p-4`}>
+    <nav aria-labelledby="sections-title" className={`${CARD} p-4`}>
       <div className="mb-3 flex items-baseline justify-between px-2">
-        <h2 id="secoes-titulo" className={KICKER}>
+        <h2 id="sections-title" className={KICKER}>
           Seções
         </h2>
         <span className="text-muted text-xs font-medium">

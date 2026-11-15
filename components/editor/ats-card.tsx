@@ -8,10 +8,10 @@ export const AtsCard = ({ checks }: { checks: Check[] | null }) => {
   const failures = checks?.filter((c) => !c.ok) ?? [];
 
   return (
-    <section className={`${CARD} p-5`} aria-labelledby="ats-titulo">
+    <section className={`${CARD} p-5`} aria-labelledby="ats-title">
       <div className="flex items-baseline justify-between gap-3">
         <h2
-          id="ats-titulo"
+          id="ats-title"
           className="font-display flex items-center gap-2 text-lg font-semibold"
         >
           <Icon name="shield" size={20} className="text-accent" />

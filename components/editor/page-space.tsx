@@ -18,9 +18,9 @@ export const PageSpace = ({ measurement, layoutFit, fitted, suggestions }: Props
   const overflowed = measurement !== null && !fitted;
 
   return (
-    <section className={`${CARD} p-5`} aria-labelledby="espaco-titulo">
+    <section className={`${CARD} p-5`} aria-labelledby="spacing-title">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="espaco-titulo" className="font-display text-lg font-semibold">
+        <h2 id="spacing-title" className="font-display text-lg font-semibold">
           Espaço da página
         </h2>
         {measurement && (
