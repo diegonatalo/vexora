@@ -1,4 +1,4 @@
-export type Theme = "claro" | "escuro";
+export type Theme = "light" | "dark";
 
 const KEY = "vexora:theme:v1";
 const EVENT = "vexora:theme:v1";
@@ -15,13 +15,13 @@ const hasChoice = () => {
 
 /** Tema em uso: a classe dark do <html> (definida por um script antes da primeira pintura). */
 export function currentTheme(): Theme {
-  return document.documentElement.classList.contains("dark") ? "escuro" : "claro";
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
 export function setTheme(theme: Theme) {
-  document.documentElement.classList.toggle("dark", theme === "escuro");
+  document.documentElement.classList.toggle("dark", theme === "dark");
   try {
-    localStorage.setItem(KEY, theme === "escuro" ? "dark" : "light");
+    localStorage.setItem(KEY, theme);
   } catch {
     // Armazenamento bloqueado: o tema vale só nesta visita.
   }

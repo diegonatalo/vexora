@@ -80,7 +80,7 @@ export const EditorShell = ({
   });
   const [active, setActive] = useState<SectionId>("personal");
   // Em telas estreitas só um painel aparece por vez (editar ou pré-visualizar).
-  const [panel, setPanel] = useState<"editar" | "previa">("editar");
+  const [panel, setPanel] = useState<"edit" | "preview">("edit");
   const firstRender = useRef(true);
 
   // Todo rascunho é salvo, mesmo com campos inválidos (ver sanitizar.ts).
@@ -220,7 +220,7 @@ export const EditorShell = ({
       <div className="mx-auto grid w-full max-w-[1680px] grid-cols-[minmax(0,1fr)] items-start gap-6 px-4 pt-6 pb-28 sm:px-6 lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_460px] xl:pb-8">
         <div
           className={`space-y-6 lg:sticky lg:top-24 ${
-            panel === "previa" ? "max-xl:hidden" : ""
+            panel === "preview" ? "max-xl:hidden" : ""
           }`}
         >
           <SectionNav
@@ -233,7 +233,7 @@ export const EditorShell = ({
 
         <main
           className={`${CARD} p-5 sm:p-8 lg:p-10 ${
-            panel === "previa" ? "max-xl:hidden" : ""
+            panel === "preview" ? "max-xl:hidden" : ""
           }`}
         >
           <form
@@ -258,7 +258,7 @@ export const EditorShell = ({
               {next && (
                 <button
                   type="button"
-                  className={BUTTON.escuro}
+                  className={BUTTON.inverse}
                   onClick={() => setActive(next.id)}
                 >
                   {next.title}
@@ -272,7 +272,7 @@ export const EditorShell = ({
 
         <aside
           className={`w-full space-y-5 xl:sticky xl:top-24 xl:max-h-[calc(100vh-7.5rem)] xl:overflow-y-auto xl:pr-1 ${
-            panel === "editar"
+            panel === "edit"
               ? "max-xl:hidden"
               : "max-xl:mx-auto max-xl:max-w-xl lg:col-span-2 xl:col-span-1"
           }`}
@@ -305,8 +305,8 @@ export const EditorShell = ({
       >
         {(
           [
-            ["editar", "Editar", "pencil"],
-            ["previa", "Prévia", "eye"],
+            ["edit", "Editar", "pencil"],
+            ["preview", "Prévia", "eye"],
           ] as const
         ).map(([id, label, icon]) => (
           <button

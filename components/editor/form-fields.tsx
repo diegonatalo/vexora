@@ -139,7 +139,7 @@ export const CardItem = ({
   title,
   aside,
   onRemove,
-  rotuloRemover,
+  removeLabel,
   handle,
   visible,
   onCollapse,
@@ -149,7 +149,7 @@ export const CardItem = ({
   title: string;
   aside?: ReactNode;
   onRemove?: () => void;
-  rotuloRemover: string;
+  removeLabel: string;
   /** Alça de arrastar (ver Ordenavel.tsx). */
   handle?: ReactNode;
   /** Interruptor "Exibir no CV" (ver InterruptorExibir). */
@@ -201,7 +201,7 @@ export const CardItem = ({
             <button
               type="button"
               onClick={onRemove}
-              aria-label={rotuloRemover}
+              aria-label={removeLabel}
               title="Remover"
               className={`${BUTTON.icon} hover:border-warn-icon hover:bg-warn-bg hover:text-warn-ink`}
             >
