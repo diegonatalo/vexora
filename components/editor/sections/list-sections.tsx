@@ -230,7 +230,7 @@ export const SkillsSection = () => {
   const {
     fields: languages,
     append: addLanguage,
-    remove: removerIdioma,
+    remove: removeLanguage,
   } = useFieldArray({ control, name: "languages" });
   return (
     <>
@@ -316,7 +316,7 @@ export const SkillsSection = () => {
             key={field.id}
             title={`Idioma ${i + 1}`}
             removeLabel={`Remover idioma ${i + 1}`}
-            onRemove={() => removerIdioma(i)}
+            onRemove={() => removeLanguage(i)}
             visible={
               <VisibilityToggle
                 name={`languages.${i}.visible`}

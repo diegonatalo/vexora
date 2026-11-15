@@ -135,7 +135,7 @@ export const profileSchema = z.object({
   languages: z.array(languageSchema),
 });
 
-/** Arquivo de exportação/importação. `formato` permite migrar no futuro. */
+/** Arquivo de exportação/importação. `format` permite migrar no futuro. */
 export const backupSchema = z.object({
   format: z.literal(1),
   exportedAt: z.string(),
