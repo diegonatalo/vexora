@@ -1,16 +1,11 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { BUTTON } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
-import { subscribeTheme, setTheme, currentTheme, type Theme } from "@/lib/theme";
+import { useTheme } from "@/hooks/use-theme";
 
 export const ThemeToggle = () => {
-  const theme = useSyncExternalStore<Theme>(
-    subscribeTheme,
-    currentTheme,
-    () => "light",
-  );
+  const { theme, setTheme } = useTheme();
   const dark = theme === "dark";
   return (
     <button

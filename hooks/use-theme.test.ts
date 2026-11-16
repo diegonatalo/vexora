@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { currentTheme, setTheme, subscribeTheme } from "@/lib/theme";
+import { currentTheme, setTheme, subscribeTheme } from "@/hooks/use-theme";
 
 const KEY = "vexora:theme:v1";
 
@@ -63,5 +63,16 @@ describe("tema", () => {
     expect(systemListeners).toHaveLength(1);
     stop();
     expect(systemListeners).toHaveLength(0);
+  });
+});
+
+describe("useTheme", () => {
+  it("acompanha o tema e troca pelo setTheme", async () => {
+    const { act, renderHook } = await import("@testing-library/react");
+    const { useTheme } = await import("@/hooks/use-theme");
+    const { result } = renderHook(() => useTheme());
+    expect(result.current.theme).toBe("light");
+    act(() => result.current.setTheme("dark"));
+    expect(result.current.theme).toBe("dark");
   });
 });

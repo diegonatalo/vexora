@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 export type Theme = "light" | "dark";
 
 const KEY = "vexora:theme:v1";
@@ -43,4 +45,10 @@ export function subscribeTheme(onChange: () => void) {
     window.removeEventListener(EVENT, onChange);
     media.removeEventListener("change", onSystemChange);
   };
+}
+
+/** Tema atual, sincronizado com a classe dark do <html>. No servidor é claro. */
+export function useTheme() {
+  const theme = useSyncExternalStore<Theme>(subscribeTheme, currentTheme, () => "light");
+  return { theme, setTheme };
 }
