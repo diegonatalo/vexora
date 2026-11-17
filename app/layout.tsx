@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { THEME_KEY } from "@/lib/storage-keys";
+import { themeScript } from "@/lib/theme";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -42,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Aplica o tema salvo antes da primeira pintura (evita o "flash" claro). */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("vexora:theme:v1");if(t!=="dark"&&t!=="light")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.classList.toggle("dark",t==="dark")}catch(e){}`,
+            __html: themeScript(THEME_KEY),
           }}
         />
       </head>

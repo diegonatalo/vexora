@@ -3,9 +3,10 @@
 import { BUTTON } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
 import { useTheme } from "@/hooks/use-theme";
+import { THEME_KEY } from "@/lib/storage-keys";
 
 export const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme(THEME_KEY);
   const dark = theme === "dark";
   return (
     <button

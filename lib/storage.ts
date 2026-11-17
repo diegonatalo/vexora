@@ -7,8 +7,7 @@ import {
   type Profile,
 } from "@/lib/schema";
 import { sanitize } from "@/lib/sanitize";
-
-const PROFILE_KEY = "vexora:profile:v1";
+import { PROFILE_KEY } from "@/lib/storage-keys";
 
 export type AppData = { profile: Profile };
 

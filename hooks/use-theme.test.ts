@@ -1,78 +1,83 @@
+import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { currentTheme, setTheme, subscribeTheme } from "@/hooks/use-theme";
+import { useTheme } from "@/hooks/use-theme";
 
-const KEY = "vexora:theme:v1";
+const KEY = "my-app:theme:v1";
+const COLORS = { light: "#ffffff", dark: "#000000" };
 
-type Listener = () => void;
-let systemListeners: Listener[] = [];
+const isDark = () => document.documentElement.classList.contains("dark");
 
 beforeEach(() => {
   localStorage.clear();
   document.documentElement.classList.remove("dark");
-  systemListeners = [];
-  vi.spyOn(window, "matchMedia").mockImplementation(
-    () =>
-      ({
-        matches: true,
-        addEventListener: (_: string, fn: Listener) => systemListeners.push(fn),
-        removeEventListener: (_: string, fn: Listener) => {
-          systemListeners = systemListeners.filter((l) => l !== fn);
-        },
-      }) as unknown as MediaQueryList,
-  );
+  document.head.innerHTML = '<meta name="theme-color" content="">';
 });
-
 afterEach(() => vi.restoreAllMocks());
 
-describe("tema", () => {
-  it("lê o tema atual pela classe dark do <html>", () => {
-    expect(currentTheme()).toBe("light");
+describe("useTheme", () => {
+  it("lê o tema aplicado pelo script e não grava nada ao abrir", () => {
     document.documentElement.classList.add("dark");
-    expect(currentTheme()).toBe("dark");
+    const { result } = renderHook(() => useTheme(KEY));
+    expect(result.current.theme).toBe("dark");
+    expect(localStorage.getItem(KEY)).toBeNull();
   });
 
-  it("setTheme aplica a classe, guarda a escolha e avisa quem acompanha", () => {
-    const onChange = vi.fn();
-    const stop = subscribeTheme(onChange);
-    setTheme("dark");
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
+  it("alterna aplicando a classe, a cor da barra e gravando a escolha", () => {
+    const { result } = renderHook(() => useTheme(KEY, COLORS));
+    act(() => result.current.toggle());
+    expect(result.current.theme).toBe("dark");
+    expect(isDark()).toBe(true);
     expect(localStorage.getItem(KEY)).toBe("dark");
-    expect(onChange).toHaveBeenCalledTimes(1);
-    stop();
-    setTheme("light");
-    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(document.querySelector("meta")).toHaveAttribute("content", "#000000");
+  });
+
+  it("mantém instâncias diferentes sincronizadas", () => {
+    const a = renderHook(() => useTheme(KEY));
+    const b = renderHook(() => useTheme(KEY));
+    act(() => a.result.current.setTheme("dark"));
+    expect(b.result.current.theme).toBe("dark");
   });
 
   it("sem escolha salva, acompanha a mudança do sistema", () => {
-    const onChange = vi.fn();
-    subscribeTheme(onChange);
-    systemListeners.forEach((l) => l());
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(onChange).toHaveBeenCalled();
+    let onSystemChange = () => {};
+    const media = {
+      matches: false,
+      addEventListener: (_: string, listener: () => void) => {
+        onSystemChange = listener;
+      },
+      removeEventListener: () => {},
+    };
+    vi.spyOn(window, "matchMedia").mockReturnValue(
+      media as unknown as MediaQueryList,
+    );
+    const { result } = renderHook(() => useTheme(KEY));
+    media.matches = true;
+    act(() => onSystemChange());
+    expect(result.current.theme).toBe("dark");
+    expect(localStorage.getItem(KEY)).toBeNull();
   });
 
   it("com escolha salva, ignora a mudança do sistema", () => {
+    let onSystemChange = () => {};
+    vi.spyOn(window, "matchMedia").mockReturnValue({
+      matches: true,
+      addEventListener: (_: string, listener: () => void) => {
+        onSystemChange = listener;
+      },
+      removeEventListener: () => {},
+    } as unknown as MediaQueryList);
     localStorage.setItem(KEY, "light");
-    subscribeTheme(() => {});
-    systemListeners.forEach((l) => l());
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
-  });
-
-  it("parar de acompanhar remove o listener do sistema", () => {
-    const stop = subscribeTheme(() => {});
-    expect(systemListeners).toHaveLength(1);
-    stop();
-    expect(systemListeners).toHaveLength(0);
-  });
-});
-
-describe("useTheme", () => {
-  it("acompanha o tema e troca pelo setTheme", async () => {
-    const { act, renderHook } = await import("@testing-library/react");
-    const { useTheme } = await import("@/hooks/use-theme");
-    const { result } = renderHook(() => useTheme());
+    const { result } = renderHook(() => useTheme(KEY));
+    act(() => onSystemChange());
     expect(result.current.theme).toBe("light");
-    act(() => result.current.setTheme("dark"));
+  });
+
+  it("aplica a escolha feita em outra aba", () => {
+    const { result } = renderHook(() => useTheme(KEY));
+    localStorage.setItem(KEY, "dark");
+    act(() => {
+      window.dispatchEvent(new StorageEvent("storage", { key: KEY }));
+    });
     expect(result.current.theme).toBe("dark");
   });
 });

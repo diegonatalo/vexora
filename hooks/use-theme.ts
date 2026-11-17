@@ -1,54 +1,87 @@
-import { useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
+import {
+  DARK_QUERY,
+  parseTheme,
+  type Theme,
+  type ThemeColors,
+} from "@/lib/theme";
 
-export type Theme = "light" | "dark";
+const CHANGE_EVENT = "theme:change";
 
-const KEY = "vexora:theme:v1";
-const EVENT = "vexora:theme:v1";
-const MEDIA_DARK = "(prefers-color-scheme: dark)";
-
-const hasChoice = () => {
+const readChoice = (key: string): Theme | null => {
   try {
-    const stored = localStorage.getItem(KEY);
-    return stored === "dark" || stored === "light";
+    return parseTheme(localStorage.getItem(key));
   } catch {
-    return false;
+    return null;
   }
 };
 
-/** Tema em uso: a classe dark do <html> (definida por um script antes da primeira pintura). */
-export function currentTheme(): Theme {
-  return document.documentElement.classList.contains("dark") ? "dark" : "light";
-}
+const systemTheme = (): Theme =>
+  window.matchMedia(DARK_QUERY).matches ? "dark" : "light";
 
-export function setTheme(theme: Theme) {
+const applyTheme = (theme: Theme, colors?: ThemeColors) => {
   document.documentElement.classList.toggle("dark", theme === "dark");
-  try {
-    localStorage.setItem(KEY, theme);
-  } catch {
-    // Armazenamento bloqueado: o tema vale só nesta visita.
+  if (colors) {
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", colors[theme]);
   }
-  window.dispatchEvent(new Event(EVENT));
-}
+};
 
-export function subscribeTheme(onChange: () => void) {
-  const media = window.matchMedia(MEDIA_DARK);
-  // Sem escolha salva, acompanha o sistema.
-  const onSystemChange = () => {
-    if (!hasChoice()) {
-      document.documentElement.classList.toggle("dark", media.matches);
-    }
-    onChange();
-  };
-  window.addEventListener(EVENT, onChange);
-  media.addEventListener("change", onSystemChange);
-  return () => {
-    window.removeEventListener(EVENT, onChange);
-    media.removeEventListener("change", onSystemChange);
-  };
-}
+/** Tema em uso: a classe `dark` do `<html>`, aplicada antes da pintura por `themeScript`. */
+const getSnapshot = (): Theme =>
+  document.documentElement.classList.contains("dark") ? "dark" : "light";
 
-/** Tema atual, sincronizado com a classe dark do <html>. No servidor é claro. */
-export function useTheme() {
-  const theme = useSyncExternalStore<Theme>(subscribeTheme, currentTheme, () => "light");
-  return { theme, setTheme };
-}
+// No servidor não há tema; o navegador corrige logo após a hidratação.
+const getServerSnapshot = (): Theme => "light";
+
+/**
+ * Tema claro/escuro. Só grava em `key` quando o usuário escolhe; sem escolha,
+ * acompanha o sistema. Sincroniza entre componentes e abas.
+ * `colors` deve ser uma constante de módulo.
+ */
+export const useTheme = (key: string, colors?: ThemeColors) => {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const media = window.matchMedia(DARK_QUERY);
+      const sync = () => {
+        applyTheme(readChoice(key) ?? systemTheme(), colors);
+        onChange();
+      };
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === key || event.key === null) sync();
+      };
+      media.addEventListener("change", sync);
+      window.addEventListener("storage", onStorage);
+      window.addEventListener(CHANGE_EVENT, onChange);
+      return () => {
+        media.removeEventListener("change", sync);
+        window.removeEventListener("storage", onStorage);
+        window.removeEventListener(CHANGE_EVENT, onChange);
+      };
+    },
+    [key, colors],
+  );
+
+  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  const setTheme = useCallback(
+    (next: Theme) => {
+      applyTheme(next, colors);
+      try {
+        localStorage.setItem(key, next);
+      } catch {
+        // Armazenamento bloqueado: o tema vale só nesta visita.
+      }
+      window.dispatchEvent(new Event(CHANGE_EVENT));
+    },
+    [key, colors],
+  );
+
+  const toggle = useCallback(
+    () => setTheme(getSnapshot() === "dark" ? "light" : "dark"),
+    [setTheme],
+  );
+
+  return { theme, setTheme, toggle };
+};
