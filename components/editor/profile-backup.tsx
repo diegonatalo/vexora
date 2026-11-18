@@ -1,18 +1,19 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { BUTTON } from "@/components/ui/styles";
 import { Icon } from "@/components/ui/icons";
 import { exportJson, importJson, type AppData } from "@/lib/storage";
 
-export const ProfileBackup = ({
-  data,
-  onImport,
-}: {
+type ProfileBackupProps = {
   data: AppData;
   onImport: (data: AppData) => void;
-}) => {
-  const [message, setMessage] = useState<string | null>(null);
+  /** Fica com quem usa o componente: a importação remonta o editor e apagaria um estado local. */
+  message: string | null;
+  onMessage: (message: string | null) => void;
+};
+
+export const ProfileBackup = ({ data, onImport, message, onMessage: setMessage }: ProfileBackupProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   function startDownload() {

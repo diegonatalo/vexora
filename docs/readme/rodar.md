@@ -17,6 +17,7 @@ pnpm dev        # http://localhost:3000
 | `pnpm test` | Roda os testes uma vez |
 | `pnpm test:watch` | Roda os testes e reexecuta ao salvar |
 | `pnpm check` | Roda typecheck, lint e testes em sequência |
+| `pnpm test:e2e` | Roda os testes de ponta a ponta (Playwright) |
 
 ### 🔑 Variáveis de ambiente
 
