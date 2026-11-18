@@ -9,6 +9,8 @@ export default function EditorPage() {
   const { data, state, update } = useData();
   // Muda a cada importação para remontar o formulário com os dados novos.
   const [generation, setGeneration] = useState(0);
+  // Fora do EditorShell para sobreviver à remontagem da importação.
+  const [backupMessage, setBackupMessage] = useState<string | null>(null);
 
   if (!data) {
     return (
@@ -29,6 +31,8 @@ export default function EditorPage() {
       backup={
         <ProfileBackup
           data={data}
+          message={backupMessage}
+          onMessage={setBackupMessage}
           onImport={(imported) => {
             update(imported);
             setGeneration((g) => g + 1);
