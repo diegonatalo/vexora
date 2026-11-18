@@ -125,6 +125,7 @@ pnpm dev        # http://localhost:3000
 | `pnpm test` | Roda os testes uma vez |
 | `pnpm test:watch` | Roda os testes e reexecuta ao salvar |
 | `pnpm check` | Roda typecheck, lint e testes em sequência |
+| `pnpm test:e2e` | Roda os testes de ponta a ponta (Playwright) |
 
 ### 🔑 Variáveis de ambiente
 
@@ -140,6 +141,13 @@ Usa [Vitest](https://vitest.dev) com Testing Library. Os testes cobrem o schema 
 
 Para reexecutar ao salvar: `pnpm test:watch`.
 
+Os testes de ponta a ponta (Playwright, em `e2e/`) abrem o app no Chromium e percorrem os fluxos inteiros: salvar o perfil e recarregar, gerar e baixar o PDF de verdade, exportar o perfil e importar em outro navegador, e abrir o editor sem erros.
+
+```bash
+pnpm exec playwright install chromium   # só na primeira vez
+pnpm test:e2e                           # gera o build e testa contra ele
+```
+
 <br />
 
 <div align="center">
@@ -150,6 +158,7 @@ Para reexecutar ao salvar: `pnpm test:watch`.
 
 ```text
 docs/             decisões de projeto (decisions.md) e fontes deste README
+e2e/              testes de ponta a ponta (Playwright)
 public/           arquivos estáticos
 ├── app/          rota /editor, layout, metadados, sitemap e robots
 ├── components/   editor (seções, ATS, backup), preview, ui e pdf (documento do CV, react-pdf)

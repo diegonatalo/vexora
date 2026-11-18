@@ -1,5 +1,6 @@
 ```text
 docs/             decisões de projeto (decisions.md) e fontes deste README
+e2e/              testes de ponta a ponta (Playwright)
 public/           arquivos estáticos
 ├── app/          rota /editor, layout, metadados, sitemap e robots
 ├── components/   editor (seções, ATS, backup), preview, ui e pdf (documento do CV, react-pdf)
