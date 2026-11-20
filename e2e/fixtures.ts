@@ -2,7 +2,7 @@ import { expect, type Page } from "@playwright/test";
 
 /** Abre o editor e espera o perfil carregar do IndexedDB. */
 export const openEditor = async (page: Page) => {
-  await page.goto("/editor");
+  await page.goto("/app");
   await expect(page.getByLabel("Nome completo")).toBeVisible();
 };
 

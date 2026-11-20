@@ -141,7 +141,9 @@ Usa [Vitest](https://vitest.dev) com Testing Library. Os testes cobrem o schema 
 
 Para reexecutar ao salvar: `pnpm test:watch`.
 
-Os testes de ponta a ponta (Playwright, em `e2e/`) abrem o app no Chromium e percorrem os fluxos inteiros: salvar o perfil e recarregar, gerar e baixar o PDF de verdade, exportar o perfil e importar em outro navegador, e abrir o editor sem erros.
+Os testes de ponta a ponta (Playwright, em `e2e/`) abrem o app no Chromium e percorrem os fluxos inteiros: salvar o perfil e recarregar, gerar e baixar o PDF de verdade, exportar o perfil e importar em outro navegador, abrir o editor sem erros, ir da landing ao editor, o redirecionamento de `/editor` e as páginas de privacidade e termos.
+
+Os prints da landing (`public/landing/`) saem de um teste à parte, com um perfil fictício: `SCREENSHOTS=1 pnpm test:e2e e2e/screenshots.spec.ts` (depois, converta os PNG para WebP).
 
 ```bash
 pnpm exec playwright install chromium   # só na primeira vez
@@ -160,8 +162,8 @@ pnpm test:e2e                           # gera o build e testa contra ele
 docs/             decisões de projeto (decisions.md) e fontes deste README
 e2e/              testes de ponta a ponta (Playwright)
 public/           arquivos estáticos
-├── app/          rota /editor, layout, metadados, sitemap e robots
-├── components/   editor (seções, ATS, backup), preview, ui e pdf (documento do CV, react-pdf)
+├── app/          landing (/), editor (/app), /privacidade, /termos, layout, metadados, sitemap e robots
+├── components/   landing, editor (seções, ATS, backup), preview, ui e pdf (documento do CV, react-pdf)
 ├── lib/          schema, storage, ajuste de página, checagens ATS e geração do PDF
 └── tests/        utilitários de teste de PDF
 ```
@@ -189,7 +191,7 @@ Todas as decisões, com o porquê, estão em [`docs/decisions.md`](docs/decision
 ### 🔎 SEO e compartilhamento
 
 - `sitemap.xml` e `robots.txt` vêm de `app/sitemap.ts` e `app/robots.ts`.
-- Open Graph e Twitter Card (título, descrição e imagem de 1200x630) são definidos em `app/layout.tsx`. A rota `/editor` tem título próprio.
+- Open Graph e Twitter Card (título, descrição e imagem de 1200x630) são definidos em `app/layout.tsx`. A landing (`/`) apresenta o projeto, e o editor mora em `/app`, com título próprio. O endereço antigo `/editor` redireciona para `/app` (308, em `lib/redirects.ts`), então links antigos continuam valendo.
 - O endereço público vem de `lib/site.ts`: `NEXT_PUBLIC_SITE_URL` se definida, `http://localhost:3000` em desenvolvimento e `https://vexoradn.vercel.app` nos demais casos.
 - Favicon: `icon.svg`, `favicon.ico` e `apple-icon.png` em `app/`.
 
