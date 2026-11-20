@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLink } from "@/components/landing/brand-link";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -166,14 +167,7 @@ export const EditorShell = ({
     <FormProvider {...form}>
       <header className="border-line/70 bg-paper/80 sticky top-0 z-30 border-b backdrop-blur-md">
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <span className="bg-accent text-on-accent grid size-10 place-items-center rounded-xl shadow-sm">
-              <Icon name="logo" size={22} />
-            </span>
-            <span className="font-display text-2xl font-bold tracking-tight">
-              Vexora
-            </span>
-          </div>
+          <BrandLink />
           <div className="ml-auto flex flex-wrap items-center gap-2 sm:gap-3">
             <p
               role="status"

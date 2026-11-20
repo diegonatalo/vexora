@@ -53,7 +53,8 @@ export const ProfileBackup = ({ data, onImport, message, onMessage: setMessage }
       </h2>
       <p className="text-muted mt-1.5 text-sm">
         Seus dados ficam só neste navegador. Exporte para guardar ou levar para
-        outro computador.
+        outro computador. O arquivo tem tudo o que você preencheu (nome,
+        contato, experiências): guarde em lugar seguro.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <button type="button" className={BUTTON.secondary} onClick={startDownload}>

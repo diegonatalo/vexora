@@ -20,9 +20,14 @@ export default function NotFound() {
         <p className="text-muted mx-auto mt-3 max-w-md">
           O endereço que você tentou acessar não existe ou foi movido.
         </p>
-        <Link href="/" className={`${BUTTON.primary} mt-8`}>
-          Voltar ao início
-        </Link>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link href="/app" className={BUTTON.primary}>
+            Abrir o editor
+          </Link>
+          <Link href="/" className={BUTTON.secondary}>
+            Voltar ao início
+          </Link>
+        </div>
       </div>
     </main>
   );

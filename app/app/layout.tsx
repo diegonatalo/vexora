@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Editor de CV",
-  alternates: { canonical: "/editor" },
+  alternates: { canonical: "/app" },
 };
 
 export default function EditorLayout({
