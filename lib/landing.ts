@@ -94,3 +94,21 @@ export const FAQ: Faq[] = [
       "Applicant Tracking System: o sistema que muitas empresas usam para receber e filtrar currículos. Ele lê o texto do PDF; layouts com colunas, tabelas ou imagens costumam sair embaralhados ou vazios.",
   },
 ];
+
+export type Photo = { src: string; alt: string };
+
+/** Foto do Unsplash (licença livre), guardada em `public/landing/`. */
+export const PHOTO: Photo = {
+  src: "/landing/recrutadora.webp",
+  alt: "Recrutadora lendo um currículo impresso numa mesa de escritório.",
+};
+
+/** Os itens da verificação ATS do editor (`lib/ats/checks.ts`), na mesma ordem. */
+export const ATS_CHECKS = [
+  "Texto real e selecionável no PDF",
+  "Coluna única, ordem de leitura correta",
+  "Títulos de seção padrão",
+  "Fonte compatível (Arial)",
+  "Sem tabelas, ícones nem imagens",
+  "Cabe em 1 página",
+];
