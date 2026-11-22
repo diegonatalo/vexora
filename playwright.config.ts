@@ -1,7 +1,10 @@
+import { createHash } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = 3100;
 const CI = Boolean(process.env.CI);
+// Uma porta por pasta (20000 a 29999), para um projeto nunca testar o servidor de outro,
+// nem se ele subir durante o build. No CI é 3100, a do BETTER_AUTH_URL do ci.yml.
+const PORT = CI ? 3100 : 20000 + (createHash("sha1").update(__dirname).digest().readUInt32BE(0) % 10000);
 
 // Roda contra o build de produção. No CI o `pnpm build` já rodou no passo anterior.
 export default defineConfig({
@@ -20,7 +23,8 @@ export default defineConfig({
   webServer: {
     command: CI ? `pnpm start --port ${PORT}` : `pnpm build && pnpm start --port ${PORT}`,
     url: `http://localhost:${PORT}`,
-    reuseExistingServer: !CI,
+    // Porta ocupada é erro: quem está nela pode ser outro app, com outro banco.
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 });
