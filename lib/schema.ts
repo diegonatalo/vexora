@@ -135,8 +135,15 @@ export const profileSchema = z.object({
   languages: z.array(languageSchema),
 });
 
-/** Arquivo de exportação/importação. `format` permite migrar no futuro. */
+/** Identifica o backup: um JSON de outro app nunca é lido como currículo. */
+export const BACKUP_APP = "vexora";
+
+/**
+ * Arquivo de exportação/importação. `format` permite migrar no futuro. `app` é opcional só
+ * para aceitar os backups de antes dele, que o resto do schema já identifica.
+ */
 export const backupSchema = z.object({
+  app: z.literal(BACKUP_APP).optional(),
   format: z.literal(1),
   exportedAt: z.string(),
   profile: profileSchema,

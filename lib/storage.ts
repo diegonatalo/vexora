@@ -1,5 +1,6 @@
 import { del, get, set } from "idb-keyval";
 import {
+  BACKUP_APP,
   backupSchema,
   createEmptyProfile,
   profileSchema,
@@ -34,6 +35,7 @@ export async function deleteData(): Promise<void> {
 
 export function exportJson(data: AppData, now = new Date()): string {
   const backup: Backup = {
+    app: BACKUP_APP,
     format: 1,
     exportedAt: now.toISOString(),
     profile: data.profile,

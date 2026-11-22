@@ -6,7 +6,7 @@ import {
   importJson,
   saveData,
 } from "@/lib/storage";
-import { createEmptyExperience } from "@/lib/schema";
+import { createEmptyExperience, createEmptyProfile } from "@/lib/schema";
 
 beforeEach(async () => {
   await deleteData();
@@ -41,6 +41,21 @@ describe("storage", () => {
     ];
     const result = importJson(exportJson(data));
     expect(result).toEqual({ ok: true, data });
+  });
+
+  it("o backup diz de qual app ele é", () => {
+    expect(JSON.parse(exportJson({ profile: createEmptyProfile() })).app).toBe("vexora");
+  });
+
+  it("rejeita o backup de outro app, mesmo com o mesmo formato", () => {
+    const other = { ...JSON.parse(exportJson({ profile: createEmptyProfile() })), app: "fiinance" };
+    expect(importJson(JSON.stringify(other)).ok).toBe(false);
+  });
+
+  it("aceita backup de antes do campo app", () => {
+    const old = JSON.parse(exportJson({ profile: createEmptyProfile() })) as Record<string, unknown>;
+    delete old.app;
+    expect(importJson(JSON.stringify(old)).ok).toBe(true);
   });
 
   it("rejeita JSON inválido ou de outro formato", () => {
